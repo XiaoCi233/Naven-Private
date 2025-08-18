@@ -354,18 +354,22 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AimAssist.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AntiBots.class
-  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AntiKB.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AntiKB_Debug.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AttackCrystal.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Aura.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoClicker.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoHeal.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoWeapon$1.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoWeapon$WeaponSlotInfo.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoWeapon$WeaponType.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/AutoWeapon.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Backtrack$1.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Backtrack$PositionRecord.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Backtrack.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Critical.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/JumpReset.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/MoreKnockBack.class
-  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Velocity$Stage.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/ThrowableAura.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/combat/Velocity.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/AntiFireball.class
@@ -380,6 +384,7 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/ItemTracker$TargetInfo.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/ItemTracker.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/KillSay.class
+  com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/MidPearl.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/Protocol.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/SafeMode.class
   com/heypixel/heypixelmod/obsoverlay/modules/impl/misc/Spammer.class
@@ -565,6 +570,7 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   dev/yalan/live/LiveReconnectionThread.class
   dev/yalan/live/LiveUser$Level.class
   dev/yalan/live/LiveUser.class
+  dev/yalan/live/LiveUtils.class
   dev/yalan/live/events/
   dev/yalan/live/events/EventLiveAuthenticationResult.class
   dev/yalan/live/events/EventLiveChannelActive.class

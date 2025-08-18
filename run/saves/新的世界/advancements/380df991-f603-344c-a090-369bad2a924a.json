@@ -191,12 +191,6 @@
     },
     "done": true
   },
-  "minecraft:recipes/misc/popped_chorus_fruit": {
-    "criteria": {
-      "has_chorus_fruit": "2025-08-13 23:22:37 +0800"
-    },
-    "done": true
-  },
   "minecraft:recipes/transportation/acacia_boat": {
     "criteria": {
       "in_water": "2025-08-13 23:21:44 +0800"
@@ -242,6 +236,12 @@
   "minecraft:recipes/transportation/dark_oak_boat": {
     "criteria": {
       "in_water": "2025-08-13 23:21:44 +0800"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/popped_chorus_fruit": {
+    "criteria": {
+      "has_chorus_fruit": "2025-08-13 23:22:37 +0800"
     },
     "done": true
   },

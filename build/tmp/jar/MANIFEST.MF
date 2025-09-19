@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
-Specification-Title: Naven-Modern
-Specification-Vendor: YGTeam
+Specification-Title: BlinkFix-NextGeneration
+Specification-Vendor: BlinkFix-NextGenerationDevTeams
 Specification-Version: 1
 Implementation-Title: BlinkFix
-Implementation-Version: BlinkFix
-Implementation-Vendor: YGTeam
-Implementation-Timestamp: 2025-08-18T16:02:17+0800
-MixinConfigs: Naven-Modern.mixins.json
+Implementation-Version: Beta
+Implementation-Vendor: BlinkFix-NextGenerationDevTeams
+Implementation-Timestamp: 2025-09-19T20:11:52+0800
+MixinConfigs: BlinkFix-NextGeneration.mixins.json
 

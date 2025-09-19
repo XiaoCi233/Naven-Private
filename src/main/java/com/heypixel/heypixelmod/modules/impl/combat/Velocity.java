@@ -1,0 +1,434 @@
+package com.heypixel.heypixelmod.modules.impl.combat;
+
+import com.heypixel.heypixelmod.BlinkFix;
+import com.heypixel.heypixelmod.events.api.EventTarget;
+import com.heypixel.heypixelmod.events.api.types.EventType;
+import com.heypixel.heypixelmod.events.impl.*;
+import com.heypixel.heypixelmod.modules.Category;
+import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.ModuleInfo;
+import com.heypixel.heypixelmod.modules.impl.move.Scaffold;
+import com.heypixel.heypixelmod.utils.*;
+import com.heypixel.heypixelmod.utils.rotation.RotationManager;
+import com.heypixel.heypixelmod.values.ValueBuilder;
+import com.heypixel.heypixelmod.values.impl.BooleanValue;
+import com.heypixel.heypixelmod.values.impl.FloatValue;
+import com.heypixel.heypixelmod.values.impl.ModeValue;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import org.joml.Vector2d;
+import org.msgpack.mixin.accessors.LocalPlayerAccessor;
+
+import java.util.Optional;
+import java.util.concurrent.LinkedBlockingDeque;
+
+@ModuleInfo(
+        name = "Velocity",
+        description = "Reduces Knock Back.",
+        category = Category.COMBAT
+)
+public class Velocity extends Module {
+    private final ModeValue mode = ValueBuilder.create(this, "Mode")
+            .setDefaultModeIndex(0)
+            .setModes("GrimNoXZ", "JumpReset","Grim","GrimFull")
+            .build()
+            .getModeValue();
+
+    private final ModeValue noXZMode = ValueBuilder.create(this, "NoXZ Mode")
+            .setDefaultModeIndex(0)
+            .setModes("OneTime", "PerTick")
+            .setVisibility(() -> mode.isCurrentMode("GrimNoXZ"))
+            .build()
+            .getModeValue();
+
+    private final FloatValue attacks = ValueBuilder.create(this, "Attack Count")
+            .setDefaultFloatValue(2.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(5.0F)
+            .setFloatStep(1.0F)
+            .setVisibility(() -> mode.isCurrentMode("GrimNoXZ"))
+            .build()
+            .getFloatValue();
+    private final FloatValue skips = ValueBuilder.create(this, "FullTicks")
+            .setDefaultFloatValue(3.0F)
+            .setFloatStep(1.0F)
+            .setMinFloatValue(2.0F)
+            .setMaxFloatValue(10.0F)
+            .setVisibility(() -> mode.isCurrentMode("GrimFull"))
+            .build()
+            .getFloatValue();
+
+    private final FloatValue jumpTick = ValueBuilder.create(this, "JumpResetTick")
+            .setDefaultFloatValue(1.0F)
+            .setMinFloatValue(0.0F)
+            .setMaxFloatValue(5.0F)
+            .setFloatStep(1.0F)
+            .setVisibility(() -> mode.isCurrentMode("JumpReset"))
+            .build()
+            .getFloatValue();
+
+    private final BooleanValue Logging = ValueBuilder.create(this, "Logging")
+            .setDefaultBooleanValue(false)
+            .build()
+            .getBooleanValue();
+
+
+
+    private Entity targetEntity;
+    private boolean velocityInput = false;
+    private boolean attacked = false;
+    private int jumpResetTicks = 0;
+    private double currentKnockbackSpeed = 0.0;
+    private int attackQueue = 0;
+    private boolean receiveDamage = false;
+    private int slowdownTicks = 0;
+    private boolean velocity = false;
+    private LivingEntity entity;
+    private boolean sprint = false;
+    private final TickTimeHelper timer = new TickTimeHelper();
+    private int delayVelocity = 0;
+    private int velocityTicks = 0;
+    LinkedBlockingDeque<Packet<ClientGamePacketListener>> inBound = new LinkedBlockingDeque<>();
+    BlockHitResult result = null;
+    private boolean nextMovement;
+    private int direction = 1;
+    private int preC0f = 0;
+    private int grimAction = 0;
+    private Optional<LivingEntity> findEntity() {
+        HitResult hitResult = mc.hitResult;
+        if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
+            Entity entity = ((EntityHitResult)hitResult).getEntity();
+            if (entity instanceof Player) {
+                return Optional.of((LivingEntity)entity);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public void onDisable() {
+        this.velocityInput = false;
+        this.attacked = false;
+        this.jumpResetTicks = 0;
+        this.targetEntity = null;
+        this.currentKnockbackSpeed = 0.0;
+        this.attackQueue = 0;
+        this.receiveDamage = false;
+    }
+    @EventTarget
+    public void onMotion(EventMotion eventMotion) {
+        this.setSuffix(mode.getCurrentMode());
+        if (this.mode.isCurrentMode("Grim")) {
+            if (eventMotion.getType() == EventType.PRE) {
+                this.slowdownTicks--;
+                if (this.slowdownTicks == 0) {
+                    com.heypixel.heypixelmod.BlinkFix.TICK_TIMER = 1.0F;
+                } else if (this.slowdownTicks > 0) {
+                    ChatUtils.addChatMessage("Slowdown Ticks: " + this.slowdownTicks);
+                    BlinkFix.TICK_TIMER = 1.0F / this.slowdownTicks;
+                }
+            }
+        }
+    }
+    @EventTarget
+    public void onEnable() {
+        super.onEnable();
+//        if (this.mode.isCurrentMode("GrimNoXZ")) {
+//            this.setSuffix("GrimNoXZ");
+//        }else if (this.mode.isCurrentMode("JumpReset")) {
+//            this.setSuffix("JumpReset");
+//        }else if (this.mode.isCurrentMode("Grim")) {
+//            this.setSuffix("Grim");
+//        }else if (this.mode.isCurrentMode("GrimFull")) {
+//            this.setSuffix("GrimFull");
+//        }
+    }
+    @EventTarget
+    public void onMotion(EventClick e) {
+        this.setSuffix(mode.getCurrentMode());
+        if (this.mode.isCurrentMode("GrimFull")) {
+            if (this.velocity) {
+                if (this.sprint && !((LocalPlayerAccessor) mc.player).isWasSprinting()) {
+                    this.velocity = false;
+                    return;
+                }
+
+                this.velocity = false;
+                if (this.sprint) {
+                    float currentYaw = mc.player.getYRot();
+                    float currentPitch = mc.player.getXRot();
+                    mc.player.setYRot(RotationManager.rotations.x);
+                    mc.player.setXRot(RotationManager.rotations.y);
+
+                    for (int i = 0; i < this.attacks.getCurrentValue(); i++) {
+                        mc.gameMode.attack(mc.player, this.entity);
+                        mc.player.swing(InteractionHand.MAIN_HAND);
+                    }
+
+                    mc.player.setYRot(currentYaw);
+                    mc.player.setXRot(currentPitch);
+                }
+
+                if (!this.sprint) {
+                }
+            }
+        }
+    }
+
+    @EventTarget
+    public void onPacket(EventPacket event) {
+        if (mc.level == null || mc.player == null) return;
+
+        Packet<?> packet = event.getPacket();
+
+        if (packet instanceof ClientboundDamageEventPacket) {
+            ClientboundDamageEventPacket damagePacket = (ClientboundDamageEventPacket)packet;
+            if (damagePacket.entityId() == mc.player.getId()) {
+                this.receiveDamage = true;
+            }
+        }
+
+        if (packet instanceof ClientboundSetEntityMotionPacket) {
+            ClientboundSetEntityMotionPacket velocityPacket = (ClientboundSetEntityMotionPacket)packet;
+            if (velocityPacket.getId() != mc.player.getId()) {
+                return;
+            }
+
+            this.velocityInput = true;
+            this.targetEntity = Aura.target;
+
+            if (this.mode.isCurrentMode("GrimNoXZ")) {
+                if (this.receiveDamage) {
+                    this.receiveDamage = false;
+                    this.attackQueue = (int)this.attacks.getCurrentValue();
+
+                    if (this.Logging.getCurrentValue()) {
+                        ChatUtils.addChatMessage("NoXZ Queue set: " + this.attackQueue + " attacks");
+                    }
+                }
+            } else if (this.mode.isCurrentMode("JumpReset")) {
+                this.jumpResetTicks = (int)this.jumpTick.getCurrentValue();
+                if (this.Logging.getCurrentValue()) {
+                    ChatUtils.addChatMessage("JumpReset scheduled in " + this.jumpResetTicks + " ticks");
+                }
+
+            }
+        }
+    }
+
+    @EventTarget
+    public void onUpdate(EventUpdate event) {
+        if (mc.player == null) return;
+
+        if (mc.player.hurtTime == 0) {
+            this.velocityInput = false;
+            this.currentKnockbackSpeed = 0.0;
+        }
+
+        if (this.jumpResetTicks > 0) {
+            this.jumpResetTicks--;
+        }
+
+        if (this.mode.isCurrentMode("GrimNoXZ") && this.targetEntity != null && this.attackQueue > 0) {
+            if (this.noXZMode.isCurrentMode("OneTime")) {
+                for (; this.attackQueue >= 1; this.attackQueue--) {
+                    mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(this.targetEntity, false));
+                    mc.player.setDeltaMovement(mc.player.getDeltaMovement().multiply(0.6, 1, 0.6));
+                    mc.player.setSprinting(false);
+                    mc.player.swing(InteractionHand.MAIN_HAND);
+                }
+                if (this.Logging.getCurrentValue()) {
+                    ChatUtils.addChatMessage("NoXZ OneTime attacks executed");
+                }
+            } else if (this.noXZMode.isCurrentMode("PerTick")) {
+                if (this.attackQueue >= 1) {
+                    mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(this.targetEntity, false));
+                    mc.player.setDeltaMovement(mc.player.getDeltaMovement().multiply(0.6, 1, 0.6));
+                    mc.player.setSprinting(false);
+                    mc.player.swing(InteractionHand.MAIN_HAND);
+
+                    if (this.Logging.getCurrentValue()) {
+                        ChatUtils.addChatMessage("NoXZ PerTick attack executed, remaining: " + (this.attackQueue - 1));
+                    }
+                }
+                this.attackQueue--;
+            }
+        }
+    }
+
+    @EventTarget
+    public void onMoveInput(EventMoveInput event) {
+        if (mc.player != null && this.mode.isCurrentMode("JumpReset") &&
+                mc.player.onGround() && this.jumpResetTicks == 1) {
+            event.setJump(true);
+            this.jumpResetTicks = 0;
+            if (this.Logging.getCurrentValue()) {
+                ChatUtils.addChatMessage("Jump reset activated");
+            }
+        }
+    }
+@EventTarget(0)
+public void onPacket(EventHandlePacket e) {
+    try {
+        if (mc.player != null && !e.isCancelled()) {
+            if (e.getPacket() instanceof ClientboundSetEntityMotionPacket && this.timer.delay(3)) {
+                ClientboundSetEntityMotionPacket packet = (ClientboundSetEntityMotionPacket)e.getPacket();
+                if (mc.player.getId() == packet.getId()) {
+                    double x = packet.getXa() / 8000.0;
+                    double z = packet.getZa() / 8000.0;
+                    double speed = Math.sqrt(x * x + z * z);
+                    Optional<LivingEntity> targetEntity = this.findEntity();
+                    if (this.mode.isCurrentMode("GrimFull")
+                            && !com.heypixel.heypixelmod.BlinkFix.getInstance().getModuleManager().getModule(Scaffold.class).isEnabled()
+                            && mc.player.getUseItem().isEmpty()
+                            && mc.screen == null
+                            && targetEntity.isPresent()) {
+                        this.entity = targetEntity.get();
+                        this.sprint = ((LocalPlayerAccessor)mc.player).isWasSprinting();
+                        if (this.sprint) {
+                            e.setCancelled(true);
+                            if (this.Logging.getCurrentValue()) {
+                                ChatUtils.addChatMessage("Vel: " + (float)Math.round(speed * 100.0) / 100.0F);
+                            }
+
+                            x *= Math.pow(0.6, this.attacks.getCurrentValue());
+                            z *= Math.pow(0.6, this.attacks.getCurrentValue());
+                            mc.player.setDeltaMovement(x, packet.getYa() / 8000.0, z);
+                            this.velocity = true;
+                            this.timer.reset();
+                        }
+                    }
+
+                    if (this.mode.isCurrentMode("GrimFull") && mc.player.tickCount > 120) {
+                        double horizontalStrength = new Vector2d(packet.getXa(), packet.getZa()).length();
+                        if (horizontalStrength <= 1000.0) {
+                            return;
+                        }
+
+                        if (packet.getYa() < 0) {
+                            return;
+                        }
+
+                        this.delayVelocity = (int)this.skips.getCurrentValue();
+                        this.velocityTicks = 0;
+                        this.velocity = true;
+                        e.setCancelled(true);
+                    }
+                }
+            }
+
+            if (this.mode.isCurrentMode("GrimFull") && mc.player.tickCount > 120) {
+                Packet<?> packet = e.getPacket();
+                if (packet instanceof ClientboundPlayerPositionPacket wrapped) {
+                    while (!this.inBound.isEmpty()) {
+                        this.inBound.poll().handle(mc.player.connection);
+                    }
+                }
+
+                if (packet instanceof ClientboundPingPacket pingPacket) {
+                    if (Math.abs(this.preC0f - pingPacket.getId()) == 1) {
+                        this.grimAction = pingPacket.getId();
+                    }
+
+                    this.preC0f = pingPacket.getId();
+                    if (this.grimAction != pingPacket.getId() && Math.abs(this.grimAction - pingPacket.getId()) > 10 && mc.player.hurtTime > 0) {
+                        mc.player.hurtTime = 0;
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+
+                if (this.delayVelocity > 0 && this.velocity) {
+                    if (packet instanceof ClientboundSystemChatPacket) {
+                        return;
+                    }
+
+                    if (e.getPacket().getClass().getSimpleName().startsWith("C")
+                            && !(packet instanceof ClientboundSetEntityMotionPacket)
+                            && !(packet instanceof ClientboundExplodePacket)
+                            && !(packet instanceof ClientboundSetTimePacket)
+                            && !(packet instanceof ClientboundMoveEntityPacket)
+                            && !(packet instanceof ClientboundTeleportEntityPacket)
+                            && !(packet instanceof ClientboundSoundPacket)
+                            && !(packet instanceof ClientboundSetHealthPacket)
+                            && !(packet instanceof ClientboundPlayerPositionPacket)
+                            && !(packet instanceof ClientboundSystemChatPacket)) {
+                        e.setCancelled(true);
+                        this.inBound.add((Packet<ClientGamePacketListener>)packet);
+                        if (packet instanceof ClientboundPingPacket) {
+                            this.delayVelocity--;
+                            if (this.delayVelocity == 0) {
+                                this.delayVelocity++;
+                                BlockHitResult blockRayTraceResult = (BlockHitResult) PlayerUtils.pickCustom(4.5, mc.player.getYRot(), 90.0F);
+                                if (blockRayTraceResult == null) {
+                                    return;
+                                }
+
+                                if (BlockUtils.isAirBlock(blockRayTraceResult.getBlockPos())) {
+                                    return;
+                                }
+
+                                AABB aabb = new AABB(blockRayTraceResult.getBlockPos().above());
+                                if (!mc.player.getBoundingBox().intersects(aabb)) {
+                                    return;
+                                }
+
+                                this.delayVelocity--;
+
+                                while (!this.inBound.isEmpty()) {
+                                    this.inBound.poll().handle(mc.player.connection);
+                                }
+
+                                this.result = new BlockHitResult(
+                                        blockRayTraceResult.getLocation(), blockRayTraceResult.getDirection(), blockRayTraceResult.getBlockPos(), false
+                                );
+                                this.direction = (int)(this.direction * -0.1);
+                                float pitch = (float)(MathUtils.getRandomDoubleInRange(89.1F, 90.0) - MathUtils.getRandomDoubleInRange(0.002F, 1.0E-14));
+                                float yaw = (float)(((LocalPlayerAccessor)mc.player).getYRotLast() - MathUtils.getRandomDoubleInRange(0.002F, 0.004F));
+                                ((LocalPlayerAccessor)mc.player).setYRotLast(yaw);
+                                ((LocalPlayerAccessor)mc.player).setXRotLast(pitch);
+                                float currentYaw = mc.player.getYRot();
+                                mc.player.connection.send(new ServerboundMovePlayerPacket.Rot(yaw, pitch, mc.player.onGround()));
+                                mc.player
+                                        .connection
+                                        .send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, this.result, MathUtils.getRandomIntInRange(0, 2)));
+                                if (this.Logging.getCurrentValue()) {
+                                    ChatUtils.addChatMessage("Send");
+                                }
+
+                                ((IMixinMinecraft)mc).setSkipTicks((int)this.skips.getCurrentValue());
+                                mc.hitResult = this.result;
+                                this.delayVelocity = 0;
+                                this.result = null;
+                                this.velocity = false;
+                                this.nextMovement = true;
+                            }
+                        }
+                    }
+                }
+
+                if (packet instanceof ServerboundMovePlayerPacket
+                        && !(packet instanceof ServerboundMovePlayerPacket.Pos)
+                        && !(packet instanceof ServerboundMovePlayerPacket.Rot)
+                        && !(packet instanceof ServerboundMovePlayerPacket.PosRot)
+                        && this.nextMovement) {
+                    mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.onGround()));
+                    e.setCancelled(true);
+                    this.nextMovement = false;
+                }
+            }
+        }
+    } catch (Exception var12) {
+        var12.printStackTrace();
+    }
+}
+}

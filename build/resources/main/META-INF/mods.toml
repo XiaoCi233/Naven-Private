@@ -3,20 +3,20 @@ loaderVersion="[47,)" #mandatory
 license="MIT"
 
 [[mods]] #mandatory
-modId="naven" #mandatory
+modId="blinkfix" #mandatory
 version="1.0.0" #mandatory
-displayName="Naven HWID Protected Mod" #mandatory
-authors="Naven" #optional
-description='''一个带有 GitHub HWID 验证的 Forge 1.20.1 测试 Mod'''
+displayName="BlinkFix HWID Protected Mod" #mandatory
+authors="BlinkFix" #optional
+description='''blinkfix客户端'''
 
-[[dependencies."naven"]] #optional
+[[dependencies."blinkfix"]] #optional
 modId="forge"
 mandatory=true
 versionRange="[47,)"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies."naven"]]
+[[dependencies."blinkfix"]]
 modId="minecraft"
 mandatory=true
 versionRange="[1.20.1,1.20.2)"

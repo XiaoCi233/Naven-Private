@@ -4,8 +4,8 @@
 Time: 2025-08-11 05:47:55
 Description: Unexpected error
 
-com.heypixel.heypixelmod.obsoverlay.exceptions.NoSuchModuleException: null
-	at com.heypixel.heypixelmod.obsoverlay.modules.ModuleManager.getModule(ModuleManager.java:155) ~[main/:?] {re:mixin,re:classloading}
+exceptions.com.heypixel.heypixelmod.NoSuchModuleException: null
+	at modules.com.heypixel.heypixelmod.ModuleManager.getModule(ModuleManager.java:155) ~[main/:?] {re:mixin,re:classloading}
 	at net.minecraft.client.renderer.GameRenderer.handler$zzk000$bobHurt(GameRenderer.java:1673) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.renderer.GameRenderer.bobHurt(GameRenderer.java) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1095) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
@@ -38,7 +38,7 @@ A detailed walkthrough of the error, its code path and all known details is as f
 Thread: Render thread
 Suspected Mods: NONE
 Stacktrace:
-	at com.heypixel.heypixelmod.obsoverlay.modules.ModuleManager.getModule(ModuleManager.java:155) ~[%23196!/:?] {re:mixin,re:classloading}
+	at modules.com.heypixel.heypixelmod.ModuleManager.getModule(ModuleManager.java:155) ~[%23196!/:?] {re:mixin,re:classloading}
 	at net.minecraft.client.renderer.GameRenderer.handler$zzk000$bobHurt(GameRenderer.java:1673) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.renderer.GameRenderer.bobHurt(GameRenderer.java) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:1095) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}

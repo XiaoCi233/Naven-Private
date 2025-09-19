@@ -4,7 +4,7 @@
 Time: 2025-08-11 16:17:20
 Description: Unexpected error
 
-java.lang.NullPointerException: Cannot invoke "com.heypixel.heypixelmod.obsoverlay.modules.impl.render.MotionBlur.isEnabled()" because "motionblur" is null
+java.lang.NullPointerException: Cannot invoke "render.impl.modules.com.heypixel.heypixelmod.MotionBlur.isEnabled()" because "motionblur" is null
 	at net.minecraft.client.renderer.GameRenderer.handler$zzk000$render(GameRenderer.java:1649) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:1002) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinGameRenderer,pl:mixin:APP:Naven-Modern.mixins.json:accessors.GameRendererAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1146) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinMinecraft,pl:mixin:APP:Naven-Modern.mixins.json:accessors.MinecraftAccessor,pl:mixin:A,pl:runtimedistcleaner:A}

@@ -33,6 +33,7 @@ import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
 import com.heypixel.heypixelmod.values.impl.ModeValue;
+import com.heypixel.heypixelmod.ui.targethud.TargetHUD;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
@@ -106,10 +107,10 @@ public class Aura extends Module {
     FloatValue fov = ValueBuilder.create(this, "FoV").setDefaultFloatValue(360.0F).setFloatStep(1.0F).setMinFloatValue(10.0F).setMaxFloatValue(360.0F).build().getFloatValue();
     FloatValue hurtTime = ValueBuilder.create(this, "Hurt Time").setDefaultFloatValue(10.0F).setFloatStep(1.0F).setMinFloatValue(0.0F).setMaxFloatValue(10.0F).build().getFloatValue();
     ModeValue priority = ValueBuilder.create(this, "Priority").setModes("Health", "FoV", "Range", "None").build().getModeValue();
-    private final ModeValue targetHudMode = ValueBuilder.create(this, "TargetHud Mode")
+    ModeValue targetHudStyle = ValueBuilder.create(this, "Target HUD Style")
+            .setModes("Naven", "Naven-XD", "MoonLight", "Rise","Lite")
             .setDefaultModeIndex(0)
-            .setModes("Naven", "Lite")
-            .setVisibility(() -> this.targetHud.getCurrentValue())
+            .setVisibility(() -> Aura.this.targetHud.getCurrentValue())
             .build()
             .getModeValue();
     RotationUtils.Data lastRotationData;
@@ -134,153 +135,31 @@ public class Aura extends Module {
         return target;
     }
 
-    @EventTarget
-    public void onRender(EventRender2D e) {
-        if (this.targetHudMode.isCurrentMode("Naven")) {
-            this.blurMatrix = null;
-            long currentTime = System.currentTimeMillis();
-            if (target != this.previousTarget) {
-                this.animationStartTime = currentTime;
-                this.previousTarget = target;
-                this.animationRunning = true;
-                this.animationDirection = target != null ? 1 : -1;
-            }
-            if (animationRunning) {
-                long elapsed = currentTime - animationStartTime;
-                long duration = animationDirection > 0 ? 850 : 400;
-
-                if (elapsed >= duration) {
-                    animationProgress = animationDirection > 0 ? 1f : 0f;
-                    animationRunning = false;
-
-                    if (animationDirection < 0) {
-                        previousTarget = null;
-                    }
-                } else {
-                    float progress = (float) elapsed / duration;
-                    if (animationDirection > 0) {
-                        animationProgress = easeOutElastic(progress);
-                    } else {
-                        animationProgress = 1f - easeInBack(progress);
-                    }
-                }
-            }
-            Entity renderTarget = target != null ? target : this.previousTarget;
-            if (renderTarget instanceof LivingEntity && this.targetHud.getCurrentValue() && animationProgress > 0) {
-                LivingEntity living = (LivingEntity) renderTarget;
-                PoseStack stack = e.getStack();
-                float x = (float) mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
-                float y = (float) mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
-                String targetName = renderTarget.getName().getString() + (living.isBaby() ? " (Baby)" : "");
-                float width = Math.max(Fonts.harmony.getWidth(targetName, 0.4F) + 10.0F, 60.0F);
-                this.blurMatrix = new Vector4f(x, y, width, 30.0F);
-                stack.pushPose();
-                float centerX = x + width / 2;
-                float centerY = y + 15;
-                stack.translate(centerX, centerY, 0);
-                stack.scale(animationProgress, animationProgress, 1);
-                stack.translate(-centerX, -centerY, 0);
-                StencilUtils.write(false);
-                RenderUtils.drawRoundedRect(stack, x, y, width, 30.0F, 5.0F, HUD.headerColor);
-                StencilUtils.erase(true);
-                RenderUtils.fillBound(stack, x, y, width, 30.0F, HUD.bodyColor);
-                RenderUtils.fillBound(stack, x, y, width * (living.getHealth() / living.getMaxHealth()), 3.0F, HUD.headerColor);
-                StencilUtils.dispose();
-
-                Fonts.harmony.render(stack, targetName, (double) (x + 5.0F), (double) (y + 6.0F), Color.WHITE, true, 0.35F);
-                Fonts.harmony.render(
-                        stack,
-                        "HP: " + Math.round(living.getHealth()) + (living.getAbsorptionAmount() > 0.0F ? "+" + Math.round(living.getAbsorptionAmount()) : ""),
-                        (double) (x + 5.0F),
-                        (double) (y + 17.0F),
-                        Color.WHITE,
-                        true,
-                        0.35F
-                );
-
-                stack.popPose();
-            }
-        } else if (this.targetHudMode.isCurrentMode("Lite")) {
-            this.blurMatrix = null;
-            if (target instanceof LivingEntity && this.targetHud.getCurrentValue()) {
-                LivingEntity living = (LivingEntity) target;
-                e.getStack().pushPose();
-                float x = (float) mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
-                float y = (float) mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
-                String targetName = target.getName().getString() + (living.isBaby() ? " (Baby)" : "");
-                float avatarSize = 24.0F;
-                float avatarPadding = 5.0F;
-                float width = Math.max(Fonts.harmony.getWidth(targetName, 0.4f) + 20.0F + avatarSize + avatarPadding, 100.0F);
-                float height = 40.0F;
-                this.blurMatrix = new Vector4f(x, y, width, height);
-                StencilUtils.write(false);
-                RenderUtils.drawRoundedRect(e.getStack(), x, y, width, height, 5.0F, HUD.headerColor);
-                StencilUtils.erase(true);
-                RenderUtils.fillBound(e.getStack(), x, y, width, height, HUD.bodyColor);
-                float avatarX = x + avatarPadding;
-                float avatarY = y + (height - avatarSize) / 2.0F;
-                float textX = x + avatarSize + avatarPadding * 2;
-                Fonts.harmony.render(e.getStack(), targetName, textX, y + 6.0, Color.WHITE, true, 0.35);
-                Fonts.harmony.render(e.getStack(), "HP: " + Math.round(living.getHealth()) +
-                                (living.getAbsorptionAmount() > 0.0F ? "+" + Math.round(living.getAbsorptionAmount()) : ""),
-                        textX, y + 17.0, Color.WHITE, true, 0.35);
-                float progressBarY = y + 30.0F;
-                float progressBarWidth = width - avatarSize - avatarPadding * 3;
-                float progressBarHeight = 4.0F;
-                float currentHealth = living.getHealth() / living.getMaxHealth();
-                float previousHealth = this.getPreviousHealth(living);
-                RenderUtils.drawRoundedRect(e.getStack(), textX, progressBarY, progressBarWidth, progressBarHeight, 2.0F, new Color(100, 100, 100, 150).getRGB());
-                int healthColor = new Color(200, 45, 45, 200).getRGB();
-                int damageColor = new Color(150, 150, 150, 180).getRGB();
-                if (previousHealth > currentHealth) {
-                    float damageWidth = progressBarWidth * (previousHealth - currentHealth);
-                    float damageX = textX + progressBarWidth * currentHealth;
-                    if (damageWidth > 0) {
-                        damageWidth += 2.0F;
-                        damageX -= 1.0F;
-                        if (damageWidth < 4.0F) damageWidth = 4.0F;
-                        RenderUtils.drawRoundedRect(e.getStack(), damageX, progressBarY, damageWidth, progressBarHeight, 2.0F, damageColor);
-                    }
-                }
-
-                if (currentHealth > 0) {
-                    float healthWidth = progressBarWidth * currentHealth;
-                    if (healthWidth < 4.0F) healthWidth = 4.0F;
-                    float extendedHealthWidth = healthWidth + 1.0F;
-                    RenderUtils.drawRoundedRect(e.getStack(), textX, progressBarY, extendedHealthWidth, progressBarHeight, 2.0F, healthColor);
-                }
-                StencilUtils.dispose();
-                this.drawAvatar(e, living, avatarX, avatarY, avatarSize);
-                e.getStack().popPose();
-                this.updatePreviousHealth(living, currentHealth);
-            }
-        }
-    }
-    private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
-        boolean isHit = entity.hurtTime > 0;
-        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();
-        RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2 + 1, bgColor);
-        try {
-            ResourceLocation skinTexture = this.getEntitySkinTexture(entity);
-            RenderSystem.setShaderTexture(0, skinTexture);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.enableBlend();
-            Matrix4f matrix = e.getStack().last().pose();
-            BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
-            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-            float u1 = 8.0F / 64.0F;
-            float v1 = 8.0F / 64.0F;
-            float u2 = 16.0F / 64.0F;
-            float v2 = 16.0F / 64.0F;
-            bufferBuilder.vertex(matrix, x, y + size, 0).uv(u1, v2).endVertex();
-            bufferBuilder.vertex(matrix, x + size, y + size, 0).uv(u2, v2).endVertex();
-            bufferBuilder.vertex(matrix, x + size, y, 0).uv(u2, v1).endVertex();
-            bufferBuilder.vertex(matrix, x, y, 0).uv(u1, v1).endVertex();
-            BufferUploader.drawWithShader(bufferBuilder.end());
-        } catch (Exception ex) {
-            RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2, new Color(150, 150, 150, 255).getRGB());
-        }
-    }
+    //    private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
+//        boolean isHit = entity.hurtTime > 0;
+//        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();
+//        RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2 + 1, bgColor);
+//        try {
+//            ResourceLocation skinTexture = this.getEntitySkinTexture(entity);
+//            RenderSystem.setShaderTexture(0, skinTexture);
+//            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+//            RenderSystem.enableBlend();
+//            Matrix4f matrix = e.getStack().last().pose();
+//            BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+//            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+//            float u1 = 8.0F / 64.0F;
+//            float v1 = 8.0F / 64.0F;
+//            float u2 = 16.0F / 64.0F;
+//            float v2 = 16.0F / 64.0F;
+//            bufferBuilder.vertex(matrix, x, y + size, 0).uv(u1, v2).endVertex();
+//            bufferBuilder.vertex(matrix, x + size, y + size, 0).uv(u2, v2).endVertex();
+//            bufferBuilder.vertex(matrix, x + size, y, 0).uv(u2, v1).endVertex();
+//            bufferBuilder.vertex(matrix, x, y, 0).uv(u1, v1).endVertex();
+//            BufferUploader.drawWithShader(bufferBuilder.end());
+//        } catch (Exception ex) {
+//            RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2, new Color(150, 150, 150, 255).getRGB());
+//        }
+//    }
     private ResourceLocation getEntitySkinTexture(LivingEntity entity) {
         Minecraft minecraft = Minecraft.getInstance();
         if (entity instanceof AbstractClientPlayer) {
@@ -312,42 +191,19 @@ public class Aura extends Module {
     }
 
     @EventTarget
-    public void onRender(EventRender e) {
-        if (this.targetEsp.getCurrentValue()) {
-            PoseStack stack = e.getPMatrixStack();
-            float partialTicks = e.getRenderPartialTicks();
-            stack.pushPose();
-            GL11.glEnable(3042);
-            GL11.glBlendFunc(770, 771);
-            GL11.glDisable(2929);
-            GL11.glDepthMask(false);
-            GL11.glEnable(2848);
-            RenderSystem.setShader(GameRenderer::getPositionShader);
-            RenderUtils.applyRegionalRenderOffset(stack);
+    public void onRender(EventRender2D e) {
+        this.blurMatrix = null;
+        if (target instanceof LivingEntity && this.targetHud.getCurrentValue()) {
+            LivingEntity living = (LivingEntity)target;
+            e.getStack().pushPose();
+            float x = (float)mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
+            float y = (float)mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
 
-            for(Entity entity : targets) {
-                if (entity instanceof LivingEntity) {
-                    LivingEntity living = (LivingEntity)entity;
-                    float[] color = target == living ? targetColorRed : targetColorGreen;
-                    stack.pushPose();
-                    RenderSystem.setShaderColor(color[0], color[1], color[2], color[3]);
-                    double motionX = entity.getX() - entity.xo;
-                    double motionY = entity.getY() - entity.yo;
-                    double motionZ = entity.getZ() - entity.zo;
-                    AABB boundingBox = entity.getBoundingBox().move(-motionX, -motionY, -motionZ).move((double)partialTicks * motionX, (double)partialTicks * motionY, (double)partialTicks * motionZ);
-                    RenderUtils.drawSolidBox(boundingBox, stack);
-                    stack.popPose();
-                }
-            }
+            // 使用TargetHUD类来渲染，而不是硬编码的Naven样式
+            this.blurMatrix = TargetHUD.render(e.getGuiGraphics(), living, this.targetHudStyle.getCurrentMode(), x, y);
 
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            GL11.glDisable(3042);
-            GL11.glEnable(2929);
-            GL11.glDepthMask(true);
-            GL11.glDisable(2848);
-            stack.popPose();
+            e.getStack().popPose();
         }
-
     }
 
     public void onEnable() {

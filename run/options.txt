@@ -44,7 +44,7 @@ biomeBlendRadius:2
 renderClouds:"false"
 resourcePacks:[]
 incompatibleResourcePacks:[]
-lastServer:mc.remiaft.com
+lastServer:127.0.0.1:25565
 lang:zh_cn
 soundDevice:""
 chatVisibility:0

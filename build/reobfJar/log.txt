@@ -407,7 +407,6 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/modules/impl/render/Projectile.class
   com/heypixel/heypixelmod/modules/impl/render/Scoreboard.class
   com/heypixel/heypixelmod/modules/impl/render/ScoreboardSpoof.class
-  com/heypixel/heypixelmod/modules/impl/render/TargetHUD.class
   com/heypixel/heypixelmod/modules/impl/render/TimeChanger.class
   com/heypixel/heypixelmod/modules/impl/render/ViewClip.class
   com/heypixel/heypixelmod/modules/impl/render/Widget.class
@@ -438,6 +437,8 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/ui/notification/Notification.class
   com/heypixel/heypixelmod/ui/notification/NotificationLevel.class
   com/heypixel/heypixelmod/ui/notification/NotificationManager.class
+  com/heypixel/heypixelmod/ui/targethud/
+  com/heypixel/heypixelmod/ui/targethud/TargetHUD.class
   com/heypixel/heypixelmod/utils/
   com/heypixel/heypixelmod/utils/AnimationUtils.class
   com/heypixel/heypixelmod/utils/AttackTargetHelper.class
@@ -494,6 +495,8 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/utils/renderer/Fonts.class
   com/heypixel/heypixelmod/utils/renderer/Framebuffer.class
   com/heypixel/heypixelmod/utils/renderer/GL.class
+  com/heypixel/heypixelmod/utils/renderer/HealthBarAnimator.class
+  com/heypixel/heypixelmod/utils/renderer/HealthParticle.class
   com/heypixel/heypixelmod/utils/renderer/Mesh$Attrib.class
   com/heypixel/heypixelmod/utils/renderer/Mesh.class
   com/heypixel/heypixelmod/utils/renderer/PostProcessRenderer.class

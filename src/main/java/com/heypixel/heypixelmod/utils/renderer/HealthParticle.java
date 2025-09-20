@@ -22,15 +22,15 @@ public class HealthParticle {
     public HealthParticle(float x, float y) {
         this.position = new Vector2f(x, y);
         this.velocity = new Vector2f(
-                (random.nextFloat() - 0.5f) * 10.0f, // 增大到 10.0f
-                (random.nextFloat() - 0.5f) * 10.0f  // 增大到 10.0f
+                (random.nextFloat() - 0.5f) * 10.0f,
+                (random.nextFloat() - 0.5f) * 10.0f
         );
 
-        this.size = random.nextFloat() * 3.0f + 2.0f; // 大小在 2.0 到 5.0 之间
+        this.size = random.nextFloat() * 3.0f + 2.0f;
         this.color = new Color(0xFF962D2D).getRGB();
         this.alpha = 1.0f;
         this.creationTime = System.currentTimeMillis();
-        this.lifeTime = 600 + random.nextInt(400); // 稍微增加生命周期
+        this.lifeTime = 600 + random.nextInt(400);
         this.dead = false;
     }
 

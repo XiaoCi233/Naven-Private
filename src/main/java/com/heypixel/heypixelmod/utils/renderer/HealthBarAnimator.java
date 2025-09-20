@@ -4,22 +4,11 @@ public class HealthBarAnimator {
     private float displayedHealth;
     private long lastUpdateTime;
     private final float animationSpeed;
-
-    /**
-     * Constructs a new HealthBarAnimator.
-     * @param initialHealth The starting health value.
-     * @param animationSpeed The speed of the animation. A higher value means faster transition.
-     */
     public HealthBarAnimator(float initialHealth, float animationSpeed) {
         this.displayedHealth = initialHealth;
         this.lastUpdateTime = System.currentTimeMillis();
         this.animationSpeed = animationSpeed;
     }
-
-    /**
-     * Updates the displayed health value based on the target health and elapsed time.
-     * @param targetHealth The health value to animate towards.
-     */
     public void update(float targetHealth) {
         long currentTime = System.currentTimeMillis();
         long deltaTime = currentTime - this.lastUpdateTime;

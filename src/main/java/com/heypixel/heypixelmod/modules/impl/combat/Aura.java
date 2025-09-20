@@ -134,7 +134,6 @@ public class Aura extends Module {
     public static Entity getTarget() {
         return target;
     }
-
     //    private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
 //        boolean isHit = entity.hurtTime > 0;
 //        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();

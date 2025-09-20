@@ -3,7 +3,6 @@ package dev.yalan.live;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.heypixel.heypixelmod.events.api.EventManager;
-import com.yumegod.obfuscation.Native;
 import dev.yalan.live.events.EventLiveConnectionStatus;
 import dev.yalan.live.netty.LiveProto;
 import dev.yalan.live.netty.codec.FrameDecoder;
@@ -38,6 +37,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+@jnic.JNICInclude
 public class LiveClient {
     public static LiveClient INSTANCE;
     public static final Gson GSON = new GsonBuilder().create();

@@ -3,7 +3,7 @@ package dev.yalan.live;
 import com.google.gson.JsonObject;
 
 import java.util.UUID;
-
+@jnic.JNICInclude
 public class LiveUser {
     private final String clientId;
     private final UUID userId;

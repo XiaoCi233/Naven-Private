@@ -3,8 +3,6 @@ package dev.yalan.live.gui;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.files.FileManager;
-import com.yumegod.obfuscation.Include;
-import com.yumegod.obfuscation.Native;
 import dev.yalan.live.LiveClient;
 import dev.yalan.live.events.*;
 import dev.yalan.live.netty.LiveProto;
@@ -29,7 +27,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
-
+@jnic.JNICInclude
 public class LiveAuthenticationScreen extends Screen {
     private static final Logger logger = LogManager.getLogger("LiveAuthenticationScreen");
     private static final File accountDataFile = new File(FileManager.clientFolder, "LiveAccount.dat");

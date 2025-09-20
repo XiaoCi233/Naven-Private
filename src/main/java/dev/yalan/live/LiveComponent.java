@@ -7,8 +7,6 @@ import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.events.api.types.EventType;
 import com.heypixel.heypixelmod.events.impl.EventRenderTabOverlay;
 import com.heypixel.heypixelmod.utils.ChatUtils;
-import com.yumegod.obfuscation.Include;
-import com.yumegod.obfuscation.Native;
 import dev.yalan.live.events.EventLiveAuthenticationResult;
 import dev.yalan.live.events.EventLiveChannelInactive;
 import dev.yalan.live.events.EventLiveGenericMessage;
@@ -20,7 +18,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
 import java.util.UUID;
-
+@jnic.JNICInclude
 public class LiveComponent {
     private final Minecraft mc = Minecraft.getInstance();
     private final LiveClient live;

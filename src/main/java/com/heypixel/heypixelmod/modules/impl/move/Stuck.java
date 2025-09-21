@@ -41,8 +41,6 @@ public class Stuck extends Module {
     float lastPitch;
     boolean tryDisable = false;
     Queue<ServerboundPongPacket> packets = new ConcurrentLinkedQueue<>();
-
-    // 新增的AntiSB选项
     private final BooleanValue antiSB = ValueBuilder.create(this, "AntiSB")
             .setDefaultBooleanValue(false)
             .build()
@@ -99,7 +97,6 @@ public class Stuck extends Module {
                 }
 
                 if (this.tryDisable) {
-                    // 如果启用了AntiSB选项，允许强制关闭
                     if (this.antiSB.getCurrentValue()) {
                         super.setEnabled(false);
                         return;

@@ -122,6 +122,8 @@ public class LiveHandler extends SimpleChannelInboundHandler<ByteBuf> {
         final UUID userId = buf.readUUID();
         final String userPayload = buf.readUTF();
 
+        logger.info(userPayload);
+
         mc.execute(() -> live.getLiveComponent().handleQueryResultMinecraftProfile(mcUUID, clientId, userId, userPayload));
     }
 

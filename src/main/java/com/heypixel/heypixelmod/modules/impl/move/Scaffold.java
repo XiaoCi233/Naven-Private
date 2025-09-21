@@ -1,7 +1,5 @@
 package com.heypixel.heypixelmod.modules.impl.move;
 
-import com.heypixel.heypixelmod.annotations.FlowExclude;
-import com.heypixel.heypixelmod.annotations.ParameterObfuscationExclude;
 import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.events.api.types.EventType;
 import com.heypixel.heypixelmod.events.impl.*;
@@ -127,6 +125,22 @@ public class Scaffold extends Module {
             .setMinFloatValue(1F)
             .setMaxFloatValue(20F)
             .setFloatStep(1F)
+            .build()
+            .getFloatValue();
+    private final FloatValue TellyRotationAngle = ValueBuilder.create(this, "Rotation Angle")
+            .setVisibility(() -> this.mode.isCurrentMode("Telly Bridge"))
+            .setDefaultFloatValue(180.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(360.0F)
+            .setFloatStep(1.0F)
+            .build()
+            .getFloatValue();
+    private final FloatValue blinkFixRotationSpeed = ValueBuilder.create(this, "Rotation Speed")
+            .setVisibility(() -> this.mode.isCurrentMode("Blink Fix"))
+            .setDefaultFloatValue(180.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(360.0F)
+            .setFloatStep(1.0F)
             .build()
             .getFloatValue();
     public ModeValue mode = ValueBuilder.create(this, "Mode").setDefaultModeIndex(0).setModes("Normal", "Blink Fix", "Telly Bridge", "Keep Y").build().getModeValue();
@@ -568,7 +582,7 @@ public class Scaffold extends Module {
             if (this.mode.isCurrentMode("Telly Bridge")) {
                 mc.options.keyJump.setDown(PlayerUtils.movementInput() || isHoldingJump);
                 if (this.offGroundTicks < 1 && PlayerUtils.movementInput()) {
-                    this.rots.setX(RotationUtils.rotateToYaw(180.0F, this.rots.getX(), mc.player.getYRot()));
+                    this.rots.setX(RotationUtils.rotateToYaw(TellyRotationAngle.getCurrentValue(), this.rots.getX(), mc.player.getYRot()));
                     this.lastRots.set(this.rots.getX(), this.rots.getY());
                     return;
                 }
@@ -576,7 +590,7 @@ public class Scaffold extends Module {
             } else if (this.mode.isCurrentMode("Blink Fix")) {
                 mc.options.keyJump.setDown(PlayerUtils.movementInput() || isHoldingJump);
                 if (mc.player.onGround() && PlayerUtils.movementInput()) {
-                    this.rots.setX(RotationUtils.rotateToYaw(180.0F, this.rots.getX(), mc.player.getYRot()));
+                    this.rots.setX(RotationUtils.rotateToYaw(blinkFixRotationSpeed.getCurrentValue(), this.rots.getX(), mc.player.getYRot()));
                     this.lastRots.set(this.rots.getX(), this.rots.getY());
                     return;
                 }
@@ -1081,8 +1095,6 @@ public class Scaffold extends Module {
         return min + (max - min) * random.nextDouble();
     }
 
-    @FlowExclude
-    @ParameterObfuscationExclude
     private Vector2f getPlayerYawRotation() {
         return mc.player != null && this.pos != null
                 ? new Vector2f(RotationUtils.getRotations(this.pos.position(), 0.0F).getYaw(), RotationUtils.getRotations(this.pos.position(), 0.0F).getPitch())
@@ -1093,9 +1105,6 @@ public class Scaffold extends Module {
         BlockPos playerPos = BlockPos.containing(mc.player.getX(), mc.player.getY() - 0.5, mc.player.getZ());
         return mc.level.isEmptyBlock(playerPos) && isValidStack(mc.player.getMainHandItem());
     }
-
-    @FlowExclude
-    @ParameterObfuscationExclude
     private void getBlockPos() {
         Vec3 baseVec = mc.player.getEyePosition().add(mc.player.getDeltaMovement().multiply(2.0, 2.0, 2.0));
         if (mc.player.getDeltaMovement().y < 0.01) {
@@ -1157,8 +1166,6 @@ public class Scaffold extends Module {
         }
     }
 
-    @FlowExclude
-    @ParameterObfuscationExclude
     public static Vec3 getVec3(BlockPos pos, Direction face) {
         double x = (double) pos.getX() + 0.5;
         double y = (double) pos.getY() + 0.5;

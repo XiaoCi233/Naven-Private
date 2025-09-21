@@ -18,14 +18,7 @@ import com.heypixel.heypixelmod.modules.impl.misc.Teams;
 import com.heypixel.heypixelmod.modules.impl.move.Blink;
 import com.heypixel.heypixelmod.modules.impl.move.Stuck;
 import com.heypixel.heypixelmod.modules.impl.render.HUD;
-import com.heypixel.heypixelmod.utils.BlinkingPlayer;
-import com.heypixel.heypixelmod.utils.ChatUtils;
-import com.heypixel.heypixelmod.utils.FriendManager;
-import com.heypixel.heypixelmod.utils.InventoryUtils;
-import com.heypixel.heypixelmod.utils.NetworkUtils;
-import com.heypixel.heypixelmod.utils.RenderUtils;
-import com.heypixel.heypixelmod.utils.StencilUtils;
-import com.heypixel.heypixelmod.utils.Vector2f;
+import com.heypixel.heypixelmod.utils.*;
 import com.heypixel.heypixelmod.utils.renderer.Fonts;
 import com.heypixel.heypixelmod.utils.rotation.RotationManager;
 import com.heypixel.heypixelmod.utils.rotation.RotationUtils;
@@ -43,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -70,6 +64,8 @@ import net.minecraft.world.phys.HitResult.Type;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Interface;
+
 
 @ModuleInfo(
         name = "Aura",
@@ -91,6 +87,12 @@ public class Aura extends Module {
     private int animationDirection = 1; // 1 = 淡入, -1 = 淡出
     BooleanValue targetHud = ValueBuilder.create(this, "Target HUD").setDefaultBooleanValue(true).build().getBooleanValue();
     BooleanValue targetEsp = ValueBuilder.create(this, "Target ESP").setDefaultBooleanValue(true).build().getBooleanValue();
+    ModeValue targetespStyle = ValueBuilder.create(this, "Target ESP Style")
+            .setModes("Naven", "Rectangle")
+            .setDefaultModeIndex(0)
+            .setVisibility(() -> Aura.this.targetEsp.getCurrentValue())
+            .build()
+            .getModeValue();
     BooleanValue attackPlayer = ValueBuilder.create(this, "Attack Player").setDefaultBooleanValue(true).build().getBooleanValue();
     BooleanValue attackInvisible = ValueBuilder.create(this, "Attack Invisible").setDefaultBooleanValue(false).build().getBooleanValue();
     BooleanValue attackAnimals = ValueBuilder.create(this, "Attack Animals").setDefaultBooleanValue(false).build().getBooleanValue();
@@ -120,7 +122,18 @@ public class Aura extends Module {
     private int index;
     private Vector4f blurMatrix;
     public static Aura instance;
+    private void putRainbowVertex(BufferBuilder buffer, float x, float y, float z, int offset) {
+        int rgb = getRainbowColor(offset);
+        float r = (rgb >> 16 & 0xFF) / 255.0F;
+        float g = (rgb >> 8 & 0xFF) / 255.0F;
+        float b = (rgb & 0xFF) / 255.0F;
+        buffer.vertex(x, y, z).color(r, g, b, 1.0F).endVertex();
+    }
 
+    private int getRainbowColor(int offset) {
+        float hue = (System.currentTimeMillis() + offset) % 3000L / 3000.0f;
+        return Color.HSBtoRGB(hue, 1.0f, 1.0f);
+    }
     public Aura() {
         instance = this;
     }
@@ -134,7 +147,87 @@ public class Aura extends Module {
     public static Entity getTarget() {
         return target;
     }
-    //    private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
+    @EventTarget
+    public void onRender(EventRender e) {
+        if (this.targetespStyle.isCurrentMode("Naven")) {
+            if (this.targetEsp.getCurrentValue()) {
+                PoseStack stack = e.getPMatrixStack();
+                float partialTicks = e.getRenderPartialTicks();
+                stack.pushPose();
+                GL11.glEnable(3042);
+                GL11.glBlendFunc(770, 771);
+                GL11.glDisable(2929);
+                GL11.glDepthMask(false);
+                GL11.glEnable(2848);
+                RenderSystem.setShader(GameRenderer::getPositionShader);
+                RenderUtils.applyRegionalRenderOffset(stack);
+
+                for (Entity entity : targets) {
+                    if (entity instanceof LivingEntity) {
+                        LivingEntity living = (LivingEntity) entity;
+                        float[] color = target == living ? targetColorRed : targetColorGreen;
+                        stack.pushPose();
+                        RenderSystem.setShaderColor(color[0], color[1], color[2], color[3]);
+                        double motionX = entity.getX() - entity.xo;
+                        double motionY = entity.getY() - entity.yo;
+                        double motionZ = entity.getZ() - entity.zo;
+                        AABB boundingBox = entity.getBoundingBox().move(-motionX, -motionY, -motionZ).move((double) partialTicks * motionX, (double) partialTicks * motionY, (double) partialTicks * motionZ);
+                        RenderUtils.drawSolidBox(boundingBox, stack);
+                        stack.popPose();
+                    }
+                }
+
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                GL11.glDisable(3042);
+                GL11.glEnable(2929);
+                GL11.glDepthMask(true);
+                GL11.glDisable(2848);
+                stack.popPose();
+            }
+        } else if (this.targetespStyle.isCurrentMode("Rectangle")) {
+            if (this.targetEsp.getCurrentValue() && target instanceof LivingEntity living) {
+                PoseStack stack = e.getPMatrixStack();
+                float partialTicks = e.getRenderPartialTicks();
+
+                stack.pushPose();
+                RenderSystem.enableBlend();
+                RenderSystem.disableDepthTest();
+                RenderSystem.depthMask(false);
+
+                RenderUtils.applyRegionalRenderOffset(stack);
+
+                float x = (float) (living.getX() - mc.getEntityRenderDispatcher().camera.getPosition().x);
+                float y = (float) (living.getY() + living.getBbHeight() + 0.5 - mc.getEntityRenderDispatcher().camera.getPosition().y);
+                float z = (float) (living.getZ() - mc.getEntityRenderDispatcher().camera.getPosition().z);
+
+                stack.pushPose();
+                stack.translate(x, y, z);
+                stack.scale(0.8f, 0.8f, 0.8f);
+
+                Tesselator tessellator = Tesselator.getInstance();
+                BufferBuilder buffer = tessellator.getBuilder();
+
+                buffer.begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 0);
+                putRainbowVertex(buffer, 0.5f, 0.0f, -0.5f, 500);
+                putRainbowVertex(buffer, 0.5f, 0.0f, 0.5f, 1000);
+                putRainbowVertex(buffer, -0.5f, 0.0f, 0.5f, 1500);
+                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 2000); // 闭合
+
+                tessellator.end();
+
+                stack.popPose();
+
+                // reset
+                RenderSystem.enableDepthTest();
+                RenderSystem.depthMask(true);
+                RenderSystem.disableBlend();
+                stack.popPose();
+            }
+        }
+    }
+//        private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
 //        boolean isHit = entity.hurtTime > 0;
 //        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();
 //        RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2 + 1, bgColor);
@@ -198,7 +291,6 @@ public class Aura extends Module {
             float x = (float)mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
             float y = (float)mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
 
-            // 使用TargetHUD类来渲染，而不是硬编码的Naven样式
             this.blurMatrix = TargetHUD.render(e.getGuiGraphics(), living, this.targetHudStyle.getCurrentMode(), x, y);
 
             e.getStack().popPose();

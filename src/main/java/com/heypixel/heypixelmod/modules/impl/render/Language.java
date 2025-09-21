@@ -10,11 +10,11 @@ import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.ModeValue;
 
-@ModuleInfo(name = "Language", description = "Change module language", category = Category.MISC)
+@ModuleInfo(name = "Language", description = "Change module language", category = Category.RENDER)
 public class Language extends Module {
 
     public final ModeValue languageMode = ValueBuilder.create(this, "Language")
-            .setModes("English", "简体中文", "日本語")
+            .setModes("English", "Chinese", "Japanese")
             .setDefaultModeIndex(0)
             .build()
             .getModeValue();
@@ -35,8 +35,8 @@ public class Language extends Module {
     private void updateLanguage(String languageName) {
         String languageCode;
         switch (languageName) {
-            case "简体中文": languageCode = "zh_cn"; break;
-            case "日本語": languageCode = "ja_jp"; break;
+            case "Chinese": languageCode = "zh_cn"; break;
+            case "Japanese": languageCode = "ja_jp"; break;
             case "English": default: languageCode = "en_us"; break;
         }
 

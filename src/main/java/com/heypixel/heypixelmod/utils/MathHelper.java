@@ -63,4 +63,9 @@ public class MathHelper {
          return num > max ? max : num;
       }
    }
+
+    public static double clamp_double(double num, double min, double max)
+    {
+        return num < min ? min : (num > max ? max : num);
+    }
 }

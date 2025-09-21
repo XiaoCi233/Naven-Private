@@ -91,7 +91,7 @@ public class ModuleLanguageManager {
         en.put("module.midpearl", "MidPearl");
         en.put("module.autoweapon", "AutoWeapon");
         en.put("module.throwableaura", "ThrowableAura");
-        en.put("module.backtrack", "BackTrack");
+        en.put("module.backtrack", "DelayTrack");
         en.put("module.protocolmodule", "ProtocolModule");
         en.put("module.antikb", "Velocity");
         en.put("module.fakelag", "FakeLag");
@@ -192,7 +192,10 @@ public class ModuleLanguageManager {
         en.put("module.nofall.desc", "Prevents fall damage");
         en.put("module.island.desc", "Island related features");
         en.put("module.fakelag.desc", "Simulates network lag by delaying packets");
-
+        en.put("module.delaytrack", "DelayTrack");
+        en.put("module.delaytrack.desc", "Simulates network delay for packets");
+        en.put("module.camera", "Camera");
+        en.put("module.camera.desc", "Camera settings and controls");
         en.put("category.combat", "Combat");
         en.put("category.movement", "Movement");
         en.put("category.render", "Render");
@@ -224,6 +227,11 @@ public class ModuleLanguageManager {
         zh.put("module.antibot", "反机器人");
         zh.put("module.sprint", "自动奔跑");
         zh.put("module.targetstrafe", "目标环绕");
+        zh.put("module.delaytrack", "延迟追踪");
+        zh.put("module.delaytrack.desc", "模拟数据包的网络延迟");
+        zh.put("module.camera", "相机");
+        zh.put("module.camera.desc", "相机设置和控制");
+
         zh.put("module.chestesp", "箱子ESP");
         zh.put("module.clickgui", "点击GUI");
         zh.put("module.teams", "队伍");
@@ -585,6 +593,10 @@ public class ModuleLanguageManager {
         ja.put("category.render", "レンダー");
         ja.put("category.exploit", "悪用");
         ja.put("category.misc", "その他");
+        ja.put("module.delaytrack", "ディレイトラック");
+        ja.put("module.delaytrack.desc", "パケットのネットワーク遅延をシミュレート");
+        ja.put("module.camera", "カメラ");
+        ja.put("module.camera.desc", "カメラ設定と制御");
         ja.put("category.world", "ワールド");
         ja.put("category.player", "プレイヤー");
         ja.put("setting.enabled", "有効");

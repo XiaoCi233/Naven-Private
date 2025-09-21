@@ -1,12 +1,7 @@
 package com.heypixel.heypixelmod.utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import java.awt.Color;
@@ -14,6 +9,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -404,6 +400,25 @@ public class RenderUtils {
         float right = left + width;
         float bottom = top + height;
         fill(stack, left, top, right, bottom, color);
+    }
+    public static void drawImage(ResourceLocation texture, float x1, float y1, float x2, float y2,
+                                 int color1, int color2, int color3, int color4) {
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderTexture(0, texture);
+
+        float u1 = 0.0F, v1 = 0.0F;
+        float u2 = 1.0F, v2 = 1.0F;
+
+        Tesselator tessellator = Tesselator.getInstance();
+        BufferBuilder buffer = tessellator.getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+
+        buffer.vertex(x1, y2, 0).uv(u1, v2).color((color1 >> 16 & 255) / 255f, (color1 >> 8 & 255) / 255f, (color1 & 255) / 255f, (color1 >> 24 & 255) / 255f).endVertex();
+        buffer.vertex(x2, y2, 0).uv(u2, v2).color((color2 >> 16 & 255) / 255f, (color2 >> 8 & 255) / 255f, (color2 & 255) / 255f, (color2 >> 24 & 255) / 255f).endVertex();
+        buffer.vertex(x2, y1, 0).uv(u2, v1).color((color3 >> 16 & 255) / 255f, (color3 >> 8 & 255) / 255f, (color3 & 255) / 255f, (color3 >> 24 & 255) / 255f).endVertex();
+        buffer.vertex(x1, y1, 0).uv(u1, v1).color((color4 >> 16 & 255) / 255f, (color4 >> 8 & 255) / 255f, (color4 & 255) / 255f, (color4 >> 24 & 255) / 255f).endVertex();
+
+        tessellator.end();
     }
 
     public static void drawHealthRing(PoseStack poseStack, float centerX, float centerY,

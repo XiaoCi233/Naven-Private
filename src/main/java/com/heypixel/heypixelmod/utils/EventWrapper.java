@@ -6,8 +6,11 @@ import com.heypixel.heypixelmod.events.api.types.EventType;
 import com.heypixel.heypixelmod.events.impl.EventClientChat;
 import com.heypixel.heypixelmod.events.impl.EventMotion;
 import com.heypixel.heypixelmod.events.impl.EventRespawn;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.netty.LiveProto;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGuiEvent.Post;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,4 +34,26 @@ public class EventWrapper {
          BlinkFix.getInstance().getEventManager().call(new EventRespawn());
       }
    }
+
+    @SubscribeEvent
+    public void onPlayerLoggingIn(ClientPlayerNetworkEvent.LoggingIn e) {
+        LiveClient.INSTANCE.sendPacket(LiveProto.createUpdateMinecraftProfile(
+                e.getPlayer().getUUID(),
+                e.getPlayer().getName().getString()
+        ));
+    }
+
+    @SubscribeEvent
+    public void onPlayerRespawn(ClientPlayerNetworkEvent.Clone e) {
+        LiveClient.INSTANCE.sendPacket(LiveProto.createUpdateMinecraftProfile(
+                e.getNewPlayer().getUUID(),
+                e.getNewPlayer().getName().getString()
+        ));
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggingOut(ClientPlayerNetworkEvent.LoggingOut e) {
+        LiveClient.INSTANCE.sendPacket(LiveProto.createRemoveMinecraftProfile());
+        LiveClient.INSTANCE.getLiveUserMap().clear();
+    }
 }

@@ -43,7 +43,6 @@
     "MixinProjectileUtil",
     "MixinTimer",
     "MixinVertexBuffer",
-    "MinecraftMixin",
     "accessors.AbstractArrowAccessor",
     "accessors.BufferUploaderAccessor",
     "accessors.ClientboundMoveEntityPacketAccessor",

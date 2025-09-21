@@ -47,8 +47,15 @@ public class FakeLag extends Module {
             .setDefaultModeIndex(0)
             .build().getModeValue();
 
-    FloatValue range = ValueBuilder.create(this, "Range").setDefaultFloatValue(3).setFloatStep(1).setMinFloatValue(0.1F).setMaxFloatValue(6).build().getFloatValue();
-    public BooleanValue sendVelocity = ValueBuilder.create(this, "Velocity").setDefaultBooleanValue(false).build().getBooleanValue();
+    FloatValue range = ValueBuilder.create(this, "Range")
+            .setDefaultFloatValue(3)
+            .setFloatStep(1)
+            .setMinFloatValue(0.1F)
+            .setMaxFloatValue(6)
+            .build()
+            .getFloatValue();
+    public BooleanValue log = ValueBuilder.create(this, "DevLog").setDefaultBooleanValue(true).build().getBooleanValue();
+    public BooleanValue sendVelocity = ValueBuilder.create(this, "Velocity").setDefaultBooleanValue(true).build().getBooleanValue();
     public BooleanValue autoReleaseAtMax = ValueBuilder.create(this, "AutoReleaseAtMax").setDefaultBooleanValue(true).build().getBooleanValue();
 
     public FloatValue maxPackets = ValueBuilder.create(this, "MaxPackets")
@@ -182,6 +189,7 @@ public class FakeLag extends Module {
             oldEntity = aura.target;
 
             if (attackLogTimer.hasTimePassed(500L)) {
+                if (this.log.getCurrentValue())
                 mc.player.sendSystemMessage(Component.literal("§aFakeLag §7 has Attack target: §f" + entity.getName().getString()));
                 attackLogTimer.reset();
             }
@@ -203,7 +211,9 @@ public class FakeLag extends Module {
                 if (hurtCount >= (int)hurtCountThreshold.getCurrentValue()) {
                     send();
                     hurtCount = 0;
-                    mc.player.sendSystemMessage(Component.literal("§cFakeLag §7Under attack, release all packages."));
+                    if (this.log.getCurrentValue()) {
+                        mc.player.sendSystemMessage(Component.literal("§cFakeLag §7Under attack, release all packages."));
+                    }
                 }
             }
             lastHurtTime = currentHurtTime;

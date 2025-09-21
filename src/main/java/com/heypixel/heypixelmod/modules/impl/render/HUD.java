@@ -219,7 +219,7 @@ public class HUD extends Module {
         }
 
         this.blurMatrices.clear();
-        if (this.arraymode.isCurrentMode("FDP")) {
+        if (this.arrayList.getCurrentValue() && this.arraymode.isCurrentMode("FDP")) {
             e.getStack().pushPose();
             ModuleManager moduleManager = BlinkFix.getInstance().getModuleManager();
             if (update || this.renderModules == null) {
@@ -296,7 +296,7 @@ public class HUD extends Module {
 
             font.setAlpha(1.0F);
             e.getStack().popPose();
-        } else if (this.arraymode.isCurrentMode("Normal")) {
+        } else if (this.arrayList.getCurrentValue() &&this.arraymode.isCurrentMode("Normal")) {
             e.getStack().pushPose();
             ModuleManager moduleManager = BlinkFix.getInstance().getModuleManager();
             if (update || this.renderModules == null) {

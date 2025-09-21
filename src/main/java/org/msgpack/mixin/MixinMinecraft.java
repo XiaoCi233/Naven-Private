@@ -36,13 +36,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin({Minecraft.class})
 public abstract class MixinMinecraft {
+    @Inject(
+            method = "createTitle",
+            at = @At("HEAD"),
+            cancellable = true
+    )
+    private void onCreateTitle(CallbackInfoReturnable<String> cir) {
+        cir.setReturnValue("BlinkFix-NextGeneration-250919 | ife has dreams, and each is wonderful in its own way.");
+    }
     @Shadow
     public abstract void setScreen(@Nullable Screen p_91153_);
 
     @Unique
-   private int skipTicks;
-   @Unique
-   private long blinkfix_NextGeneration$lastFrame;
+    private int skipTicks;
+    @Unique
+    private long blinkfix_NextGeneration$lastFrame;
 
     /**
      * @author Yalan
@@ -53,127 +61,120 @@ public abstract class MixinMinecraft {
         setScreen(new LiveAuthenticationScreen());
     }
 
-   @Inject(
-      method = {"<init>"},
-      at = {@At("TAIL")}
-   )
-   private void onInit(CallbackInfo info) {
-      com.heypixel.heypixelmod.BlinkFix.modRegister();
-   }
+    @Inject(
+            method = {"<init>"},
+            at = {@At("TAIL")}
+    )
+    private void onInit(CallbackInfo info) {
+        com.heypixel.heypixelmod.BlinkFix.modRegister();
+    }
 
-   @Inject(
-      method = {"<init>"},
-      at = {@At("RETURN")}
-   )
-   public void onInit(GameConfig pGameConfig, CallbackInfo ci) {
-      System.setProperty("java.awt.headless", "false");
-      ModList.get().getMods().removeIf(modInfox -> modInfox.getModId().contains("blinkfix"));
-      List<IModFileInfo> fileInfoToRemove = new ArrayList<>();
+    @Inject(
+            method = {"<init>"},
+            at = {@At("RETURN")}
+    )
+    public void onInit(GameConfig pGameConfig, CallbackInfo ci) {
+        System.setProperty("java.awt.headless", "false");
+        ModList.get().getMods().removeIf(modInfox -> modInfox.getModId().contains("blinkfix"));
+        List<IModFileInfo> fileInfoToRemove = new ArrayList<>();
 
-      for (IModFileInfo fileInfo : ModList.get().getModFiles()) {
-         for (IModInfo modInfo : fileInfo.getMods()) {
-            if (modInfo.getModId().contains("blinkfix")) {
-               fileInfoToRemove.add(fileInfo);
+        for (IModFileInfo fileInfo : ModList.get().getModFiles()) {
+            for (IModInfo modInfo : fileInfo.getMods()) {
+                if (modInfo.getModId().contains("blinkfix")) {
+                    fileInfoToRemove.add(fileInfo);
+                }
             }
-         }
-      }
+        }
 
-      ModList.get().getModFiles().removeAll(fileInfoToRemove);
-   }
+        ModList.get().getModFiles().removeAll(fileInfoToRemove);
+    }
 
-   @Inject(
-      method = {"close"},
-      at = {@At("HEAD")},
-      remap = false
-   )
-   private void shutdown(CallbackInfo ci) {
-      if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
-         com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventShutdown());
-      }
-   }
+    @Inject(
+            method = {"close"},
+            at = {@At("HEAD")},
+            remap = false
+    )
+    private void shutdown(CallbackInfo ci) {
+        if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
+            com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventShutdown());
+        }
+    }
 
-   @Inject(
-      method = {"tick"},
-      at = {@At("HEAD")}
-   )
-   private void tickPre(CallbackInfo ci) {
-      if (BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
-         com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventRunTicks(EventType.PRE));
-      }
-   }
+    @Inject(
+            method = {"tick"},
+            at = {@At("HEAD")}
+    )
+    private void tickPre(CallbackInfo ci) {
+        if (BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
+            com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventRunTicks(EventType.PRE));
+        }
+    }
 
-   @Inject(
-      method = {"tick"},
-      at = {@At("TAIL")}
-   )
-   private void tickPost(CallbackInfo ci) {
-      if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
-         com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventRunTicks(EventType.POST));
-      }
-   }
+    @Inject(
+            method = {"tick"},
+            at = {@At("TAIL")}
+    )
+    private void tickPost(CallbackInfo ci) {
+        if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
+            com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(new EventRunTicks(EventType.POST));
+        }
+    }
 
-   @Inject(
-      method = {"shouldEntityAppearGlowing"},
-      at = {@At("RETURN")},
-      cancellable = true
-   )
-   private void shouldEntityAppearGlowing(Entity pEntity, CallbackInfoReturnable<Boolean> cir) {
-      if (Glow.shouldGlow(pEntity)) {
-         cir.setReturnValue(true);
-      }
-   }
+    @Inject(
+            method = {"shouldEntityAppearGlowing"},
+            at = {@At("RETURN")},
+            cancellable = true
+    )
+    private void shouldEntityAppearGlowing(Entity pEntity, CallbackInfoReturnable<Boolean> cir) {
+        if (Glow.shouldGlow(pEntity)) {
+            cir.setReturnValue(true);
+        }
+    }
 
-   @Inject(
-      method = {"runTick"},
-      at = {@At("HEAD")}
-   )
-   private void runTick(CallbackInfo ci) {
-      long currentTime = System.nanoTime() / 1000000L;
-      int deltaTime = (int)(currentTime - this.blinkfix_NextGeneration$lastFrame);
-      this.blinkfix_NextGeneration$lastFrame = currentTime;
-      AnimationUtils.delta = deltaTime;
-   }
+    @Inject(
+            method = {"runTick"},
+            at = {@At("HEAD")}
+    )
+    private void runTick(CallbackInfo ci) {
+        long currentTime = System.nanoTime() / 1000000L;
+        int deltaTime = (int)(currentTime - this.blinkfix_NextGeneration$lastFrame);
+        this.blinkfix_NextGeneration$lastFrame = currentTime;
+        AnimationUtils.delta = deltaTime;
+    }
 
-   @ModifyArg(
-      method = {"runTick"},
-      at = @At(
-         value = "INVOKE",
-         target = "Lnet/minecraft/client/renderer/GameRenderer;render(FJZ)V"
-      )
-   )
-   private float fixSkipTicks(float g) {
-      if (this.skipTicks > 0) {
-         g = 0.0F;
-      }
+    @ModifyArg(
+            method = {"runTick"},
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/GameRenderer;render(FJZ)V"
+            )
+    )
+    private float fixSkipTicks(float g) {
+        if (this.skipTicks > 0) {
+            g = 0.0F;
+        }
 
-      return g;
-   }
+        return g;
+    }
 
-   @Inject(
-      method = {"handleKeybinds"},
-      at = {@At(
-         value = "INVOKE",
-         target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z",
-         ordinal = 0,
-         shift = Shift.BEFORE
-      )},
-      cancellable = true
-   )
-   private void clickEvent(CallbackInfo ci) {
-      if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
-         EventClick event = new EventClick();
-         com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(event);
-         if (event.isCancelled()) {
-            ci.cancel();
-         }
-      }
-   }
-
-
-    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
-    public void clearLevel(CallbackInfo ci) {
-        LiveClient.INSTANCE.sendPacket(LiveProto.createRemoveMinecraftProfile());
-        LiveClient.INSTANCE.getLiveUserMap().clear();
+    @Inject(
+            method = {"handleKeybinds"},
+            at = {@At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z",
+                    ordinal = 0,
+                    shift = Shift.BEFORE
+            )},
+            cancellable = true
+    )
+    private void clickEvent(CallbackInfo ci) {
+        if (com.heypixel.heypixelmod.BlinkFix.getInstance() != null && com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager() != null) {
+            EventClick event = new EventClick();
+            com.heypixel.heypixelmod.BlinkFix.getInstance().getEventManager().call(event);
+            if (event.isCancelled()) {
+                ci.cancel();
+            }
+        }
     }
 
     public void setBlinkfix_NextGeneration$lastFrame(long blinkfix_NextGeneration$lastFrame) {

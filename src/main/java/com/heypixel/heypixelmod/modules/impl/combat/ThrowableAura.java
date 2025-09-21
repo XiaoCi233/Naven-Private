@@ -123,7 +123,7 @@ public class ThrowableAura extends Module {
                 return false;
             }
 
-            BackTrack backTrackModule = (BackTrack) com.heypixel.heypixelmod.BlinkFix.getInstance().getModuleManager().getModule(BackTrack.class);
+            DelayTrack backTrackModule = (DelayTrack) com.heypixel.heypixelmod.BlinkFix.getInstance().getModuleManager().getModule(DelayTrack.class);
             if (backTrackModule != null && backTrackModule.isEnabled() && backTrackModule.btwork) {
                 return false;
             }

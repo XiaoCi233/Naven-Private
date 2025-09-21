@@ -1,7 +1,9 @@
 package dev.yalan.live;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.Optional;
 import java.util.UUID;
 @jnic.JNICInclude
 public class LiveUser {
@@ -22,11 +24,9 @@ public class LiveUser {
     }
 
     public String getRank() {
-        if (isBlinkFixUser()) {
-            return payload.get("rank").getAsString();
-        }
-
-        return null;
+        return Optional.ofNullable(payload.get("rank"))
+                .map(JsonElement::getAsString)
+                .orElse(null);
     }
 
     public Level getLevel() {

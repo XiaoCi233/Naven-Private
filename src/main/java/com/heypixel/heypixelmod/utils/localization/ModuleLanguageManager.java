@@ -91,7 +91,8 @@ public class ModuleLanguageManager {
         en.put("module.midpearl", "MidPearl");
         en.put("module.autoweapon", "AutoWeapon");
         en.put("module.throwableaura", "ThrowableAura");
-        en.put("module.backtrack", "DelayTrack");
+        en.put("module.backtrack", "BackTrack");
+        en.put("module.BlueArchive", "BlueArchive");
         en.put("module.protocolmodule", "ProtocolModule");
         en.put("module.antikb", "Velocity");
         en.put("module.fakelag", "FakeLag");
@@ -231,7 +232,7 @@ public class ModuleLanguageManager {
         zh.put("module.delaytrack.desc", "模拟数据包的网络延迟");
         zh.put("module.camera", "相机");
         zh.put("module.camera.desc", "相机设置和控制");
-
+        zh.put("module.BlueArchive", "蓝色档案");
         zh.put("module.chestesp", "箱子ESP");
         zh.put("module.clickgui", "点击GUI");
         zh.put("module.teams", "队伍");
@@ -435,6 +436,7 @@ public class ModuleLanguageManager {
         ja.put("module.nojumpdelay", "ジャンプ遅延無効");
         ja.put("module.fastplace", "高速設置");
         ja.put("module.antifireball", "反ファイアボール");
+        ja.put("module.BlueArchive", "ブルーアーカイブ");
         ja.put("module.stuck", "スタック修正");
         ja.put("module.scoreboardspoof", "スコアボード偽装");
         ja.put("module.autotools", "自動ツール");

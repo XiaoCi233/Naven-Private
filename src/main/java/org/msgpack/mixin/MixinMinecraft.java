@@ -42,7 +42,7 @@ public abstract class MixinMinecraft {
             cancellable = true
     )
     private void onCreateTitle(CallbackInfoReturnable<String> cir) {
-        cir.setReturnValue("BlinkFix-NextGeneration-250919 | ife has dreams, and each is wonderful in its own way.");
+        cir.setReturnValue("BlinkFix-NextGeneration 250928-2244 | ife has dreams, and each is wonderful in its own way.");
     }
     @Shadow
     public abstract void setScreen(@Nullable Screen p_91153_);

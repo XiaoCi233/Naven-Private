@@ -38,6 +38,7 @@ import java.util.stream.StreamSupport;
 
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -88,7 +89,7 @@ public class Aura extends Module {
     BooleanValue targetHud = ValueBuilder.create(this, "Target HUD").setDefaultBooleanValue(true).build().getBooleanValue();
     BooleanValue targetEsp = ValueBuilder.create(this, "Target ESP").setDefaultBooleanValue(true).build().getBooleanValue();
     ModeValue targetespStyle = ValueBuilder.create(this, "Target ESP Style")
-            .setModes("Naven", "Rectangle")
+            .setModes("Naven", "Rectangle","XD")
             .setDefaultModeIndex(0)
             .setVisibility(() -> Aura.this.targetEsp.getCurrentValue())
             .build()
@@ -213,21 +214,80 @@ public class Aura extends Module {
                 putRainbowVertex(buffer, 0.5f, 0.0f, -0.5f, 500);
                 putRainbowVertex(buffer, 0.5f, 0.0f, 0.5f, 1000);
                 putRainbowVertex(buffer, -0.5f, 0.0f, 0.5f, 1500);
-                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 2000); // 闭合
+                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 2000);
 
                 tessellator.end();
 
                 stack.popPose();
 
-                // reset
                 RenderSystem.enableDepthTest();
                 RenderSystem.depthMask(true);
                 RenderSystem.disableBlend();
                 stack.popPose();
             }
+        }else if (targetespStyle.isCurrentMode("XD")) {
+            PoseStack stack = e.getPMatrixStack();
+            float partialTicks = e.getRenderPartialTicks();
+            stack.pushPose();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.depthMask(false);
+            GuiGraphics guiGraphics = new GuiGraphics(mc, mc.renderBuffers().bufferSource());
+            Vec3 eyePos = mc.player.getEyePosition(partialTicks);
+            for (Entity entity : targets) {
+                if (entity instanceof LivingEntity) {
+                    Vec3 targetPos = entity.getPosition(partialTicks);
+                    Vector2f screenPos = ProjectionUtils.project(
+                            targetPos.x,
+                            targetPos.y + entity.getBbHeight() / 2,
+                            targetPos.z,
+                            partialTicks
+                    );
+                    if (screenPos.x != Float.MAX_VALUE && screenPos.y != Float.MAX_VALUE) {
+                        double distance = eyePos.distanceTo(targetPos);
+                        float baseDistance = 5.0f;
+                        float baseSize = 80.0f;
+                        float minSize = 20.0f;
+                        float maxSize = 120.0f;
+                        float size = baseSize * (float)(baseDistance / Math.max(1.0, distance));
+                        size = Math.max(minSize, Math.min(maxSize, size));
+                        float imageX = screenPos.x - size/2;
+                        float imageY = screenPos.y - size/2;
+                        float rotationAngle = (System.currentTimeMillis() % 10000) * 0.036f;
+                        long time = System.currentTimeMillis();
+                        float r = (float)(Math.sin(time * 0.001) * 0.3 + 0.7);
+                        float g = (float)(Math.sin(time * 0.001 + 2.0) * 0.3 + 0.7);
+                        float b = (float)(Math.sin(time * 0.001 + 4.0) * 0.3 + 0.7);
+                        float a = 0.7f;
+                        RenderSystem.setShaderColor(r, g, b, a);
+                        ResourceLocation renderImage = ResourceLocation.fromNamespaceAndPath("heypixel", "textures/rectangle.png");
+                        RenderSystem.setShaderTexture(0, renderImage);
+                        stack.pushPose();
+                        stack.translate(imageX + size/2, imageY + size/2, 0);
+                        stack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rotationAngle));
+                        stack.translate(-(imageX + size/2), -(imageY + size/2), 0);
+                        guiGraphics.blit(
+                                renderImage,
+                                (int)imageX,
+                                (int)imageY,
+                                0,
+                                0,
+                                (int)size,
+                                (int)size,
+                                (int)size,
+                                (int)size
+                        );
+                        stack.popPose();
+                    }
+                }
+            }
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.depthMask(true);
+            RenderSystem.disableBlend();
+            stack.popPose();
         }
     }
-//        private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
+    //        private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
 //        boolean isHit = entity.hurtTime > 0;
 //        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();
 //        RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2 + 1, bgColor);

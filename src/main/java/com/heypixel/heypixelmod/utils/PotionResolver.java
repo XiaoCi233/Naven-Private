@@ -28,7 +28,7 @@ public class PotionResolver {
    }
 
    static {
-      InputStream stream = PotionResolver.class.getResourceAsStream("/assets/heypixel/VcX6svVqmeT8/potion_effects.dat");
+      InputStream stream = PotionResolver.class.getResourceAsStream("/assets/heypixel/potion_effects.dat");
       if (stream != null) {
          try {
             GZIPInputStream gzipInputStream = new GZIPInputStream(stream);

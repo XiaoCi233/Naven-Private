@@ -47,8 +47,7 @@ public class ModuleManager {
                 new Camera(),
                 new DelayTrack(),
 //                new Test(),
-                new KillEffect(),
-                new NoGuiClose(),
+//                new KillEffect(),
                 new NameTags(),
                 new ContainerStealer(),
                 new InventoryCleaner(),
@@ -96,7 +95,7 @@ public class ModuleManager {
                 new SafeWalk(),
                 new AimAssist(),
                 new MotionBlur(),
-                new BlueArchive(),
+//                new BlueArchive(),
                 new Language(),
                 new InventoryMove(),
                 new BedAura(),
@@ -109,6 +108,7 @@ public class ModuleManager {
                 new BedPlates(),
 //                new AutoSoup(),
                 new TNTWarning(),
+                new ZhagnTieNanChestStealer(),
                 new NoSlow(),
                 new LongJump(),
 //                new SafeMode(),
@@ -125,11 +125,12 @@ public class ModuleManager {
 //                new ProtocolModule(),
                 new Velocity(),
                 new FakeLag(),
-//                new IQBooster(),
+                new AutoPlay(),
                 new Animations(),
                 new AutoRod(),
                 new NoFall(),
                 new Island()
+
         );
     }
 

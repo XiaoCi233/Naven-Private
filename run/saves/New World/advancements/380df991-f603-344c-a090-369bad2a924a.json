@@ -73,6 +73,7 @@
   },
   "minecraft:adventure/kill_all_mobs": {
     "criteria": {
+      "minecraft:skeleton": "2025-10-02 22:12:00 +0800",
       "minecraft:slime": "2025-08-13 23:23:54 +0800",
       "minecraft:zombie": "2025-08-20 15:21:16 +0800"
     },
@@ -135,6 +136,12 @@
   "minecraft:recipes/food/cake": {
     "criteria": {
       "has_egg": "2025-08-14 14:44:56 +0800"
+    },
+    "done": true
+  },
+  "minecraft:recipes/misc/bone_meal": {
+    "criteria": {
+      "has_bone": "2025-10-02 22:12:00 +0800"
     },
     "done": true
   },

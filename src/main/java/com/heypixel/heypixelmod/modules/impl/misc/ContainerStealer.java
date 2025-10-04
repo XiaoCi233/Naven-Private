@@ -94,7 +94,7 @@ public class ContainerStealer extends Module {
     }
     @EventTarget
     public void onTick(EventMotion eventMotion) {
-        if (ContainerStealer.mc.options.keyUse.isDown()) {
+        if (com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.options.keyUse.isDown()) {
             if (eventMotion.getType() == EventType.POST) {
                 return;
             }
@@ -102,11 +102,11 @@ public class ContainerStealer extends Module {
         }
     }
     public boolean ghostInteractWithChest() {
-        if (ContainerStealer.mc.player == null || ContainerStealer.mc.level == null) {
+        if (com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player == null || com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.level == null) {
             return false;
         }
-        Vec3 eyePos = ContainerStealer.mc.player.getEyePosition(1.0f);
-        Vec3 lookVec = ContainerStealer.mc.player.getViewVector(1.0f);
+        Vec3 eyePos = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.getEyePosition(1.0f);
+        Vec3 lookVec = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.getViewVector(1.0f);
         Vec3 reachEnd = eyePos.add(lookVec.scale(4.0));
         ChestBlockEntity targetChest = null;
         BlockHitResult fakeHit = null;
@@ -123,8 +123,8 @@ public class ContainerStealer extends Module {
             fakeHit = new BlockHitResult(hit.get(), Direction.UP, chest.getBlockPos(), false);
         }
         if (targetChest != null && fakeHit != null) {
-            ContainerStealer.mc.gameMode.useItemOn(ContainerStealer.mc.player, InteractionHand.MAIN_HAND, fakeHit);
-            ContainerStealer.mc.player.swing(InteractionHand.MAIN_HAND);
+            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameMode.useItemOn(com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player, InteractionHand.MAIN_HAND, fakeHit);
+            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.swing(InteractionHand.MAIN_HAND);
             return true;
         }
         return false;
@@ -135,15 +135,15 @@ public class ContainerStealer extends Module {
         this.chests.clear();
         double range = 6.0;
 
-        Vec3 cameraPos = ContainerStealer.mc.gameRenderer.getMainCamera().getPosition();
-        BlockPos playerPos = ContainerStealer.mc.player.blockPosition();
+        Vec3 cameraPos = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameRenderer.getMainCamera().getPosition();
+        BlockPos playerPos = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.blockPosition();
 
         // 扫描玩家周围6格内的箱子
         for (BlockPos pos : BlockPos.betweenClosed(
                 playerPos.offset(-6, -6, -6),
                 playerPos.offset(6, 6, 6))) {
 
-            BlockEntity be = ContainerStealer.mc.level.getBlockEntity(pos);
+            BlockEntity be = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.level.getBlockEntity(pos);
 
             if (!(be instanceof ChestBlockEntity)) {
                 continue;
@@ -245,14 +245,14 @@ public class ContainerStealer extends Module {
 
         @Override
         public String toString() {
-            return "ChestStealer.ChestInfo(blockPos=" + this.getBlockPos() + ", screenPos=" + this.getScreenPos() + ")";
+            return "ContainerStealer.ChestInfo(blockPos=" + this.getBlockPos() + ", screenPos=" + this.getScreenPos() + ")";
         }
     }
 
     @EventTarget(value=1)
     public void onMotion(EventMotion e) {
         if (e.getType() == EventType.PRE) {
-            Screen currentScreen = ContainerStealer.mc.screen;
+            Screen currentScreen = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.screen;
 
             if (currentScreen instanceof ContainerScreen) {
                 ContainerScreen container = (ContainerScreen) currentScreen;
@@ -267,12 +267,9 @@ public class ContainerStealer extends Module {
                     String enderChest = Component.translatable("container.enderchest").getString();
                     if (chestTitle.equals(chest) || chestTitle.equals(largeChest) || chestTitle.equals("Chest") ||
                             (this.pickEnderChest.getCurrentValue() && chestTitle.equals(enderChest))) {
-
-                        // 如果箱子为空且延迟已到，关闭箱子
                         if (this.isChestEmpty(menu) && timer.delay(this.delay.getCurrentValue())) {
-                            ContainerStealer.mc.player.closeContainer();
+                            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.closeContainer();
                         } else {
-                            // 随机排序箱子槽位
                             List<Integer> slots = IntStream.range(0, menu.getRowCount() * 9)
                                     .boxed()
                                     .collect(Collectors.toList());
@@ -280,43 +277,31 @@ public class ContainerStealer extends Module {
 
                             for (Integer pSlotId : slots) {
                                 ItemStack stack = menu.getSlot(pSlotId).getItem();
-
-                                // 检查物品是否有用且是箱子中最好的
-                                if (!ContainerStealer.isItemUseful(stack) ||
+                                if (!com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.isItemUseful(stack) ||
                                         !this.isBestItemInChest(menu, stack) ||
                                         !timer.delay(this.delay.getCurrentValue())) {
                                     continue;
                                 }
 
                                 if (this.swap.getCurrentValue()) {
-                                    // 即时交换模式
-                                    int slot = ContainerStealer.getFirstEmptySlot();
+                                    int slot = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.getFirstEmptySlot();
 
                                     if (slot != -1 && slot + 18 < 54) {
-                                        if (stack.getCount() <= 1) {
-                                            if (slot < 9) {
-                                                ContainerStealer.mc.gameMode.handleInventoryMouseClick(
-                                                        menu.containerId, pSlotId, slot, ClickType.SWAP, ContainerStealer.mc.player);
-                                            } else {
-                                                ContainerStealer.mc.gameMode.handleInventoryMouseClick(
-                                                        menu.containerId, slot + 18, 8, ClickType.SWAP, ContainerStealer.mc.player);
-                                                ContainerStealer.mc.gameMode.handleInventoryMouseClick(
-                                                        menu.containerId, pSlotId, 8, ClickType.SWAP, ContainerStealer.mc.player);
-                                            }
-                                        } else if (timer2.delay(this.delay1.getCurrentValue())) {
-                                            // 快速移动多个物品
-                                            ContainerStealer.mc.gameMode.handleInventoryMouseClick(
-                                                    menu.containerId, pSlotId, 0, ClickType.QUICK_MOVE, ContainerStealer.mc.player);
-                                            timer2.reset();
+                                        if (slot < 9) {
+                                            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameMode.handleInventoryMouseClick(
+                                                    menu.containerId, pSlotId, slot, ClickType.SWAP, com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player);
+                                        } else {
+                                            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameMode.handleInventoryMouseClick(
+                                                    menu.containerId, slot + 18, 8, ClickType.SWAP, com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player);
+                                            com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameMode.handleInventoryMouseClick(
+                                                    menu.containerId, pSlotId, 8, ClickType.SWAP, com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player);
                                         }
                                     } else {
-                                        // 没有空槽位，关闭箱子
-                                        ContainerStealer.mc.player.closeContainer();
+                                        com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.closeContainer();
                                     }
                                 } else {
-                                    // 普通模式，快速移动物品
-                                    ContainerStealer.mc.gameMode.handleInventoryMouseClick(
-                                            menu.containerId, pSlotId, 0, ClickType.QUICK_MOVE, ContainerStealer.mc.player);
+                                    com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.gameMode.handleInventoryMouseClick(
+                                            menu.containerId, pSlotId, 0, ClickType.QUICK_MOVE, com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player);
                                 }
 
                                 timer.reset();
@@ -396,7 +381,7 @@ public class ContainerStealer extends Module {
     }
     public static int getFirstEmptySlot() {
         // 获取第一个空槽位
-        Inventory inventory = ContainerStealer.mc.player.getInventory();
+        Inventory inventory = com.heypixel.heypixelmod.modules.impl.misc.ContainerStealer.mc.player.getInventory();
 
         for (int i = 0; i < inventory.items.size(); ++i) {
             if (i == 8 || !inventory.getItem(i).isEmpty()) {

@@ -147,6 +147,18 @@ Conflicting propagated mapping for com/heypixel/heypixelmod/utils/BlinkingPlayer
 Conflicting propagated mapping for com/heypixel/heypixelmod/utils/BlinkingPlayer/isSkinLoaded()Z from net/minecraft/client/player/AbstractClientPlayer/isSkinLoaded()Z: isSkinLoaded -> m_108559_
 Conflicting propagated mapping for com/heypixel/heypixelmod/utils/BlinkingPlayer/getSkinTextureLocation()Lnet/minecraft/resources/ResourceLocation; from net/minecraft/client/player/AbstractClientPlayer/getSkinTextureLocation()Lnet/minecraft/resources/ResourceLocation;: getSkinTextureLocation -> m_108560_
 Conflicting propagated mapping for net/minecraft/world/level/block/entity/ChestBlockEntity/setBlockState(Lnet/minecraft/world/level/block/state/BlockState;)V from net/minecraft/world/level/block/entity/BlockEntity/setBlockState(Lnet/minecraft/world/level/block/state/BlockState;)V: setBlockState -> m_155250_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/MainUI/MainUI/isPauseScreen()Z from net/minecraft/client/gui/screens/Screen/isPauseScreen()Z: isPauseScreen -> m_7043_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/MainUI/MainUI/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/MainUI/MainUI/init()V from net/minecraft/client/gui/screens/Screen/init()V: init -> m_7856_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/MainUI/MainUI/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
+Conflicting propagated mapping for net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen/onClose()V from net/minecraft/client/gui/screens/Screen/onClose()V: onClose -> m_7379_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/keyPressed(III)Z from net/minecraft/client/gui/screens/Screen/keyPressed(III)Z: keyPressed -> m_7933_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/isPauseScreen()Z from net/minecraft/client/gui/screens/Screen/isPauseScreen()Z: isPauseScreen -> m_7043_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/init()V from net/minecraft/client/gui/screens/Screen/init()V: init -> m_7856_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/renderBackground(Lnet/minecraft/client/gui/GuiGraphics;)V from net/minecraft/client/gui/screens/Screen/renderBackground(Lnet/minecraft/client/gui/GuiGraphics;)V: renderBackground -> m_280273_
+Conflicting propagated mapping for com/heypixel/heypixelmod/ui/Welcome/tick()V from net/minecraft/client/gui/screens/Screen/tick()V: tick -> m_86600_
 Conflicting propagated mapping for com/heypixel/heypixelmod/utils/renderer/text/BufferedTexture/load(Lnet/minecraft/server/packs/resources/ResourceManager;)V from net/minecraft/client/renderer/texture/AbstractTexture/load(Lnet/minecraft/server/packs/resources/ResourceManager;)V: load -> m_6704_
 Conflicting propagated mapping for dev/yalan/live/gui/LiveAuthenticationScreen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
 Conflicting propagated mapping for dev/yalan/live/gui/LiveAuthenticationScreen/init()V from net/minecraft/client/gui/screens/Screen/init()V: init -> m_7856_
@@ -164,25 +176,145 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   META-INF/mixins.blinkfix.json
   META-INF/mods.toml
   assets/
+  assets/ba/
+  assets/ba/textures/
+  assets/ba/textures/A.png
+  assets/ba/textures/A1.png
+  assets/ba/textures/A2.png
+  assets/ba/textures/A3.png
+  assets/ba/textures/A4.png
+  assets/ba/textures/B.png
+  assets/ba/textures/B1.png
+  assets/ba/textures/B2.png
+  assets/ba/textures/B3.png
+  assets/ba/textures/B4.png
+  assets/ba/textures/C.png
+  assets/ba/textures/C1.png
+  assets/ba/textures/C2.png
+  assets/ba/textures/C3.png
+  assets/ba/textures/C4.png
+  assets/ba/textures/D.png
+  assets/ba/textures/D1.png
+  assets/ba/textures/D2.png
+  assets/ba/textures/D3.png
+  assets/ba/textures/D4.png
+  assets/ba/textures/E.png
+  assets/ba/textures/E1.png
+  assets/ba/textures/E2.png
+  assets/ba/textures/E3.png
+  assets/ba/textures/E4.png
+  assets/ba/textures/F.png
+  assets/ba/textures/F1.png
+  assets/ba/textures/F2.png
+  assets/ba/textures/F3.png
+  assets/ba/textures/F4.png
+  assets/ba/textures/G.png
+  assets/ba/textures/G1.png
+  assets/ba/textures/G2.png
+  assets/ba/textures/G3.png
+  assets/ba/textures/G4.png
+  assets/ba/textures/H.png
+  assets/ba/textures/H1.png
+  assets/ba/textures/H2.png
+  assets/ba/textures/H3.png
+  assets/ba/textures/H4.png
+  assets/ba/textures/I.png
+  assets/ba/textures/I1.png
+  assets/ba/textures/I2.png
+  assets/ba/textures/I3.png
+  assets/ba/textures/I4.png
+  assets/ba/textures/J.png
+  assets/ba/textures/J1.png
+  assets/ba/textures/J2.png
+  assets/ba/textures/J3.png
+  assets/ba/textures/J4.png
+  assets/ba/textures/K.png
+  assets/ba/textures/K1.png
+  assets/ba/textures/K2.png
+  assets/ba/textures/K3.png
+  assets/ba/textures/L.png
+  assets/ba/textures/L1.png
+  assets/ba/textures/L2.png
+  assets/ba/textures/L3.png
+  assets/ba/textures/M.png
+  assets/ba/textures/M1.png
+  assets/ba/textures/M2.png
+  assets/ba/textures/M3.png
+  assets/ba/textures/N.png
+  assets/ba/textures/N1.png
+  assets/ba/textures/N2.png
+  assets/ba/textures/N3.png
+  assets/ba/textures/O.png
+  assets/ba/textures/O1.png
+  assets/ba/textures/O2.png
+  assets/ba/textures/O3.png
+  assets/ba/textures/P.png
+  assets/ba/textures/P1.png
+  assets/ba/textures/P2.png
+  assets/ba/textures/P3.png
+  assets/ba/textures/Q.png
+  assets/ba/textures/Q1.png
+  assets/ba/textures/Q2.png
+  assets/ba/textures/Q3.png
+  assets/ba/textures/R.png
+  assets/ba/textures/R1.png
+  assets/ba/textures/R2.png
+  assets/ba/textures/R3.png
+  assets/ba/textures/S.png
+  assets/ba/textures/S1.png
+  assets/ba/textures/S2.png
+  assets/ba/textures/S3.png
+  assets/ba/textures/T.png
+  assets/ba/textures/T1.png
+  assets/ba/textures/T2.png
+  assets/ba/textures/T3.png
+  assets/ba/textures/U.png
+  assets/ba/textures/U1.png
+  assets/ba/textures/U2.png
+  assets/ba/textures/U3.png
+  assets/ba/textures/V.png
+  assets/ba/textures/V1.png
+  assets/ba/textures/V2.png
+  assets/ba/textures/V3.png
+  assets/ba/textures/W.png
+  assets/ba/textures/W1.png
+  assets/ba/textures/W2.png
+  assets/ba/textures/W3.png
+  assets/ba/textures/X.png
+  assets/ba/textures/X1.png
+  assets/ba/textures/X2.png
+  assets/ba/textures/X3.png
+  assets/ba/textures/Y.png
+  assets/ba/textures/Y1.png
+  assets/ba/textures/Y2.png
+  assets/ba/textures/Y3.png
+  assets/ba/textures/Z.png
+  assets/ba/textures/Z1.png
+  assets/ba/textures/Z2.png
+  assets/ba/textures/Z3.png
   assets/heypixel/
-  assets/heypixel/VcX6svVqmeT8/
-  assets/heypixel/VcX6svVqmeT8/fonts/
-  assets/heypixel/VcX6svVqmeT8/fonts/harmony.ttf
-  assets/heypixel/VcX6svVqmeT8/fonts/icon.ttf
-  assets/heypixel/VcX6svVqmeT8/fonts/opensans.ttf
-  assets/heypixel/VcX6svVqmeT8/fonts/youyuan.ttf
-  assets/heypixel/VcX6svVqmeT8/lang/
-  assets/heypixel/VcX6svVqmeT8/lang/ja_jp.json
-  assets/heypixel/VcX6svVqmeT8/lang/zh_cn.json
-  assets/heypixel/VcX6svVqmeT8/potion_effects.dat
-  assets/heypixel/VcX6svVqmeT8/shader/
-  assets/heypixel/VcX6svVqmeT8/shader/blur.vert
-  assets/heypixel/VcX6svVqmeT8/shader/blur_down.frag
-  assets/heypixel/VcX6svVqmeT8/shader/blur_up.frag
-  assets/heypixel/VcX6svVqmeT8/shader/shadow.frag
-  assets/heypixel/VcX6svVqmeT8/shader/shadow.vert
-  assets/heypixel/VcX6svVqmeT8/shader/text.frag
-  assets/heypixel/VcX6svVqmeT8/shader/text.vert
+  assets/heypixel/fonts/
+  assets/heypixel/fonts/harmony.ttf
+  assets/heypixel/fonts/icon.ttf
+  assets/heypixel/fonts/opensans.ttf
+  assets/heypixel/fonts/youyuan.ttf
+  assets/heypixel/lang/
+  assets/heypixel/lang/ja_jp.json
+  assets/heypixel/lang/zh_cn.json
+  assets/heypixel/potion_effects.dat
+  assets/heypixel/shader/
+  assets/heypixel/shader/blur.vert
+  assets/heypixel/shader/blur_down.frag
+  assets/heypixel/shader/blur_up.frag
+  assets/heypixel/shader/shadow.frag
+  assets/heypixel/shader/shadow.vert
+  assets/heypixel/shader/text.frag
+  assets/heypixel/shader/text.vert
+  assets/heypixel/textures/
+  assets/heypixel/textures/images/
+  assets/heypixel/textures/images/background.png
+  assets/heypixel/textures/target/
+  assets/heypixel/textures/target/rectangle.png
   assets/minecraft/
   assets/minecraft/shaders/
   assets/minecraft/shaders/core/
@@ -336,6 +468,7 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/modules/impl/misc/
   com/heypixel/heypixelmod/modules/impl/misc/AntiFireball.class
   com/heypixel/heypixelmod/modules/impl/misc/AntiWeb.class
+  com/heypixel/heypixelmod/modules/impl/misc/AutoPlay.class
   com/heypixel/heypixelmod/modules/impl/misc/AutoTools.class
   com/heypixel/heypixelmod/modules/impl/misc/BedAura.class
   com/heypixel/heypixelmod/modules/impl/misc/Clip.class
@@ -351,12 +484,13 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/modules/impl/misc/KillSay.class
   com/heypixel/heypixelmod/modules/impl/misc/KillerDetection.class
   com/heypixel/heypixelmod/modules/impl/misc/MidPearl.class
-  com/heypixel/heypixelmod/modules/impl/misc/NoGuiClose.class
   com/heypixel/heypixelmod/modules/impl/misc/SelfRescue$CalculateThread.class
   com/heypixel/heypixelmod/modules/impl/misc/SelfRescue.class
   com/heypixel/heypixelmod/modules/impl/misc/Spammer.class
   com/heypixel/heypixelmod/modules/impl/misc/TNTWarning.class
   com/heypixel/heypixelmod/modules/impl/misc/Teams.class
+  com/heypixel/heypixelmod/modules/impl/misc/ZhagnTieNanChestStealer$ChestInfo.class
+  com/heypixel/heypixelmod/modules/impl/misc/ZhagnTieNanChestStealer.class
   com/heypixel/heypixelmod/modules/impl/move/
   com/heypixel/heypixelmod/modules/impl/move/AutoMLG.class
   com/heypixel/heypixelmod/modules/impl/move/Blink$1.class
@@ -429,6 +563,9 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/protocol/spoofer/FakeDiskStore.class
   com/heypixel/heypixelmod/protocol/spoofer/FakeMac.class
   com/heypixel/heypixelmod/ui/
+  com/heypixel/heypixelmod/ui/ArrayList/
+  com/heypixel/heypixelmod/ui/ArrayList/ArrayList$Mode.class
+  com/heypixel/heypixelmod/ui/ArrayList/ArrayList.class
   com/heypixel/heypixelmod/ui/ClickGUI$1.class
   com/heypixel/heypixelmod/ui/ClickGUI$2.class
   com/heypixel/heypixelmod/ui/ClickGUI$3.class
@@ -436,11 +573,20 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   com/heypixel/heypixelmod/ui/ClickGUI$5.class
   com/heypixel/heypixelmod/ui/ClickGUI$6.class
   com/heypixel/heypixelmod/ui/ClickGUI.class
+  com/heypixel/heypixelmod/ui/HUDEditor$HUDElement.class
+  com/heypixel/heypixelmod/ui/HUDEditor.class
+  com/heypixel/heypixelmod/ui/MainUI/
+  com/heypixel/heypixelmod/ui/MainUI/MainUI$Button.class
+  com/heypixel/heypixelmod/ui/MainUI/MainUI.class
+  com/heypixel/heypixelmod/ui/Watermark/
+  com/heypixel/heypixelmod/ui/Watermark/Watermark.class
+  com/heypixel/heypixelmod/ui/Welcome.class
   com/heypixel/heypixelmod/ui/notification/
   com/heypixel/heypixelmod/ui/notification/Notification.class
   com/heypixel/heypixelmod/ui/notification/NotificationLevel.class
   com/heypixel/heypixelmod/ui/notification/NotificationManager.class
   com/heypixel/heypixelmod/ui/targethud/
+  com/heypixel/heypixelmod/ui/targethud/TargetESP.class
   com/heypixel/heypixelmod/ui/targethud/TargetHUD.class
   com/heypixel/heypixelmod/utils/
   com/heypixel/heypixelmod/utils/AnimationUtils.class
@@ -657,7 +803,6 @@ Writing Output: D:\Src\BlinkFix-Modern\build\reobfJar\output.jar
   org/msgpack/mixin/MixinScreenEffectRenderer.class
   org/msgpack/mixin/MixinTimer.class
   org/msgpack/mixin/MixinVertexBuffer.class
-  org/msgpack/mixin/NoGuiCloseMixin.class
   org/msgpack/mixin/ScreenMixin.class
   org/msgpack/mixin/accessors/
   org/msgpack/mixin/accessors/AbstractArrowAccessor.class

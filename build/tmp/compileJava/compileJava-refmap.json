@@ -20,9 +20,6 @@
       "travel": "Lnet/minecraft/world/entity/LivingEntity;m_7023_(Lnet/minecraft/world/phys/Vec3;)V",
       "tickHeadTurn": "Lnet/minecraft/world/entity/LivingEntity;m_5632_(FF)F"
     },
-    "org/msgpack/mixin/NoGuiCloseMixin": {
-      "handleContainerClose": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7776_(Lnet/minecraft/network/protocol/game/ClientboundContainerClosePacket;)V"
-    },
     "org/msgpack/mixin/MixinClientPacketListener": {
       "Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;onPlayerInfoReceived(Lnet/minecraft/world/level/GameType;Z)V": "Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;m_260888_(Lnet/minecraft/world/level/GameType;Z)V",
       "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V": "Lnet/minecraft/network/Connection;m_129512_(Lnet/minecraft/network/protocol/Packet;)V",
@@ -106,7 +103,8 @@
       "hasPos": "f_132507_:Z"
     },
     "org/msgpack/mixin/MixinCamera": {
-      "getMaxZoom": "Lnet/minecraft/client/Camera;m_90566_(D)D"
+      "getMaxZoom": "Lnet/minecraft/client/Camera;m_90566_(D)D",
+      "setup": "Lnet/minecraft/client/Camera;m_90575_(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V"
     },
     "org/msgpack/mixin/MixinMultiPlayerGameMode": {
       "useItem": "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;m_233721_(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;",
@@ -256,9 +254,6 @@
         "travel": "Lnet/minecraft/world/entity/LivingEntity;m_7023_(Lnet/minecraft/world/phys/Vec3;)V",
         "tickHeadTurn": "Lnet/minecraft/world/entity/LivingEntity;m_5632_(FF)F"
       },
-      "org/msgpack/mixin/NoGuiCloseMixin": {
-        "handleContainerClose": "Lnet/minecraft/client/multiplayer/ClientPacketListener;m_7776_(Lnet/minecraft/network/protocol/game/ClientboundContainerClosePacket;)V"
-      },
       "org/msgpack/mixin/MixinClientPacketListener": {
         "Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;onPlayerInfoReceived(Lnet/minecraft/world/level/GameType;Z)V": "Lnet/minecraft/client/telemetry/WorldSessionTelemetryManager;m_260888_(Lnet/minecraft/world/level/GameType;Z)V",
         "Lnet/minecraft/network/Connection;send(Lnet/minecraft/network/protocol/Packet;)V": "Lnet/minecraft/network/Connection;m_129512_(Lnet/minecraft/network/protocol/Packet;)V",
@@ -342,7 +337,8 @@
         "hasPos": "f_132507_:Z"
       },
       "org/msgpack/mixin/MixinCamera": {
-        "getMaxZoom": "Lnet/minecraft/client/Camera;m_90566_(D)D"
+        "getMaxZoom": "Lnet/minecraft/client/Camera;m_90566_(D)D",
+        "setup": "Lnet/minecraft/client/Camera;m_90575_(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V"
       },
       "org/msgpack/mixin/MixinMultiPlayerGameMode": {
         "useItem": "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;m_233721_(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;",

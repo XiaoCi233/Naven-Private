@@ -16,7 +16,8 @@ public class ModuleLanguageManager {
 
     private static void initEnglish() {
         Map<String, String> en = new HashMap<>();
-
+        en.put("module.autoPlay", "AutoPlay");
+        en.put("module.zhagnTieNanChestStealer", "ZhagnTieNanChestStealer");
         en.put("module.antiweb", "AntiWeb");
         en.put("module.aura", "Aura");
         en.put("module.hud", "HUD");
@@ -215,12 +216,13 @@ public class ModuleLanguageManager {
 
     private static void initChinese() {
         Map<String, String> zh = new HashMap<>();
-
+        zh.put("module.autoplay", "自动游玩");
         zh.put("module.antiweb", "反蜘蛛网");
         zh.put("module.aura", "杀戮光环");
         zh.put("module.hud", "HUD");
         zh.put("module.velocity", "防击退");
         zh.put("module.nametags", "名称标签");
+        zh.put("module.ZhagnTieNanChestStealer", "张铁楠箱子窃取");
         zh.put("module.containerstealer", "箱子窃取");
         zh.put("module.inventorycleaner", "库存清理");
         zh.put("module.scaffold", "脚手架");
@@ -415,11 +417,13 @@ public class ModuleLanguageManager {
     private static void initJapanese() {
         Map<String, String> ja = new HashMap<>();
 
+        ja.put("module.autoplay", "自動再生");
         ja.put("module.antiweb", "反ウェブ");
         ja.put("module.aura", "キルオーラ");
         ja.put("module.hud", "HUD");
         ja.put("module.velocity", "ノックバック軽減");
         ja.put("module.nametags", "ネームタグ");
+        ja.put("module.ZhagnTieNanChestStealer", "張鉄男チェストスティーラー");
         ja.put("module.containerstealer", "コンテナ窃盗");
         ja.put("module.inventorycleaner", "インベントリクリーナー");
         ja.put("module.scaffold", "足場");

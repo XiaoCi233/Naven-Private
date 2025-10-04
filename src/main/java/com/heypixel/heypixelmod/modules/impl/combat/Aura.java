@@ -88,10 +88,23 @@ public class Aura extends Module {
     private int animationDirection = 1; // 1 = 淡入, -1 = 淡出
     BooleanValue targetHud = ValueBuilder.create(this, "Target HUD").setDefaultBooleanValue(true).build().getBooleanValue();
     BooleanValue targetEsp = ValueBuilder.create(this, "Target ESP").setDefaultBooleanValue(true).build().getBooleanValue();
-    ModeValue targetespStyle = ValueBuilder.create(this, "Target ESP Style")
-            .setModes("Naven", "Rectangle","XD")
+    BooleanValue advancedCPS = ValueBuilder.create(this, "AdvancedCPS")
+            .setDefaultBooleanValue(false)
+            .build()
+            .getBooleanValue();
+
+    FloatValue getCPSDelay = ValueBuilder.create(this, "Get CPS Delay")
+            .setVisibility(advancedCPS::getCurrentValue)
+            .setDefaultFloatValue(5.0F)
+            .setFloatStep(1.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(50.0F)
+            .build()
+            .getFloatValue();
+        public ModeValue TargetESPStyle = ValueBuilder.create(this, "TargetEsp Style")
+            .setVisibility(this.targetEsp::getCurrentValue)
             .setDefaultModeIndex(0)
-            .setVisibility(() -> Aura.this.targetEsp.getCurrentValue())
+            .setModes("Naven", "rectangle")
             .build()
             .getModeValue();
     BooleanValue attackPlayer = ValueBuilder.create(this, "Attack Player").setDefaultBooleanValue(true).build().getBooleanValue();
@@ -104,14 +117,27 @@ public class Aura extends Module {
     BooleanValue moreParticles = ValueBuilder.create(this, "More Particles").setDefaultBooleanValue(false).build().getBooleanValue();
     public BooleanValue fakeAutoblock = ValueBuilder.create(this, "张铁男Fake Autoblock").setDefaultBooleanValue(false).build().getBooleanValue();
     FloatValue aimRange = ValueBuilder.create(this, "Aim Range").setDefaultFloatValue(5.0F).setFloatStep(0.1F).setMinFloatValue(1.0F).setMaxFloatValue(6.0F).build().getFloatValue();
-    FloatValue aps = ValueBuilder.create(this, "Attack Per Second").setDefaultFloatValue(10.0F).setFloatStep(1.0F).setMinFloatValue(1.0F).setMaxFloatValue(20.0F).build().getFloatValue();
+    FloatValue attackCpsMax = ValueBuilder.create(this, "Attack CPS Max")
+            .setDefaultFloatValue(10.0F)
+            .setFloatStep(1.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(20.0F)
+            .build()
+            .getFloatValue();
+    FloatValue attackCpsMin = ValueBuilder.create(this, "Attack CPS Min")
+            .setDefaultFloatValue(10.0F)
+            .setFloatStep(1.0F)
+            .setMinFloatValue(1.0F)
+            .setMaxFloatValue(20.0F)
+            .build()
+            .getFloatValue();
     FloatValue switchSize = ValueBuilder.create(this, "Switch Size").setDefaultFloatValue(1.0F).setFloatStep(1.0F).setMinFloatValue(1.0F).setMaxFloatValue(5.0F).setVisibility(() -> !this.infSwitch.getCurrentValue()).build().getFloatValue();
     FloatValue switchAttackTimes = ValueBuilder.create(this, "Switch Delay (Attack Times)").setDefaultFloatValue(1.0F).setFloatStep(1.0F).setMinFloatValue(1.0F).setMaxFloatValue(10.0F).build().getFloatValue();
     FloatValue fov = ValueBuilder.create(this, "FoV").setDefaultFloatValue(360.0F).setFloatStep(1.0F).setMinFloatValue(10.0F).setMaxFloatValue(360.0F).build().getFloatValue();
     FloatValue hurtTime = ValueBuilder.create(this, "Hurt Time").setDefaultFloatValue(10.0F).setFloatStep(1.0F).setMinFloatValue(0.0F).setMaxFloatValue(10.0F).build().getFloatValue();
     ModeValue priority = ValueBuilder.create(this, "Priority").setModes("Health", "FoV", "Range", "None").build().getModeValue();
     ModeValue targetHudStyle = ValueBuilder.create(this, "Target HUD Style")
-            .setModes("Naven", "Naven-XD", "MoonLight", "Rise","Lite")
+            .setModes("Naven", "Naven-XD", "MoonLight", "Rise", "Lite","Exhibition")
             .setDefaultModeIndex(0)
             .setVisibility(() -> Aura.this.targetHud.getCurrentValue())
             .build()
@@ -123,18 +149,14 @@ public class Aura extends Module {
     private int index;
     private Vector4f blurMatrix;
     public static Aura instance;
-    private void putRainbowVertex(BufferBuilder buffer, float x, float y, float z, int offset) {
-        int rgb = getRainbowColor(offset);
-        float r = (rgb >> 16 & 0xFF) / 255.0F;
-        float g = (rgb >> 8 & 0xFF) / 255.0F;
-        float b = (rgb & 0xFF) / 255.0F;
-        buffer.vertex(x, y, z).color(r, g, b, 1.0F).endVertex();
-    }
+    private final Random random = new Random();
+    private long lastCpsUpdate = 0;
+    private float currentCps = 0.0F;
+    private boolean cpsInitialized = false;
+    private float baseFov = 1.0F;
+    private long lastAttackTime = 0;
+    private static final long FOV_BLOCK_DURATION = 500;
 
-    private int getRainbowColor(int offset) {
-        float hue = (System.currentTimeMillis() + offset) % 3000L / 3000.0f;
-        return Color.HSBtoRGB(hue, 1.0f, 1.0f);
-    }
     public Aura() {
         instance = this;
     }
@@ -145,149 +167,13 @@ public class Aura extends Module {
             RenderUtils.drawRoundedRect(e.getStack(), this.blurMatrix.x(), this.blurMatrix.y(), this.blurMatrix.z(), this.blurMatrix.w(), 3.0F, 1073741824);
         }
     }
+
     public static Entity getTarget() {
         return target;
     }
-    @EventTarget
-    public void onRender(EventRender e) {
-        if (this.targetespStyle.isCurrentMode("Naven")) {
-            if (this.targetEsp.getCurrentValue()) {
-                PoseStack stack = e.getPMatrixStack();
-                float partialTicks = e.getRenderPartialTicks();
-                stack.pushPose();
-                GL11.glEnable(3042);
-                GL11.glBlendFunc(770, 771);
-                GL11.glDisable(2929);
-                GL11.glDepthMask(false);
-                GL11.glEnable(2848);
-                RenderSystem.setShader(GameRenderer::getPositionShader);
-                RenderUtils.applyRegionalRenderOffset(stack);
 
-                for (Entity entity : targets) {
-                    if (entity instanceof LivingEntity) {
-                        LivingEntity living = (LivingEntity) entity;
-                        float[] color = target == living ? targetColorRed : targetColorGreen;
-                        stack.pushPose();
-                        RenderSystem.setShaderColor(color[0], color[1], color[2], color[3]);
-                        double motionX = entity.getX() - entity.xo;
-                        double motionY = entity.getY() - entity.yo;
-                        double motionZ = entity.getZ() - entity.zo;
-                        AABB boundingBox = entity.getBoundingBox().move(-motionX, -motionY, -motionZ).move((double) partialTicks * motionX, (double) partialTicks * motionY, (double) partialTicks * motionZ);
-                        RenderUtils.drawSolidBox(boundingBox, stack);
-                        stack.popPose();
-                    }
-                }
 
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                GL11.glDisable(3042);
-                GL11.glEnable(2929);
-                GL11.glDepthMask(true);
-                GL11.glDisable(2848);
-                stack.popPose();
-            }
-        } else if (this.targetespStyle.isCurrentMode("Rectangle")) {
-            if (this.targetEsp.getCurrentValue() && target instanceof LivingEntity living) {
-                PoseStack stack = e.getPMatrixStack();
-                float partialTicks = e.getRenderPartialTicks();
-
-                stack.pushPose();
-                RenderSystem.enableBlend();
-                RenderSystem.disableDepthTest();
-                RenderSystem.depthMask(false);
-
-                RenderUtils.applyRegionalRenderOffset(stack);
-
-                float x = (float) (living.getX() - mc.getEntityRenderDispatcher().camera.getPosition().x);
-                float y = (float) (living.getY() + living.getBbHeight() + 0.5 - mc.getEntityRenderDispatcher().camera.getPosition().y);
-                float z = (float) (living.getZ() - mc.getEntityRenderDispatcher().camera.getPosition().z);
-
-                stack.pushPose();
-                stack.translate(x, y, z);
-                stack.scale(0.8f, 0.8f, 0.8f);
-
-                Tesselator tessellator = Tesselator.getInstance();
-                BufferBuilder buffer = tessellator.getBuilder();
-
-                buffer.begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-
-                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 0);
-                putRainbowVertex(buffer, 0.5f, 0.0f, -0.5f, 500);
-                putRainbowVertex(buffer, 0.5f, 0.0f, 0.5f, 1000);
-                putRainbowVertex(buffer, -0.5f, 0.0f, 0.5f, 1500);
-                putRainbowVertex(buffer, -0.5f, 0.0f, -0.5f, 2000);
-
-                tessellator.end();
-
-                stack.popPose();
-
-                RenderSystem.enableDepthTest();
-                RenderSystem.depthMask(true);
-                RenderSystem.disableBlend();
-                stack.popPose();
-            }
-        }else if (targetespStyle.isCurrentMode("XD")) {
-            PoseStack stack = e.getPMatrixStack();
-            float partialTicks = e.getRenderPartialTicks();
-            stack.pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.depthMask(false);
-            GuiGraphics guiGraphics = new GuiGraphics(mc, mc.renderBuffers().bufferSource());
-            Vec3 eyePos = mc.player.getEyePosition(partialTicks);
-            for (Entity entity : targets) {
-                if (entity instanceof LivingEntity) {
-                    Vec3 targetPos = entity.getPosition(partialTicks);
-                    Vector2f screenPos = ProjectionUtils.project(
-                            targetPos.x,
-                            targetPos.y + entity.getBbHeight() / 2,
-                            targetPos.z,
-                            partialTicks
-                    );
-                    if (screenPos.x != Float.MAX_VALUE && screenPos.y != Float.MAX_VALUE) {
-                        double distance = eyePos.distanceTo(targetPos);
-                        float baseDistance = 5.0f;
-                        float baseSize = 80.0f;
-                        float minSize = 20.0f;
-                        float maxSize = 120.0f;
-                        float size = baseSize * (float)(baseDistance / Math.max(1.0, distance));
-                        size = Math.max(minSize, Math.min(maxSize, size));
-                        float imageX = screenPos.x - size/2;
-                        float imageY = screenPos.y - size/2;
-                        float rotationAngle = (System.currentTimeMillis() % 10000) * 0.036f;
-                        long time = System.currentTimeMillis();
-                        float r = (float)(Math.sin(time * 0.001) * 0.3 + 0.7);
-                        float g = (float)(Math.sin(time * 0.001 + 2.0) * 0.3 + 0.7);
-                        float b = (float)(Math.sin(time * 0.001 + 4.0) * 0.3 + 0.7);
-                        float a = 0.7f;
-                        RenderSystem.setShaderColor(r, g, b, a);
-                        ResourceLocation renderImage = ResourceLocation.fromNamespaceAndPath("heypixel", "textures/rectangle.png");
-                        RenderSystem.setShaderTexture(0, renderImage);
-                        stack.pushPose();
-                        stack.translate(imageX + size/2, imageY + size/2, 0);
-                        stack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rotationAngle));
-                        stack.translate(-(imageX + size/2), -(imageY + size/2), 0);
-                        guiGraphics.blit(
-                                renderImage,
-                                (int)imageX,
-                                (int)imageY,
-                                0,
-                                0,
-                                (int)size,
-                                (int)size,
-                                (int)size,
-                                (int)size
-                        );
-                        stack.popPose();
-                    }
-                }
-            }
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.depthMask(true);
-            RenderSystem.disableBlend();
-            stack.popPose();
-        }
-    }
-    //        private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
+//    private void drawAvatar(EventRender2D e, LivingEntity entity, float x, float y, float size) {
 //        boolean isHit = entity.hurtTime > 0;
 //        int bgColor = isHit ? new Color(200, 50, 50, 200).getRGB() : new Color(50, 50, 50, 200).getRGB();
 //        RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2 + 1, bgColor);
@@ -312,48 +198,135 @@ public class Aura extends Module {
 //            RenderUtils.drawCircle(e.getStack(), x + size / 2, y + size / 2, size / 2, new Color(150, 150, 150, 255).getRGB());
 //        }
 //    }
-    private ResourceLocation getEntitySkinTexture(LivingEntity entity) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (entity instanceof AbstractClientPlayer) {
-            return ((AbstractClientPlayer) entity).getSkinTextureLocation();
-        } else if (entity instanceof Player) {
-            Player player = (Player) entity;
-            return DefaultPlayerSkin.getDefaultSkin(player.getUUID());
-        } else {
-            return minecraft.player.getSkinTextureLocation();
+
+
+/*    @EventTarget
+    public void onRender(EventRender e) {
+        if (this.targetEsp.getCurrentValue()) {
+            if (targetespStyle.isCurrentMode("Naven")) {
+                PoseStack stack = e.getPMatrixStack();
+                float partialTicks = e.getRenderPartialTicks();
+                stack.pushPose();
+                GL11.glEnable(3042);
+                GL11.glBlendFunc(770, 771);
+                GL11.glDisable(2929);
+                GL11.glDepthMask(false);
+                GL11.glEnable(2848);
+                RenderSystem.setShader(GameRenderer::getPositionShader);
+                RenderUtils.applyRegionalRenderOffset(stack);
+
+                for (Entity entity : targets) {
+                    if (entity instanceof LivingEntity living) {
+                        float[] color = target == living ? targetColorRed : targetColorGreen;
+                        stack.pushPose();
+                        RenderSystem.setShaderColor(color[0], color[1], color[2], color[3]);
+                        double motionX = entity.getX() - entity.xo;
+                        double motionY = entity.getY() - entity.yo;
+                        double motionZ = entity.getZ() - entity.zo;
+                        AABB boundingBox = entity.getBoundingBox()
+                                .move(-motionX, -motionY, -motionZ)
+                                .move((double)partialTicks * motionX, (double)partialTicks * motionY, (double)partialTicks * motionZ);
+                        RenderUtils.drawSolidBox(boundingBox, stack);
+                        stack.popPose();
+                    }
+                }
+
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                GL11.glDisable(3042);
+                GL11.glEnable(2929);
+                GL11.glDepthMask(true);
+                GL11.glDisable(2848);
+                stack.popPose();
+            }
+
+        } else if (targetespStyle.isCurrentMode("Rectangle")) {
+            PoseStack stack = e.getPMatrixStack();
+            float partialTicks = e.getRenderPartialTicks();
+            stack.pushPose();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.depthMask(false);
+            GuiGraphics guiGraphics = new GuiGraphics(mc, mc.renderBuffers().bufferSource());
+            Vec3 eyePos = mc.player.getEyePosition(partialTicks);
+            for (Entity entity : targets) {
+                if (entity instanceof LivingEntity) {
+                    Vec3 targetPos = entity.getPosition(partialTicks);
+                    Vector2f screenPos = ProjectionUtils.project(
+                            targetPos.x,
+                            targetPos.y + entity.getBbHeight() / 2,
+                            targetPos.z,
+                            partialTicks
+                    );
+                    if (screenPos.x != Float.MAX_VALUE && screenPos.y != Float.MAX_VALUE) {
+                        double distance = eyePos.distanceTo(targetPos);
+                        float baseDistance = 5.0f;
+                        float baseSize = 80.0f;
+                        float minSize = 20.0f;
+                        float maxSize = 120.0f;
+                        float size = baseSize * (float) (baseDistance / Math.max(1.0, distance));
+                        size = Math.max(minSize, Math.min(maxSize, size));
+                        float imageX = screenPos.x - size / 2;
+                        float imageY = screenPos.y - size / 2;
+                        float rotationAngle = (System.currentTimeMillis() % 10000) * 0.036f;
+                        long time = System.currentTimeMillis();
+                        float r = (float) (Math.sin(time * 0.001) * 0.3 + 0.7);
+                        float g = (float) (Math.sin(time * 0.001 + 2.0) * 0.3 + 0.7);
+                        float b = (float) (Math.sin(time * 0.001 + 4.0) * 0.3 + 0.7);
+                        float a = 0.7f;
+                        RenderSystem.setShaderColor(r, g, b, a);
+                        ResourceLocation renderImage = new ResourceLocation("heypixel", "textures/rectangle.png");
+                        RenderSystem.setShaderTexture(0, renderImage);
+                        stack.pushPose();
+                        stack.translate(imageX + size / 2, imageY + size / 2, 0);
+                        stack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(rotationAngle));
+                        stack.translate(-(imageX + size / 2), -(imageY + size / 2), 0);
+                        guiGraphics.blit(
+                                renderImage,
+                                (int) imageX,
+                                (int) imageY,
+                                0,
+                                0,
+                                (int) size,
+                                (int) size,
+                                (int) size,
+                                (int) size
+                        );
+                        stack.popPose();
+                    }
+                }
+            }
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.depthMask(true);
+            RenderSystem.disableBlend();
+            stack.popPose();
         }
     }
-    private Map<LivingEntity, Float> previousHealthMap = new WeakHashMap<>();
-    private Map<LivingEntity, Long> damageTimeMap = new WeakHashMap<>();
-    private float getPreviousHealth(LivingEntity entity) {
-        return previousHealthMap.getOrDefault(entity, entity.getHealth() / entity.getMaxHealth());
-    }
-    private void updatePreviousHealth(LivingEntity entity, float currentHealth){
-        float previous = previousHealthMap.getOrDefault(entity, currentHealth);
-        if (previous > currentHealth) {
-            damageTimeMap.put(entity, System.currentTimeMillis());
-        }
-        long damageTime = damageTimeMap.getOrDefault(entity, 0L);
-        if (System.currentTimeMillis() - damageTime < 1000) {
-            float newPrevious = Math.max(currentHealth, previous - 0.01F);
-            previousHealthMap.put(entity, newPrevious);
-        } else {
-            previousHealthMap.put(entity, currentHealth);
-        }
-    }
+
+ */
 
     @EventTarget
     public void onRender(EventRender2D e) {
         this.blurMatrix = null;
         if (target instanceof LivingEntity && this.targetHud.getCurrentValue()) {
-            LivingEntity living = (LivingEntity)target;
+            LivingEntity living = (LivingEntity) target;
             e.getStack().pushPose();
-            float x = (float)mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
-            float y = (float)mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
+            float x = (float) mc.getWindow().getGuiScaledWidth() / 2.0F + 10.0F;
+            float y = (float) mc.getWindow().getGuiScaledHeight() / 2.0F + 10.0F;
 
             this.blurMatrix = TargetHUD.render(e.getGuiGraphics(), living, this.targetHudStyle.getCurrentMode(), x, y);
 
             e.getStack().popPose();
+        }
+    }
+    @EventTarget
+    public void onRender(EventRender e) {
+        if (this.targetEsp.getCurrentValue()) {
+            com.heypixel.heypixelmod.ui.targethud.TargetESP.render(
+                    e,
+                    targets,
+                    target,
+                    this.TargetESPStyle.getCurrentMode()
+            );
         }
     }
 
@@ -363,11 +336,18 @@ public class Aura extends Module {
         target = null;
         aimingTarget = null;
         targets.clear();
+        this.lastCpsUpdate = 0;
+        this.currentCps = 0.0F;
+        this.cpsInitialized = false;
+        this.baseFov = 1.0F;
+        this.lastAttackTime = 0;
     }
 
     public void onDisable() {
         target = null;
         aimingTarget = null;
+        this.baseFov = 1.0F;
+        this.lastAttackTime = 0;
         super.onDisable();
     }
 
@@ -420,18 +400,18 @@ public class Aura extends Module {
                 this.index = 0;
             }
 
-            if (targets.size() > 1 && ((float)this.attackTimes >= this.switchAttackTimes.getCurrentValue() || this.rotationData != null && this.rotationData.getDistance() > (double)3.0F)) {
+            if (targets.size() > 1 && ((float) this.attackTimes >= this.switchAttackTimes.getCurrentValue() || this.rotationData != null && this.rotationData.getDistance() > (double) 3.0F)) {
                 this.attackTimes = 0;
 
-                for(int i = 0; i < targets.size(); ++i) {
+                for (int i = 0; i < targets.size(); ++i) {
                     ++this.index;
                     if (this.index > targets.size() - 1) {
                         this.index = 0;
                     }
 
-                    Entity nextTarget = (Entity)targets.get(this.index);
+                    Entity nextTarget = (Entity) targets.get(this.index);
                     RotationUtils.Data data = RotationUtils.getRotationDataToEntity(nextTarget);
-                    if (data.getDistance() < (double)3.0F) {
+                    if (data.getDistance() < (double) 3.0F) {
                         break;
                     }
                 }
@@ -441,8 +421,8 @@ public class Aura extends Module {
                 this.index = 0;
             }
 
-            target = (Entity)targets.get(this.index);
-            this.attacks += this.aps.getCurrentValue() / 20.0F;
+            target = (Entity) targets.get(this.index);
+            this.attacks = this.attacks + this.getRandomCps() / 20.0F;
         }
 
     }
@@ -450,7 +430,7 @@ public class Aura extends Module {
     @EventTarget
     public void onClick(EventClick e) {
         if (mc.player.getUseItem().isEmpty() && mc.screen == null && BlinkFix.skipTasks.isEmpty() && !NetworkUtils.isServerLag() && !BlinkFix.getInstance().getModuleManager().getModule(Blink.class).isEnabled()) {
-            while(this.attacks >= 1.0F) {
+            while (this.attacks >= 1.0F) {
                 this.doAttack();
                 --this.attacks;
             }
@@ -469,7 +449,7 @@ public class Aura extends Module {
         if (target == null) {
             List<Entity> aimTargets = this.getTargets();
             if (!aimTargets.isEmpty()) {
-                target = (Entity)aimTargets.get(0);
+                target = (Entity) aimTargets.get(0);
             }
         }
 
@@ -480,7 +460,7 @@ public class Aura extends Module {
         if (!targets.isEmpty()) {
             HitResult hitResult = mc.hitResult;
             if (hitResult.getType() == Type.ENTITY) {
-                EntityHitResult result = (EntityHitResult)hitResult;
+                EntityHitResult result = (EntityHitResult) hitResult;
                 if (AntiBots.isBot(result.getEntity())) {
                     ChatUtils.addChatMessage("Attacking Bot!");
                     return;
@@ -490,8 +470,8 @@ public class Aura extends Module {
             if (this.multi.getCurrentValue()) {
                 int attacked = 0;
 
-                for(Entity entity : targets) {
-                    if (RotationUtils.getDistance(entity, mc.player.getEyePosition(), RotationManager.rotations) < (double)3.0F) {
+                for (Entity entity : targets) {
+                    if (RotationUtils.getDistance(entity, mc.player.getEyePosition(), RotationManager.rotations) < (double) 3.0F) {
                         this.attackEntity(entity);
                         ++attacked;
                         if (attacked >= 2) {
@@ -500,7 +480,7 @@ public class Aura extends Module {
                     }
                 }
             } else if (hitResult.getType() == Type.ENTITY) {
-                EntityHitResult result = (EntityHitResult)hitResult;
+                EntityHitResult result = (EntityHitResult) hitResult;
                 this.attackEntity(result.getEntity());
             }
         }
@@ -515,15 +495,15 @@ public class Aura extends Module {
         if (entity == mc.player) {
             return false;
         } else if (entity instanceof LivingEntity) {
-            LivingEntity living = (LivingEntity)entity;
+            LivingEntity living = (LivingEntity) entity;
             if (living instanceof BlinkingPlayer) {
                 return false;
             } else {
-                AntiBots module = (AntiBots)BlinkFix.getInstance().getModuleManager().getModule(AntiBots.class);
+                AntiBots module = (AntiBots) BlinkFix.getInstance().getModuleManager().getModule(AntiBots.class);
                 if (module == null || !module.isEnabled() || !AntiBots.isBot(entity) && !AntiBots.isBedWarsBot(entity)) {
                     if (Teams.isSameTeam(living)) {
                         return false;
-                    } else if (FriendManager.isFriend((Entity)living)) {
+                    } else if (FriendManager.isFriend((Entity) living)) {
                         return false;
                     } else if (!living.isDeadOrDying() && !(living.getHealth() <= 0.0F)) {
                         if (entity instanceof ArmorStand) {
@@ -532,7 +512,7 @@ public class Aura extends Module {
                             return false;
                         } else if (entity instanceof Player && !this.attackPlayer.getCurrentValue()) {
                             return false;
-                        } else if (!(entity instanceof Player) || !((double)entity.getBbWidth() < (double)0.5F) && !living.isSleeping()) {
+                        } else if (!(entity instanceof Player) || !((double) entity.getBbWidth() < (double) 0.5F) && !living.isSleeping()) {
                             if ((entity instanceof Mob || entity instanceof Slime || entity instanceof Bat || entity instanceof AbstractGolem) && !this.attackMobs.getCurrentValue()) {
                                 return false;
                             } else if ((entity instanceof Animal || entity instanceof Squid) && !this.attackAnimals.getCurrentValue()) {
@@ -560,16 +540,17 @@ public class Aura extends Module {
     public boolean isValidAttack(Entity entity) {
         if (!this.isValidTarget(entity)) {
             return false;
-        } else if (entity instanceof LivingEntity && (float)((LivingEntity)entity).hurtTime > this.hurtTime.getCurrentValue()) {
+        } else if (entity instanceof LivingEntity && (float) ((LivingEntity) entity).hurtTime > this.hurtTime.getCurrentValue()) {
             return false;
         } else {
             Vec3 closestPoint = RotationUtils.getClosestPoint(mc.player.getEyePosition(), entity.getBoundingBox());
-            return closestPoint.distanceTo(mc.player.getEyePosition()) > (double)this.aimRange.getCurrentValue() ? false : RotationUtils.inFoV(entity, this.fov.getCurrentValue() / 2.0F);
+            return closestPoint.distanceTo(mc.player.getEyePosition()) > (double) this.aimRange.getCurrentValue() ? false : RotationUtils.inFoV(entity, this.fov.getCurrentValue() / 2.0F);
         }
     }
 
     public void attackEntity(Entity entity) {
         ++this.attackTimes;
+        this.lastAttackTime = System.currentTimeMillis();
         float currentYaw = mc.player.getYRot();
         float currentPitch = mc.player.getXRot();
         mc.player.setYRot(RotationManager.rotations.x);
@@ -591,46 +572,50 @@ public class Aura extends Module {
 
     private List<Entity> getTargets() {
         Stream<Entity> stream = StreamSupport.stream(mc.level.entitiesForRendering().spliterator(), true).filter((entity) -> entity instanceof Entity).filter(this::isValidAttack);
-        List<Entity> possibleTargets = (List)stream.collect(Collectors.toList());
+        List<Entity> possibleTargets = (List) stream.collect(Collectors.toList());
         if (this.priority.isCurrentMode("Range")) {
-            possibleTargets.sort(Comparator.comparingDouble((o) -> (double)o.distanceTo(mc.player)));
+            possibleTargets.sort(Comparator.comparingDouble((o) -> (double) o.distanceTo(mc.player)));
         } else if (this.priority.isCurrentMode("FoV")) {
-            possibleTargets.sort(Comparator.comparingDouble((o) -> (double)RotationUtils.getDistanceBetweenAngles(RotationManager.rotations.x, RotationUtils.getRotations(o).x)));
+            possibleTargets.sort(Comparator.comparingDouble((o) -> (double) RotationUtils.getDistanceBetweenAngles(RotationManager.rotations.x, RotationUtils.getRotations(o).x)));
         } else if (this.priority.isCurrentMode("Health")) {
             possibleTargets.sort(Comparator.comparingDouble((o) -> {
                 if (o instanceof LivingEntity living) {
-                    return (double)living.getHealth();
+                    return (double) living.getHealth();
                 } else {
-                    return (double)0.0F;
+                    return (double) 0.0F;
                 }
             }));
         }
 
-        if (this.preferBaby.getCurrentValue() && possibleTargets.stream().anyMatch((entity) -> entity instanceof LivingEntity && ((LivingEntity)entity).isBaby())) {
-            possibleTargets.removeIf((entity) -> !(entity instanceof LivingEntity) || !((LivingEntity)entity).isBaby());
+        if (this.preferBaby.getCurrentValue() && possibleTargets.stream().anyMatch((entity) -> entity instanceof LivingEntity && ((LivingEntity) entity).isBaby())) {
+            possibleTargets.removeIf((entity) -> !(entity instanceof LivingEntity) || !((LivingEntity) entity).isBaby());
         }
 
         possibleTargets.sort(Comparator.comparing((o) -> o instanceof EndCrystal ? 0 : 1));
-        return this.infSwitch.getCurrentValue() ? possibleTargets : possibleTargets.subList(0, (int)Math.min((float)possibleTargets.size(), this.switchSize.getCurrentValue()));
+        return this.infSwitch.getCurrentValue() ? possibleTargets : possibleTargets.subList(0, (int) Math.min((float) possibleTargets.size(), this.switchSize.getCurrentValue()));
     }
-    private int applyAlpha(int color, float alpha) {
-        int a = (int)(((color >> 24) & 0xFF) * alpha);
-        int r = (color >> 16) & 0xFF;
-        int g = (color >> 8) & 0xFF;
-        int b = color & 0xFF;
-        return (a << 24) | (r << 16) | (g << 8) | b;
-    }
-    private float easeOutCubic(float x) {
-        return (float) (1 - Math.pow(1 - x, 3));
-    }
-    private float easeOutElastic(float x) {
-        float c4 = (float) ((2 * Math.PI) / 3);
-        return x == 0 ? 0 : x == 1 ? 1 : (float) (Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1);
+    public float getRandomCps() {
+        long currentTime = System.currentTimeMillis();
+        long cpsDelayMs = advancedCPS.getCurrentValue() ?
+                (long)getCPSDelay.getCurrentValue() : 5L;
+
+        if (!this.cpsInitialized || (currentTime - this.lastCpsUpdate) >= cpsDelayMs) {
+            this.currentCps = this.generateRandomCps();
+            this.lastCpsUpdate = currentTime;
+            this.cpsInitialized = true;
+        }
+        return this.currentCps;
     }
 
-    private float easeInBack(float x) {
-        float c1 = 1.70158f;
-        float c3 = c1 + 1;
-        return c3 * x * x * x - c1 * x * x;
+
+    private float generateRandomCps() {
+        float min = Math.min(attackCpsMin.getCurrentValue(), attackCpsMax.getCurrentValue());
+        float max = Math.max(attackCpsMin.getCurrentValue(), attackCpsMax.getCurrentValue());
+
+        if (min == max) {
+            return min;
+        }
+
+        return min + random.nextFloat() * (max - min);
     }
 }

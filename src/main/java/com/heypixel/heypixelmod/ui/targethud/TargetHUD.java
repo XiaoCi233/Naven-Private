@@ -9,16 +9,19 @@ import com.heypixel.heypixelmod.utils.renderer.HealthBarAnimator;
 import com.heypixel.heypixelmod.utils.renderer.HealthParticle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -52,7 +55,10 @@ public class TargetHUD {
             return renderRise(graphics, living, x, y);
         }else if ("Lite".equals(style)) {
             return renderLite(graphics, living, x, y);
-        }
+
+        } else if ("Exhibition".equals(style)) {
+            return renderExhibitionStyle(graphics, living, x, y);
+         }
         return null;
     }
 
@@ -485,5 +491,117 @@ public class TargetHUD {
         }
         return blurMatrix;
     }
+    private static Vector4f renderExhibitionStyle(GuiGraphics graphics, LivingEntity living, float x, float y) {
+        float hudWidth = 170.0F;
+        float hudHeight = 60.0F;
+        float avatarSize = 40.0F;
+        float padding = 5.0F;
+        RenderUtils.fill(graphics.pose(), x, y, x + hudWidth, y + hudHeight, new Color(50, 50, 50, 200).getRGB()); // 外层边框
+        RenderUtils.fill(graphics.pose(), x + 1, y + 1, x + hudWidth - 1, y + hudHeight - 1, new Color(50, 50, 50, 200).getRGB()); // 加粗边框
+        RenderUtils.fill(graphics.pose(), x + 2, y + 2, x + hudWidth - 2, y + hudHeight - 2, new Color(50, 50, 50, 200).getRGB()); // 加粗边框
+        RenderUtils.fill(graphics.pose(), x + 3, y + 3, x + hudWidth - 3, y + hudHeight - 3, new Color(25, 25, 25, 240).getRGB());
+        float avatarX = x + padding + 3;
+        float modelSize = avatarSize - 6.0F;
+        float avatarY = y + (hudHeight - modelSize) / 2.0f;
+        RenderUtils.fill(graphics.pose(), avatarX - 2, avatarY - 2, avatarX + modelSize + 2, avatarY + modelSize + 2, new Color(10, 10, 10).getRGB());
+        RenderUtils.fill(graphics.pose(), avatarX - 2, avatarY - 4, avatarX + modelSize + 2, avatarY - 3, new Color(50, 50, 50).getRGB()); // 上边框更长
+        RenderUtils.fill(graphics.pose(), avatarX - 2, avatarY + modelSize + 3, avatarX + modelSize + 2, avatarY + modelSize + 4, new Color(50, 60, 60).getRGB()); // 下边框更长
+        RenderUtils.fill(graphics.pose(), avatarX - 2, avatarY - 3, avatarX - 1, avatarY + modelSize + 3, new Color(50, 50, 50).getRGB()); // 左边框
+        RenderUtils.fill(graphics.pose(), avatarX + modelSize + 1, avatarY - 3, avatarX + modelSize + 2, avatarY + modelSize + 3, new Color(60, 60, 60).getRGB()); // 右边框
+        drawPlayerModel(graphics, living, avatarX, avatarY, modelSize);
+        float textX = x + avatarSize + padding * 2 + 2;
+        float textY = y + padding + 2;
+        String targetName = living.getName().getString();
+        Fonts.harmony.render(graphics.pose(), targetName, (double) textX, (double) textY, Color.WHITE, true, 0.35F);
+        float health = living.getHealth();
+        float maxHealth = living.getMaxHealth();
+        float absorption = living.getAbsorptionAmount();
+
+        float healthBarWidth = hudWidth - (avatarSize + padding * 3) - 4;
+        float healthBarHeight = 5.0F;
+        float healthBarX = textX;
+        float healthBarY = textY + (float)Fonts.harmony.getHeight(true, 0.35F) + padding;
+
+        int numSegments = 10;
+        float gap = 1.0f;
+        float totalGapWidth = gap * (numSegments - 1);
+        float segmentWidth = (healthBarWidth - totalGapWidth) / numSegments;
+
+        float healthPerSegment = maxHealth / numSegments;
+        float currentHealthAmount = health + absorption;
+        float healthRatioForColor = (health + absorption) / maxHealth;
+        Color healthColor = getHealthColor(healthRatioForColor);
+        for (int i = 0; i < numSegments; i++) {
+            float segmentX = healthBarX + i * (segmentWidth + gap);
+            RenderUtils.fill(graphics.pose(), segmentX, healthBarY, segmentX + segmentWidth, healthBarY + healthBarHeight, new Color(50, 50, 50).getRGB());
+
+            if (currentHealthAmount > 0) {
+                float fillWidth = segmentWidth;
+                if (currentHealthAmount < healthPerSegment) {
+                    fillWidth = segmentWidth * (currentHealthAmount / healthPerSegment);
+                }
+
+                RenderUtils.fill(graphics.pose(), segmentX, healthBarY, segmentX + fillWidth, healthBarY + healthBarHeight, healthColor.getRGB());
+
+                currentHealthAmount -= healthPerSegment;
+            }
+        }
+        float itemY = healthBarY + healthBarHeight + 5.0F;
+        renderPlayerItems(graphics, living, textX, itemY);
+
+        return new Vector4f(x, y, hudWidth, hudHeight);
+    }
+
+    private static void drawPlayerModel(GuiGraphics graphics, LivingEntity living, float x, float y, float size) {
+        com.mojang.blaze3d.vertex.PoseStack poseStack = graphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(x + size / 2.0F, y + size / 2F + (size * 0.7f * living.getBbHeight()) / 2F, 100.0F);
+        poseStack.scale(size * 0.7f, size * 0.7f, -size * 0.7f);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(-30.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(10.0F));
+        EntityRenderDispatcher entityRenderDispatcher = mc.getEntityRenderDispatcher();
+        entityRenderDispatcher.setRenderShadow(false);
+        RenderSystem.runAsFancy(() -> {
+            entityRenderDispatcher.render(living, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, poseStack, graphics.bufferSource(), 15728880);
+        });
+        graphics.flush();
+        entityRenderDispatcher.setRenderShadow(true);
+        poseStack.popPose();
+    }
+
+    private static void renderPlayerItems(GuiGraphics graphics, LivingEntity living, float x, float y) {
+        if (living instanceof Player player) {
+            float itemSize = 16.0F;
+            float currentX = x;
+            for (int i = 3; i >= 0; i--) {
+                ItemStack armorStack = player.getInventory().getArmor(i);
+                if (!armorStack.isEmpty()) {
+                    graphics.renderItem(armorStack, (int) currentX, (int) y);
+                    graphics.renderItemDecorations(mc.font, armorStack, (int) currentX, (int) y);
+                    currentX += itemSize + 2.0F;
+                }
+            }
+            ItemStack mainHandStack = player.getMainHandItem();
+            if (!mainHandStack.isEmpty()) {
+                graphics.renderItem(mainHandStack, (int) currentX, (int) y);
+                graphics.renderItemDecorations(mc.font, mainHandStack, (int) currentX, (int) y);
+            }
+            ItemStack offHandStack = player.getOffhandItem();
+            if (!offHandStack.isEmpty()) {
+                graphics.renderItem(offHandStack, (int) (currentX + itemSize + 2.0F), (int) y);
+                graphics.renderItemDecorations(mc.font, offHandStack, (int) (currentX + itemSize + 2.0F), (int) y);
+            }
+        }
+    }
+
+    private static Color getHealthColor(float healthRatio) {
+        if (healthRatio > 0.6) {
+            return new Color(0, 255, 0);
+        } else if (healthRatio > 0.3) {
+            return new Color(255, 255, 0);
+        } else {
+            return new Color(255, 0, 0);
+        }
+    }
 }
-//BlinkFix风风光光操你妈

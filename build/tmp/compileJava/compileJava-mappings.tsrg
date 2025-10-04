@@ -1,4 +1,5 @@
 org/msgpack/mixin/CapabilityTrackerMixin enabled f_84586_
+org/msgpack/mixin/MixinCamera position f_90552_
 org/msgpack/mixin/MixinClientHandshakePacketListenerImpl connection f_104522_
 org/msgpack/mixin/MixinClientHandshakePacketListenerImpl minecraft f_104519_
 org/msgpack/mixin/MixinConnection LOGGER f_129465_
@@ -30,6 +31,7 @@ org/msgpack/mixin/MixinTimer msPerTick f_92521_
 org/msgpack/mixin/MixinTimer tickDelta f_92519_
 org/msgpack/mixin/MixinVertexBuffer indexBufferId f_166860_
 org/msgpack/mixin/CapabilityTrackerMixin setEnabled (Z)V m_84590_
+org/msgpack/mixin/MixinCamera setPosition (Lnet/minecraft/world/phys/Vec3;)V m_90581_
 org/msgpack/mixin/MixinConnection genericsFtw (Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;)V m_129517_
 org/msgpack/mixin/MixinConnection sendPacket (Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketSendListener;)V m_129520_
 org/msgpack/mixin/MixinEntity getViewXRot (F)F m_5686_

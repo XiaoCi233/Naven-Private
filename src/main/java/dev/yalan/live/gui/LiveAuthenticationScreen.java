@@ -3,6 +3,7 @@ package dev.yalan.live.gui;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.files.FileManager;
+import com.heypixel.heypixelmod.ui.Welcome;
 import dev.yalan.live.LiveClient;
 import dev.yalan.live.events.*;
 import dev.yalan.live.netty.LiveProto;
@@ -113,8 +114,8 @@ public class LiveAuthenticationScreen extends Screen {
         LiveClient.INSTANCE.autoPassword = password.getValue();
         LiveClient.INSTANCE.startReconnectionThread();
         BlinkFix.getInstance().getEventManager().register(LiveClient.INSTANCE.getLiveComponent());
-
-        minecraft.setScreen(new TitleScreen(true));
+        this.minecraft.setScreen(new Welcome());
+//        minecraft.setScreen(new TitleScreen(true));
     }
 
     @Override
@@ -184,7 +185,7 @@ public class LiveAuthenticationScreen extends Screen {
         }).bounds(hw - 83, hh + 25, 80, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("Sign"), (button) -> {
-            Util.getPlatform().openUri("https://www.unitednetwork.cc/BlinkFix/html?name=Register&hardwareId=" + URLEncoder.encode(LiveClient.INSTANCE.getHardwareId(), StandardCharsets.UTF_8));
+            Util.getPlatform().openUri("https://www.unitednetwork.cc/BlinkFix/html?name=RegisterWithEmail&hardwareId=" + URLEncoder.encode(LiveClient.INSTANCE.getHardwareId(), StandardCharsets.UTF_8));
         }).bounds(hw + 3, hh + 25, 80, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("Reconnect"), (button) -> {

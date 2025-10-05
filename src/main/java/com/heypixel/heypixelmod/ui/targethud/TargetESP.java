@@ -29,6 +29,7 @@ public class TargetESP {
     private static final float[] targetColorGreen = new float[]{0.0F, 0.78431374F, 0.0F, 0.23529412F};
 
     private static final ResourceLocation NITRO_TEXTURE = new ResourceLocation("heypixel", "textures/target/rectangle.png");
+    private static final ResourceLocation RAINBOW_RECTANGLE = new ResourceLocation("heypixel", "textures/target/rectangle1.png");
     private static final Random random = new Random();
 
     private static float rotationAngle = 0.0F;
@@ -50,6 +51,9 @@ public class TargetESP {
                 break;
             case "rectangle":
                 renderNitroStyle(e, targets, mainTarget);
+                break;
+            case "Newrectangle":
+                renderRectangleStyles(e, targets, mainTarget);
                 break;
         }
     }
@@ -150,6 +154,87 @@ public class TargetESP {
 
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, NITRO_TEXTURE);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder bufferBuilder = tessellator.getBuilder();
+            Matrix4f matrix = stack.last().pose();
+
+            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+            bufferBuilder.vertex(matrix, -0.5F, -0.5F, 0.0F).uv(0.0F, 0.0F).endVertex();
+            bufferBuilder.vertex(matrix, -0.5F, 0.5F, 0.0F).uv(0.0F, 1.0F).endVertex();
+            bufferBuilder.vertex(matrix, 0.5F, 0.5F, 0.0F).uv(1.0F, 1.0F).endVertex();
+            bufferBuilder.vertex(matrix, 0.5F, -0.5F, 0.0F).uv(1.0F, 0.0F).endVertex();
+            tessellator.end();
+
+            stack.popPose();
+        }
+
+        RenderSystem.enableCull();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableBlend();
+        stack.popPose();
+    }
+    private static void renderRectangleStyles(EventRender e, List<Entity> targets, Entity mainTarget) {
+        PoseStack stack = e.getPMatrixStack();
+        float partialTicks = e.getRenderPartialTicks();
+        net.minecraft.client.Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
+
+        rotationSpeedTickCounter++;
+        if (rotationSpeedTickCounter >= 10) {
+            rotationSpeedTickCounter = 0;
+            targetRotationSpeed = 3.0F + random.nextFloat() * 3.0F;
+        }
+
+        rotationDirectionTickCounter++;
+        if (rotationDirectionTickCounter >= 40 + random.nextInt(41)) {
+            rotationDirectionTickCounter = 0;
+            targetRotationSpeed = 0;
+        }
+
+        if (Math.abs(currentRotationSpeed) < 0.1F && targetRotationSpeed == 0) {
+            rotationDirection *= -1; // 反转方向
+            targetRotationSpeed = 3.0F + random.nextFloat() * 3.0F;
+        }
+        currentRotationSpeed = Mth.lerp(0.1F, currentRotationSpeed, targetRotationSpeed * rotationDirection);
+        rotationAngle += currentRotationSpeed;
+
+        sizeTickCounter++;
+        if (sizeTickCounter >= 10) {
+            sizeTickCounter = 0;
+            targetSizeMultiplier = 1.0F + random.nextFloat() * 0.5F;
+        }
+        currentSizeMultiplier = Mth.lerp(0.1F, currentSizeMultiplier, targetSizeMultiplier);
+
+        stack.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(false);
+        RenderSystem.disableCull();
+
+        for (Entity entity : targets) {
+            if (!(entity instanceof LivingEntity)) continue;
+
+            double entityX = entity.xo + (entity.getX() - entity.xo) * partialTicks;
+            double entityY = entity.yo + (entity.getY() - entity.yo) * partialTicks + entity.getBbHeight() / 2.0;
+            double entityZ = entity.zo + (entity.getZ() - entity.zo) * partialTicks;
+
+            float distance = (float) cameraPos.distanceTo(new Vec3(entityX, entityY, entityZ));
+            float baseSize = 1.0F + (distance / 20.0F); // 基础大小随距离变化
+            baseSize = Math.max(1.0F, Math.min(baseSize, 3.0F));
+            float finalSize = baseSize * currentSizeMultiplier; // 应用动态大小乘数
+
+            stack.pushPose();
+            stack.translate(entityX - cameraPos.x, entityY - cameraPos.y, entityZ - cameraPos.z);
+            stack.mulPose(camera.rotation());
+            stack.mulPose(Axis.ZP.rotationDegrees(rotationAngle));
+            stack.scale(finalSize, finalSize, finalSize);
+
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, RAINBOW_RECTANGLE);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             Tesselator tessellator = Tesselator.getInstance();

@@ -8,6 +8,8 @@ import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.utils.SmoothAnimationTimer;
 import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
 import com.heypixel.heypixelmod.values.HasValue;
+import com.heypixel.heypixelmod.values.ValueBuilder;
+import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 
@@ -23,6 +25,10 @@ public abstract class Module extends HasValue {
     private boolean enabled;
     private int minPermission = 0;
     private int key;
+    protected final BooleanValue hideInArrayList = ValueBuilder.create(this, "Hide in ArrayList")
+            .setDefaultBooleanValue(false)
+            .build()
+            .getBooleanValue();
 
     public Module(String name, String description, Category category) {
         this.name = name;
@@ -176,5 +182,8 @@ public abstract class Module extends HasValue {
 
     public void setKey(int key) {
         this.key = key;
+    }
+    public BooleanValue getHideInArrayList() {
+        return this.hideInArrayList;
     }
 }

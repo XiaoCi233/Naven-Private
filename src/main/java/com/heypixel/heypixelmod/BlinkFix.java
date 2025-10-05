@@ -1,5 +1,6 @@
 package com.heypixel.heypixelmod;
 
+import ca.weblite.objc.Client;
 import com.heypixel.heypixelmod.commands.CommandManager;
 import com.heypixel.heypixelmod.events.api.EventManager;
 import com.heypixel.heypixelmod.events.api.EventTarget;
@@ -22,6 +23,12 @@ import com.heypixel.heypixelmod.utils.renderer.Shaders;
 import com.heypixel.heypixelmod.utils.rotation.RotationManager;
 import com.heypixel.heypixelmod.values.HasValueManager;
 import com.heypixel.heypixelmod.values.ValueManager;
+import com.heypixel.heypixelmod.events.impl.EventPacket;
+import com.heypixel.heypixelmod.modules.impl.misc.AutoPlay;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.Queue;
@@ -87,6 +94,29 @@ public class BlinkFix {
         } catch (Exception var1) {
             System.err.println("Failed to load client");
             var1.printStackTrace(System.err);
+        }
+    }
+    @EventTarget
+    public void onPacket(EventPacket event) {
+        if (event.getType() == EventType.RECEIVE) {
+            Packet<?> packet = event.getPacket();
+
+            if (packet instanceof ClientboundSetTitleTextPacket) {
+                AutoPlay autoPlayModule = (AutoPlay) this.moduleManager.getModule(AutoPlay.class);
+                if (autoPlayModule != null && autoPlayModule.isEnabled()) {
+                    autoPlayModule.onTitlePacket((ClientboundSetTitleTextPacket) packet);
+                }
+            } else if (packet instanceof ClientboundSetSubtitleTextPacket) {
+                AutoPlay autoPlayModule = (AutoPlay) this.moduleManager.getModule(AutoPlay.class);
+                if (autoPlayModule != null && autoPlayModule.isEnabled()) {
+                    autoPlayModule.onSubtitlePacket((ClientboundSetSubtitleTextPacket) packet);
+                }
+            } else if (packet instanceof ClientboundSystemChatPacket) {
+                AutoPlay autoPlayModule = (AutoPlay) this.moduleManager.getModule(AutoPlay.class);
+                if (autoPlayModule != null && autoPlayModule.isEnabled()) {
+                    autoPlayModule.onSystemChatPacket((ClientboundSystemChatPacket) packet);
+                }
+            }
         }
     }
 

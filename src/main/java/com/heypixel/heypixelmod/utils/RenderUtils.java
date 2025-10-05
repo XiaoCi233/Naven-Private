@@ -466,6 +466,65 @@ public class RenderUtils {
         tessellator.end();
         RenderSystem.disableBlend();
     }
+    public static int getCustomGradientOpaque(int index, float speed) {
+        // 定义起始颜色 (#0ebeff) 和结束颜色 (#ff42b3)
+        Color startColor = new Color(0x0E, 0xBE, 0xFF);
+        Color endColor = new Color(0xFF, 0x42, 0xB3);
+
+        // 计算渐变进度 (0.0 到 1.0)，使用正弦函数实现平滑循环
+        float time = (System.currentTimeMillis() + (long)index) % (long)((int)speed);
+        float progress = (float)Math.sin(time * Math.PI * 2 / speed) * 0.5F + 0.5F;
+
+        // 在两个颜色之间进行插值
+        int red = (int)(startColor.getRed() + (endColor.getRed() - startColor.getRed()) * progress);
+        int green = (int)(startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * progress);
+        int blue = (int)(startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * progress);
+
+        return new Color(red, green, blue).getRGB();
+    }
+
+    public static int getSolidColor(int red, int green, int blue) {
+        return new Color(red, green, blue).getRGB();
+    }
+
+    public static int getTwoColorsGradient(int index, float speed, Color color1, Color color2) {
+        // 计算渐变进度 (0.0 到 1.0)，使用正弦函数实现平滑循环
+        float time = (System.currentTimeMillis() + (long)index) % (long)((int)speed);
+        float progress = (float)Math.sin(time * Math.PI * 2 / speed) * 0.5F + 0.5F;
+
+        // 在两个颜色之间进行插值
+        int red = (int)(color1.getRed() + (color2.getRed() - color1.getRed()) * progress);
+        int green = (int)(color1.getGreen() + (color2.getGreen() - color1.getGreen()) * progress);
+        int blue = (int)(color1.getBlue() + (color2.getBlue() - color1.getBlue()) * progress);
+
+        return new Color(red, green, blue).getRGB();
+    }
+
+    public static int getThreeColorsGradient(int index, float speed, Color color1, Color color2, Color color3) {
+        // 计算渐变进度 (0.0 到 2.0)，使用正弦函数实现平滑循环
+        float time = (System.currentTimeMillis() + (long) index) % (long) ((int) speed);
+        float progress = (float) Math.sin(time * Math.PI * 2 / speed) + 1.0F;
+
+        // 在三个颜色之间进行插值
+        Color startColor, endColor;
+        float localProgress;
+
+        if (progress < 1.0F) {
+            startColor = color1;
+            endColor = color2;
+            localProgress = progress;
+        } else {
+            startColor = color2;
+            endColor = color3;
+            localProgress = progress - 1.0F;
+        }
+        int red = (int)(startColor.getRed() + (endColor.getRed() - startColor.getRed()) * localProgress);
+        int green = (int)(startColor.getGreen() + (endColor.getGreen() - startColor.getGreen()) * localProgress);
+        int blue = (int)(startColor.getBlue() + (endColor.getBlue() - startColor.getBlue()) * localProgress);
+
+        return new Color(red, green, blue).getRGB();
+    }
+
 
     public static void 装女人(BufferBuilder bufferBuilder, Matrix4f matrix, AABB box) {
         float minX = (float)(box.minX - mc.getEntityRenderDispatcher().camera.getPosition().x());
@@ -550,4 +609,5 @@ public class RenderUtils {
         Tesselator.getInstance().end();
         RenderSystem.disableBlend();
     }
+
 }

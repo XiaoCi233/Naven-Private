@@ -185,7 +185,7 @@ public class LiveAuthenticationScreen extends Screen {
         }).bounds(hw - 83, hh + 25, 80, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("Sign"), (button) -> {
-            Util.getPlatform().openUri("https://www.unitednetwork.cc/BlinkFix/html?name=RegisterWithEmail&hardwareId=" + URLEncoder.encode(LiveClient.INSTANCE.getHardwareId(), StandardCharsets.UTF_8));
+            Util.getPlatform().openUri("https://www.unitednetwork.cc/BlinkFix/html?name=RegisterWithQQ&hardwareId=" + URLEncoder.encode(LiveClient.INSTANCE.getHardwareId(), StandardCharsets.UTF_8));
         }).bounds(hw + 3, hh + 25, 80, 20).build());
 
         addRenderableWidget(Button.builder(Component.literal("Reconnect"), (button) -> {

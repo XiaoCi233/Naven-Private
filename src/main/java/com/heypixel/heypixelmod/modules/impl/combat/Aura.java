@@ -104,7 +104,7 @@ public class Aura extends Module {
         public ModeValue TargetESPStyle = ValueBuilder.create(this, "TargetEsp Style")
             .setVisibility(this.targetEsp::getCurrentValue)
             .setDefaultModeIndex(0)
-            .setModes("Naven", "rectangle")
+            .setModes("Naven", "rectangle","Newrectangle")
             .build()
             .getModeValue();
     BooleanValue attackPlayer = ValueBuilder.create(this, "Attack Player").setDefaultBooleanValue(true).build().getBooleanValue();

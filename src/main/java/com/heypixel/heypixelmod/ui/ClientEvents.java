@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 
 //@Mod.EventBusSubscriber(modid = "blinkfix", value = Dist.CLIENT)
 //public class ClientEvents {
-//    private static final ResourceLocation CUSTOM_BG = new ResourceLocation("blinkfix", "assets/blinkfix/textures/gui/custom_bg.png");
+//    private static final ResourceLocation CUSTOM_BG = new ResourceLocation("blinkfix", "assets/blinkfix/textures/gui/background.png");
 
  //   @SubscribeEvent
 //    public static void onRenderTitleScreenPost(ScreenEvent.Render.Post event) {

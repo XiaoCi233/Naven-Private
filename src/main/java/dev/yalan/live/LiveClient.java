@@ -37,7 +37,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-@jnic.JNICInclude
 public class LiveClient {
     public static LiveClient INSTANCE;
     public static final Gson GSON = new GsonBuilder().create();

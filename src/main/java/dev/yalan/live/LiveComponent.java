@@ -18,7 +18,6 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
 import java.util.UUID;
-@jnic.JNICInclude
 public class LiveComponent {
     private final Minecraft mc = Minecraft.getInstance();
     private final LiveClient live;

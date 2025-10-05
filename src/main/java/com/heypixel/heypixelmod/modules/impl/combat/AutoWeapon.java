@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-@ModuleInfo(name="AutoWeapon", description="Automatically switches to preferred weapon type when attacking entities", category=Category.MISC)
+@ModuleInfo(name="AutoWeapon", description="Automatically switches to preferred weapon type when attacking entities", category=Category.COMBAT)
 public class AutoWeapon extends Module {
     private final Minecraft mc = Minecraft.getInstance();  // Get Minecraft instance
     private WeaponType selectedWeapon = WeaponType.NONE;

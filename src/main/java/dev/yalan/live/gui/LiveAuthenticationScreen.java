@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
-@jnic.JNICInclude
 public class LiveAuthenticationScreen extends Screen {
     private static final Logger logger = LogManager.getLogger("LiveAuthenticationScreen");
     private static final File accountDataFile = new File(FileManager.clientFolder, "LiveAccount.dat");

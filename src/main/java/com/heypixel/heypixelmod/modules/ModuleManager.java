@@ -131,7 +131,7 @@ public class ModuleManager {
                 new BedPlates(),
                 new HUD(),
                 new Camera(),
-                new Language(),
+              // new Language(),
                 new LowFire()
               //new Clip(),
               //new ViewClip(),

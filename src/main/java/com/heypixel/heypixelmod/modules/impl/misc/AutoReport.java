@@ -6,14 +6,17 @@ import com.heypixel.heypixelmod.events.impl.EventRunTicks;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.Module;
-import com.heypixel.heypixelmod.utils.DebugUtils;
+import com.heypixel.heypixelmod.BlinkFix;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.utils.TimeHelper;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,6 +46,14 @@ public class AutoReport extends Module {
 
     @EventTarget
     public void onMotion(EventRunTicks e) {
+        // Permission gate: only Administrator level or rank §eBeta can use this module
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
+
         if (!mc.isSingleplayer()) {
             if (e.getType() == EventType.POST && timer.delay((double) delay.getCurrentValue())) {
                 List<String> playerList = getUnreportedPlayers();
@@ -83,5 +94,19 @@ public class AutoReport extends Module {
     public void onDisable() {
         reportedPlayers.clear();
         super.onDisable();
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 }

@@ -14,7 +14,7 @@ import com.heypixel.heypixelmod.modules.ModuleManager;
 import com.heypixel.heypixelmod.utils.RenderUtils;
 import com.heypixel.heypixelmod.utils.SmoothAnimationTimer;
 import com.heypixel.heypixelmod.utils.StencilUtils;
-import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
+//import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
 import com.heypixel.heypixelmod.utils.renderer.Fonts;
 import com.heypixel.heypixelmod.utils.renderer.text.CustomTextRenderer;
 import com.heypixel.heypixelmod.values.ValueBuilder;
@@ -289,11 +289,7 @@ public class HUD extends Module {
     List<Vector4f> blurMatrices = new ArrayList<>();
 
     public String getModuleDisplayName(Module module) {
-        String translatedName = ModuleLanguageManager.getTranslation("module." + module.getName().toLowerCase());
-
-        String name = this.prettyModuleName.getCurrentValue() ?
-                formatPrettyName(translatedName) : translatedName;
-
+        String name = this.prettyModuleName.getCurrentValue() ? module.getPrettyName() : module.getName();
         return name + (module.getSuffix() == null ? "" : " §7" + module.getSuffix());
     }
 

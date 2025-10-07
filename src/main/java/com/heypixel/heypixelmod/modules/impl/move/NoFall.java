@@ -13,8 +13,13 @@ import com.heypixel.heypixelmod.events.impl.EventUpdate;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
+import com.heypixel.heypixelmod.BlinkFix;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 
@@ -36,6 +41,12 @@ public class NoFall extends Module {
 
     @Override
     public void onEnable() {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         resetState();
     }
 
@@ -57,6 +68,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onTick(EventRunTicks event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (event.getType() == EventType.POST || mc.player == null) {
             return;
         }
@@ -76,6 +90,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onLivingUpdate(EventUpdate event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (shouldBlockJump() && mc.options != null) {
             mc.options.keyJump.setDown(false);
         }
@@ -83,6 +100,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onStrafe(EventStrafe event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (mc.player.onGround() && shouldJump) {
             mc.player.jumpFromGround();
             shouldJump = false;
@@ -91,6 +111,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onMoveInput(EventMoveInput event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (shouldBlockJump()) {
             event.setJump(false);
         }
@@ -98,6 +121,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onMotion(EventMotion event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (event.getType() == EventType.POST) {
             return;
         }
@@ -127,6 +153,9 @@ public class NoFall extends Module {
 
     @EventTarget
     public void onPacket(EventPacket event) {
+        if (!hasPermission()) {
+            return;
+        }
         if (event.getType() == EventType.SEND) {
             if (shouldHandleFall &&
                     shouldSendLagPacket &&
@@ -137,6 +166,20 @@ public class NoFall extends Module {
         } else if (shouldHandleFall &&
                 event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             isLagged = true;
+        }
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 }

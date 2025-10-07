@@ -8,11 +8,15 @@ import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.render.HUD;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.utils.TimerUtils;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
 import com.heypixel.heypixelmod.values.impl.ModeValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.PacketListener;
@@ -151,6 +155,12 @@ public class FakeLag extends Module {
 
     @Override
     public void onEnable() {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         packets.clear();
         vec3 = null;
         entity = null;
@@ -169,6 +179,12 @@ public class FakeLag extends Module {
 
     @EventTarget
     public void onAttack(EventClick event) {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         if (isBlinkEnabled()) {
             return;
         }
@@ -198,6 +214,12 @@ public class FakeLag extends Module {
 
     @EventTarget
     public void onUpdate(EventRunTicks event) {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         if (mc.player == null || mc.level == null || mc.getConnection() == null) return;
         if (isBlinkEnabled()) {
             return;
@@ -240,6 +262,12 @@ public class FakeLag extends Module {
 
     @EventTarget
     public void onPacket(EventPacket event) {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         if (isBlinkEnabled()) {
             return;
         }
@@ -336,6 +364,9 @@ public class FakeLag extends Module {
 
     @EventTarget
     public void onRender(EventRender2D e) {
+        if (!hasPermission()) {
+            return;
+        }
         if (isBlinkEnabled()) {
             return;
         }
@@ -365,7 +396,7 @@ public class FakeLag extends Module {
 
     @EventTarget
     public void onRender(EventRender e) {
-        if (isBlinkEnabled() || renderMode.isCurrentMode("None") || entity == null || vec3 == null) {
+        if (!hasPermission() || isBlinkEnabled() || renderMode.isCurrentMode("None") || entity == null || vec3 == null) {
             return;
         }
 
@@ -423,6 +454,20 @@ public class FakeLag extends Module {
         while (!packets.isEmpty()) {
             Packet<PacketListener> packet = packets.poll();
             packet.handle(mc.getConnection());
+        }
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 }

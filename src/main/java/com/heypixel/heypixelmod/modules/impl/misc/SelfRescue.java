@@ -8,12 +8,16 @@ import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.move.Scaffold;
 import com.heypixel.heypixelmod.modules.impl.move.Stuck;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.utils.ChatUtils;
 import com.heypixel.heypixelmod.utils.NetworkUtils;
 import com.heypixel.heypixelmod.utils.TimeHelper;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
@@ -90,6 +94,14 @@ public class SelfRescue extends Module {
     @EventTarget
     public void onMotion(EventMotion event) {
         if (mc.player == null) return;
+
+        // Permission gate: only Administrator level or rank §eBeta can use this module
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
 
         if (onlyVoidValue.getCurrentValue() && !isAboveVoid()) {
             return;
@@ -201,6 +213,20 @@ public class SelfRescue extends Module {
         scaffoldManuallyDisabled = false;
 
         super.onDisable();
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     private int findEnderPearlSlot() {

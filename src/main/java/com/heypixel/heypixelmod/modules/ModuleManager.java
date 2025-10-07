@@ -78,6 +78,7 @@ public class ModuleManager {
               //new JumpReset(),
 
 //Misc
+                new ClientFriend(),
                 new AutoReport(),
                 new AntiWeb(),
                 new ContainerStealer(),

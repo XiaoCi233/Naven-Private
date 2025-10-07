@@ -7,9 +7,13 @@ import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.combat.Aura;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import net.minecraft.world.entity.Entity;
 
 @ModuleInfo(
@@ -45,6 +49,12 @@ public class TargetStrafe extends Module {
 
     @EventTarget
     public void onMoveInput(EventMoveInput event) {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         Aura aura = (Aura) com.heypixel.heypixelmod.BlinkFix.getInstance().getModuleManager().getModule(Aura.class);
         if (aura == null || !aura.isEnabled()) {
             currentTarget = null;
@@ -105,5 +115,28 @@ public class TargetStrafe extends Module {
         currentTarget = null;
         isIgnoringRange = false;
         this.setSuffix(null);
+    }
+
+    @Override
+    public void onEnable() {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+        }
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 }

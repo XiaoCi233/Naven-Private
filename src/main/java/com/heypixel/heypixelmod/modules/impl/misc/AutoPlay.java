@@ -3,8 +3,13 @@ package com.heypixel.heypixelmod.modules.impl.misc;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
+import com.heypixel.heypixelmod.BlinkFix;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -30,6 +35,12 @@ public class AutoPlay extends Module {
             .getBooleanValue();
     public void onTitlePacket(ClientboundSetTitleTextPacket packet) {
         if (!isEnabled() || !gamestart.getCurrentValue()) return;
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
 
         Component titleComponent = packet.getText();
         if (titleComponent != null) {
@@ -41,6 +52,12 @@ public class AutoPlay extends Module {
     }
     public void onSubtitlePacket(ClientboundSetSubtitleTextPacket packet) {
         if (!isEnabled() || !gamestart.getCurrentValue()) return;
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
 
         Component subtitleComponent = packet.getText();
         if (subtitleComponent != null) {
@@ -52,6 +69,12 @@ public class AutoPlay extends Module {
     }
     public void onSystemChatPacket(ClientboundSystemChatPacket packet) {
         if (!isEnabled() || !gameover.getCurrentValue()) return;
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
 
         Component message = packet.content();
         if (message != null) {
@@ -65,6 +88,20 @@ public class AutoPlay extends Module {
     private void sendAgainCommand() {
         if (mc.player != null && mc.player.connection != null) {
             mc.player.connection.sendCommand("again");
+        }
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 }

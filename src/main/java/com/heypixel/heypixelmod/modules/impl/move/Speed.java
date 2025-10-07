@@ -1,6 +1,8 @@
 package com.heypixel.heypixelmod.modules.impl.move;
 
 import com.heypixel.heypixelmod.BlinkFix;
+import com.heypixel.heypixelmod.ui.notification.Notification;
+import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
@@ -8,6 +10,8 @@ import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
 import com.heypixel.heypixelmod.values.impl.FloatValue;
 import com.heypixel.heypixelmod.values.impl.ModeValue;
+import dev.yalan.live.LiveClient;
+import dev.yalan.live.LiveUser;
 import com.heypixel.heypixelmod.events.impl.EventRunTicks;
 import com.heypixel.heypixelmod.events.impl.EventMoveInput;
 import com.heypixel.heypixelmod.events.api.types.EventType;
@@ -90,6 +94,12 @@ public class Speed extends Module {
 
     @Override
     public void onEnable() {
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         super.onEnable();
         customTickSpeed = DEFAULT_TICK_SPEED;
         if (mc.player != null) {
@@ -142,6 +152,12 @@ public class Speed extends Module {
     public void onRunTicks(EventRunTicks event) {
         if (!isEnabled() || event.getType() != EventType.PRE)
             return;
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         if (shouldDisableSpeed()) {
             updateBPS();
             this.setSuffix(String.format("%.2f (Disabled)", currentBPS));
@@ -241,6 +257,12 @@ public class Speed extends Module {
     public void onMoveInput(EventMoveInput event) {
         if (!isEnabled())
             return;
+        if (!hasPermission()) {
+            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
+            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
+            this.setEnabled(false);
+            return;
+        }
         if (shouldDisableSpeed()) {
             return;
         }
@@ -261,5 +283,19 @@ public class Speed extends Module {
 
         event.setForward(forward);
         event.setStrafe(strafe);
+    }
+
+    private boolean hasPermission() {
+        try {
+            LiveClient client = LiveClient.INSTANCE;
+            if (client == null || client.liveUser == null) {
+                return false;
+            }
+            LiveUser user = client.liveUser;
+            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
+                    "§eBeta".equals(user.getRank());
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 }

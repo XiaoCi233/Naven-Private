@@ -6,7 +6,7 @@ import com.heypixel.heypixelmod.modules.impl.render.HUD;
 import com.heypixel.heypixelmod.ui.notification.Notification;
 import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.utils.SmoothAnimationTimer;
-import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
+//import com.heypixel.heypixelmod.utils.localization.ModuleLanguageManager;
 import com.heypixel.heypixelmod.values.HasValue;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
@@ -84,36 +84,32 @@ public abstract class Module extends HasValue {
 
     public void setEnabled(boolean enabled) {
         try {
-            BlinkFix blinkFix = com.heypixel.heypixelmod.BlinkFix.getInstance();
+            BlinkFix naven = BlinkFix.getInstance();
             if (enabled) {
                 this.enabled = true;
-                blinkFix.getEventManager().register(this);
+                naven.getEventManager().register(this);
                 this.onEnable();
                 if (!(this instanceof ClickGUIModule)) {
-                    HUD module = (HUD) com.heypixel.heypixelmod.BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
+                    HUD module = (HUD)BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
                     if (module.moduleToggleSound.getCurrentValue()) {
                         mc.player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, 0.5F, 1.3F);
                     }
 
-                    String message = ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase()) + " " +
-                            ModuleLanguageManager.getTranslation("setting.enabled");
-                    Notification notification = new Notification(NotificationLevel.SUCCESS, message, 3000L);
-                    blinkFix.getNotificationManager().addNotification(notification);
+                    Notification notification = new Notification(NotificationLevel.SUCCESS, this.name + " Enabled!", 3000L);
+                    naven.getNotificationManager().addNotification(notification);
                 }
             } else {
                 this.enabled = false;
-                blinkFix.getEventManager().unregister(this);
+                naven.getEventManager().unregister(this);
                 this.onDisable();
                 if (!(this instanceof ClickGUIModule)) {
-                    HUD module = (HUD) BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
+                    HUD module = (HUD)BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
                     if (module.moduleToggleSound.getCurrentValue()) {
                         mc.player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_OFF, 0.5F, 0.8F);
                     }
 
-                    String message = ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase()) + " " +
-                            ModuleLanguageManager.getTranslation("setting.disabled");
-                    Notification notification = new Notification(NotificationLevel.ERROR, message, 3000L);
-                    blinkFix.getNotificationManager().addNotification(notification);
+                    Notification notification = new Notification(NotificationLevel.ERROR, this.name + " Disabled!", 3000L);
+                    naven.getNotificationManager().addNotification(notification);
                 }
             }
         } catch (Exception var5) {
@@ -137,17 +133,17 @@ public abstract class Module extends HasValue {
         return this.prettyName;
     }
 
-    public String getDisplayName() {
-        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase());
-    }
+//    public String getDisplayName() {
+//        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase());
+//    }
 
     public String getDescription() {
         return this.description;
     }
 
-    public String getDisplayDescription() {
-        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase() + ".desc");
-    }
+//    public String getDisplayDescription() {
+//        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase() + ".desc");
+//    }
 
     public String getSuffix() {
         return this.suffix;
@@ -157,9 +153,9 @@ public abstract class Module extends HasValue {
         return this.category;
     }
 
-    public String getDisplayCategory() {
-        return ModuleLanguageManager.getTranslation("category." + this.category.name().toLowerCase());
-    }
+//    public String getDisplayCategory() {
+//        return ModuleLanguageManager.getTranslation("category." + this.category.name().toLowerCase());
+//    }
 
     public boolean isEnabled() {
         return this.enabled;

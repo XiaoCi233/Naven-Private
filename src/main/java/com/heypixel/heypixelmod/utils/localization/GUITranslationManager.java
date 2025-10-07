@@ -59,22 +59,22 @@ public class GUITranslationManager {
             return original;
         }
 
-        // 检查直接匹配
-        if (translationMap.containsKey(text)) {
-            String translated = ModuleLanguageManager.getTranslation(translationMap.get(text));
-            if (!translated.equals(translationMap.get(text))) {
-                return Component.literal(translated);
-            }
-        }
-
-        // 检查模块名称（驼峰命名）
-        if (isLikelyModuleName(text)) {
-            String translationKey = "module." + text.toLowerCase();
-            String translated = ModuleLanguageManager.getTranslation(translationKey);
-            if (!translated.equals(translationKey)) {
-                return Component.literal(translated);
-            }
-        }
+//        // 检查直接匹配
+//        if (translationMap.containsKey(text)) {
+//            String translated = ModuleLanguageManager.getTranslation(translationMap.get(text));
+//            if (!translated.equals(translationMap.get(text))) {
+//                return Component.literal(translated);
+//            }
+//        }
+//
+//        // 检查模块名称（驼峰命名）
+//        if (isLikelyModuleName(text)) {
+//            String translationKey = "module." + text.toLowerCase();
+//            String translated = ModuleLanguageManager.getTranslation(translationKey);
+//            if (!translated.equals(translationKey)) {
+//                return Component.literal(translated);
+//            }
+//        }
 
         return original;
     }

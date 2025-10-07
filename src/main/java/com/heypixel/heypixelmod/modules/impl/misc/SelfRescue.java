@@ -5,6 +5,7 @@ import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.events.impl.EventMotion;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.move.Scaffold;
 import com.heypixel.heypixelmod.modules.impl.move.Stuck;
@@ -32,7 +33,7 @@ import java.util.Random;
         description = "Automatically throws ender pearl when falling into void",
         category = Category.MISC
 )
-public class SelfRescue extends Module {
+public class SelfRescue extends Module implements PermissionGatedModule {
     private final Minecraft mc = Minecraft.getInstance();
     public FloatValue fallDistValue = ValueBuilder.create(this, "Fall Distance")
             .setDefaultFloatValue(3.0F)
@@ -215,7 +216,8 @@ public class SelfRescue extends Module {
         super.onDisable();
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

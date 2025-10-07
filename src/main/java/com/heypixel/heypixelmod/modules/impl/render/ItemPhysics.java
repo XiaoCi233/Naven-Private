@@ -2,6 +2,7 @@ package com.heypixel.heypixelmod.modules.impl.render;
 
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.ui.notification.Notification;
@@ -16,7 +17,7 @@ import dev.yalan.live.LiveUser;
         description = "Custom item physics effects",
         category = Category.RENDER
 )
-public class ItemPhysics extends Module {
+public class ItemPhysics extends Module implements PermissionGatedModule {
     private final FloatValue weight = ValueBuilder.create(this, "Weight")
             .setDefaultFloatValue(0.5f)
             .setMinFloatValue(0.1f)
@@ -64,7 +65,8 @@ public class ItemPhysics extends Module {
         }
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

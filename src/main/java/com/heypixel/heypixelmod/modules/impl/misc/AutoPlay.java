@@ -2,6 +2,7 @@ package com.heypixel.heypixelmod.modules.impl.misc;
 
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.ui.notification.Notification;
@@ -21,7 +22,7 @@ import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
         description = "AutoPlay Game",
         category = Category.MISC
 )
-public class AutoPlay extends Module {
+public class AutoPlay extends Module implements PermissionGatedModule {
     private final Minecraft mc = Minecraft.getInstance();
 
     BooleanValue gameover = ValueBuilder.create(this, "Game Over Check")
@@ -91,7 +92,8 @@ public class AutoPlay extends Module {
         }
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

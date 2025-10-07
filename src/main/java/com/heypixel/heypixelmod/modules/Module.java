@@ -86,6 +86,16 @@ public abstract class Module extends HasValue {
         try {
             BlinkFix naven = BlinkFix.getInstance();
             if (enabled) {
+                if (this instanceof PermissionGatedModule) {
+                    PermissionGatedModule gated = (PermissionGatedModule) this;
+                    if (!gated.hasPermission()) {
+                        this.enabled = false;
+                        // notify and refuse enabling
+                        Notification notification = new Notification(NotificationLevel.INFO, gated.getPermissionDenyMessage(), 3000L);
+                        naven.getNotificationManager().addNotification(notification);
+                        return;
+                    }
+                }
                 this.enabled = true;
                 naven.getEventManager().register(this);
                 this.onEnable();

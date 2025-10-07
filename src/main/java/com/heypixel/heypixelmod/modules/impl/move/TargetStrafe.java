@@ -5,6 +5,7 @@ import com.heypixel.heypixelmod.events.api.EventTarget;
 import com.heypixel.heypixelmod.events.impl.EventMoveInput;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.combat.Aura;
 import com.heypixel.heypixelmod.ui.notification.Notification;
@@ -21,7 +22,7 @@ import net.minecraft.world.entity.Entity;
         description = "Automatically moves forward to follow the Aura target(Maybe failed)",
         category = Category.MOVEMENT
 )
-public class TargetStrafe extends Module {
+public class TargetStrafe extends Module implements PermissionGatedModule {
     public FloatValue range = ValueBuilder.create(this, "Range")
             .setDefaultFloatValue(5.0F)
             .setMinFloatValue(1.0F)
@@ -126,7 +127,8 @@ public class TargetStrafe extends Module {
         }
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

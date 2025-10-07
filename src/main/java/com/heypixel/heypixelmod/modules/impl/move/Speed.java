@@ -5,6 +5,7 @@ import com.heypixel.heypixelmod.ui.notification.Notification;
 import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.values.ValueBuilder;
 import com.heypixel.heypixelmod.values.impl.BooleanValue;
@@ -26,7 +27,7 @@ import net.minecraft.world.phys.AABB;
         description = "Make you move speed faster",
         category = Category.MOVEMENT
 )
-public class Speed extends Module {
+public class Speed extends Module implements PermissionGatedModule {
     private static final float DEFAULT_TICK_SPEED = 1.0F;
     private static final float SPEED_TICK_MULTIPLIER = 1.004f;
     private static final float FRICTION_MULTIPLIER = 1.002F;
@@ -285,7 +286,8 @@ public class Speed extends Module {
         event.setStrafe(strafe);
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

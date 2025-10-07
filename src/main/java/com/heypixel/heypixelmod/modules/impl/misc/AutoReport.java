@@ -6,6 +6,7 @@ import com.heypixel.heypixelmod.events.impl.EventRunTicks;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.ui.notification.Notification;
 import com.heypixel.heypixelmod.ui.notification.NotificationLevel;
@@ -29,7 +30,7 @@ import java.util.Set;
         description = "Auto Report Hacker $ GreenPlayer^_^",
         category = Category.MISC
 )
-public class AutoReport extends Module {
+public class AutoReport extends Module implements PermissionGatedModule {
     public FloatValue delay = ValueBuilder.create(this, "Delay")
             .setDefaultFloatValue(6000.0F)
             .setFloatStep(100.0F)
@@ -96,7 +97,8 @@ public class AutoReport extends Module {
         super.onDisable();
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

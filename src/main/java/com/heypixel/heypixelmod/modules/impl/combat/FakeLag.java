@@ -6,6 +6,7 @@ import com.heypixel.heypixelmod.events.api.types.EventType;
 import com.heypixel.heypixelmod.events.impl.*;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.modules.impl.render.HUD;
 import com.heypixel.heypixelmod.ui.notification.Notification;
@@ -40,7 +41,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import org.lwjgl.opengl.GL11;
 
 @ModuleInfo(name = "FakeLag", description = "FakeLag", category = Category.COMBAT)
-public class FakeLag extends Module {
+public class FakeLag extends Module implements PermissionGatedModule {
     ModeValue targetMode = ValueBuilder.create(this, "TargetMode")
             .setModes("Range", "Attack")
             .setDefaultModeIndex(1)
@@ -457,7 +458,8 @@ public class FakeLag extends Module {
         }
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

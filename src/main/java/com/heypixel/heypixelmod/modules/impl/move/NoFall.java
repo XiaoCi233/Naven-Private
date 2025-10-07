@@ -12,6 +12,7 @@ import com.heypixel.heypixelmod.events.impl.EventStrafe;
 import com.heypixel.heypixelmod.events.impl.EventUpdate;
 import com.heypixel.heypixelmod.modules.Category;
 import com.heypixel.heypixelmod.modules.Module;
+import com.heypixel.heypixelmod.modules.PermissionGatedModule;
 import com.heypixel.heypixelmod.modules.ModuleInfo;
 import com.heypixel.heypixelmod.BlinkFix;
 import com.heypixel.heypixelmod.ui.notification.Notification;
@@ -24,7 +25,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 
 @ModuleInfo(name = "NoFall", category = Category.MOVEMENT, description = "Prevent fall damage")
-public class NoFall extends Module {
+public class NoFall extends Module implements PermissionGatedModule {
     private final FloatValue fallDistance = ValueBuilder.create(this, "Fall Distance")
             .setDefaultFloatValue(3.0f)
             .setFloatStep(0.1f)
@@ -163,13 +164,15 @@ public class NoFall extends Module {
                     event.getPacket() instanceof ServerboundMovePlayerPacket) {
                 event.setCancelled(true);
             }
+            
         } else if (shouldHandleFall &&
                 event.getPacket() instanceof ClientboundPlayerPositionPacket) {
             isLagged = true;
         }
     }
 
-    private boolean hasPermission() {
+    @Override
+    public boolean hasPermission() {
         try {
             LiveClient client = LiveClient.INSTANCE;
             if (client == null || client.liveUser == null) {

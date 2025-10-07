@@ -40,7 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class BlinkFix {
     public static final String CLIENT_NAME = "BlinkFix-NextGeneration";
     public static final String CLIENT_DISPLAY_NAME = "Best";
-    public static final String CLIENT_VERSION = "Femboy0721";
+    public static final String CLIENT_VERSION = "Alpha-B";
     private static BlinkFix instance;
     private final EventManager eventManager;
     private final EventWrapper eventWrapper;

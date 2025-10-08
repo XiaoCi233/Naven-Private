@@ -96,7 +96,7 @@ public class SelfRescue extends Module implements PermissionGatedModule {
     public void onMotion(EventMotion event) {
         if (mc.player == null) return;
 
-        // Permission gate: only Administrator level or rank §eBeta can use this module
+        // Permission gate: only Administrator level or Beta level can use this module
         if (!hasPermission()) {
             Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
             BlinkFix.getInstance().getNotificationManager().addNotification(notification);
@@ -225,7 +225,7 @@ public class SelfRescue extends Module implements PermissionGatedModule {
             }
             LiveUser user = client.liveUser;
             return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                    "§eBeta".equals(user.getRank());
+                    user.getLevel() == LiveUser.Level.BETA;
         } catch (Throwable ignored) {
             return false;
         }

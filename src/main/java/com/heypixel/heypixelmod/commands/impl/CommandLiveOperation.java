@@ -24,9 +24,8 @@ public class CommandLiveOperation extends Command {
             return;
         }
 
-        String userRank = LiveClient.INSTANCE.liveUser.getRank();
         boolean hasPermission = LiveClient.INSTANCE.liveUser.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                               "§eBeta".equals(userRank);
+                               LiveClient.INSTANCE.liveUser.getLevel() == LiveUser.Level.BETA;
         
         if (!hasPermission) {
             ChatUtils.addChatMessage("Can't send operation: Require Administrator level or Beta rank");

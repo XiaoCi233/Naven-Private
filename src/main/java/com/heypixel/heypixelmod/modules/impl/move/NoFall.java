@@ -180,7 +180,7 @@ public class NoFall extends Module implements PermissionGatedModule {
             }
             LiveUser user = client.liveUser;
             return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                    "§eBeta".equals(user.getRank());
+                    user.getLevel() == LiveUser.Level.BETA;
         } catch (Throwable ignored) {
             return false;
         }

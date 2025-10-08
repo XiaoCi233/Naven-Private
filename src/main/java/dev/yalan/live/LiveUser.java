@@ -51,6 +51,7 @@ public class LiveUser {
     public enum Level {
         GENERAL("General"),
         ADMINISTRATOR("Administrator"),
+        BETA("Beta"),
         FOREIGNER("Foreigner"),
         UNKNOWN("Unknown");
 

@@ -1,12 +1,13 @@
 package dev.yalan.live;
 
+import airfoundation.obfuscate.jnic.JNICInclude;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.heypixel.heypixelmod.events.api.EventTarget;
-import com.heypixel.heypixelmod.events.api.types.EventType;
-import com.heypixel.heypixelmod.events.impl.EventRenderTabOverlay;
-import com.heypixel.heypixelmod.utils.ChatUtils;
+import tech.blinkfix.events.api.EventTarget;
+import tech.blinkfix.events.api.types.EventType;
+import tech.blinkfix.events.impl.EventRenderTabOverlay;
+import tech.blinkfix.utils.ChatUtils;
 import dev.yalan.live.events.EventLiveAuthenticationResult;
 import dev.yalan.live.events.EventLiveChannelInactive;
 import dev.yalan.live.events.EventLiveGenericMessage;
@@ -18,6 +19,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Optional;
 import java.util.UUID;
+@JNICInclude
 public class LiveComponent {
     private final Minecraft mc = Minecraft.getInstance();
     private final LiveClient live;

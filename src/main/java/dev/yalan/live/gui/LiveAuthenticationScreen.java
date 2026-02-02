@@ -1,9 +1,11 @@
 package dev.yalan.live.gui;
 
-import com.heypixel.heypixelmod.BlinkFix;
-import com.heypixel.heypixelmod.events.api.EventTarget;
-import com.heypixel.heypixelmod.files.FileManager;
-import com.heypixel.heypixelmod.ui.Welcome;
+import airfoundation.obfuscate.jnic.JNICExclude;
+import airfoundation.obfuscate.jnic.JNICInclude;
+import tech.blinkfix.BlinkFix;
+import tech.blinkfix.events.api.EventTarget;
+import tech.blinkfix.files.FileManager;
+import tech.blinkfix.ui.Welcome;
 import dev.yalan.live.LiveClient;
 import dev.yalan.live.events.*;
 import dev.yalan.live.netty.LiveProto;
@@ -13,7 +15,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+@JNICInclude
 public class LiveAuthenticationScreen extends Screen {
     private static final Logger logger = LogManager.getLogger("LiveAuthenticationScreen");
     private static final File accountDataFile = new File(FileManager.clientFolder, "LiveAccount.dat");
@@ -125,7 +127,7 @@ public class LiveAuthenticationScreen extends Screen {
         final int hw = width / 2;
         final int hh = height / 2;
 
-        graphics.drawCenteredString(minecraft.font, "§d我的手艺BlinkFIx-NextGeneration客户端", hw, hh - 80, -1);
+        graphics.drawCenteredString(minecraft.font, "§dAlpha-X The final version", hw, hh - 80, -1);
         graphics.drawCenteredString(minecraft.font, status, hw, hh - 65, -1);
         graphics.drawString(minecraft.font, "§2BlinkFixIRC: " + getLiveConnectionStatus(), 2, height - minecraft.font.lineHeight, -1);
         graphics.drawString(minecraft.font, "§1username: ", hw - 82, hh - 45, -1);
@@ -145,12 +147,13 @@ public class LiveAuthenticationScreen extends Screen {
     }
 
     @Override
+    @JNICExclude
     public void tick() {
         username.tick();
         password.tick();
 
         if (LiveProto.PROTOCOL_VERSION != LiveClient.INSTANCE.serversideProtocolVersion
-            || !com.heypixel.heypixelmod.BlinkFix.CLIENT_VERSION.equals(LiveClient.INSTANCE.clientSetting.getVersion())) {
+            || !BlinkFix.CLIENT_VERSION.equals(LiveClient.INSTANCE.clientSetting.getVersion())) {
             status = ChatFormatting.RED + "The IRC connection is closed!";
             loginButton.active = false;
 

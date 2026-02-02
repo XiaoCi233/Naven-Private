@@ -12,8 +12,8 @@ java.lang.OutOfMemoryError: Unable to allocate 268435456 bytes
 	at text.renderer.utils.com.heypixel.heypixelmod.Font.<init>(Font.java:34) ~[main/:?] {re:classloading}
 	at text.renderer.utils.com.heypixel.heypixelmod.CustomTextRenderer.<init>(CustomTextRenderer.java:48) ~[main/:?] {re:classloading}
 	at renderer.utils.com.heypixel.heypixelmod.Fonts.loadFonts(Fonts.java:15) ~[main/:?] {re:classloading}
-	at com.heypixel.heypixelmod.BlinkFix.<init>(Naven.java:58) ~[main/:?] {re:mixin,re:classloading}
-	at com.heypixel.heypixelmod.BlinkFix.modRegister(Naven.java:86) ~[main/:?] {re:mixin,re:classloading}
+	at tech.blinkfix.BlinkFix.<init>(Naven.java:58) ~[main/:?] {re:mixin,re:classloading}
+	at tech.blinkfix.BlinkFix.modRegister(Naven.java:86) ~[main/:?] {re:mixin,re:classloading}
 	at net.minecraft.client.Minecraft.handler$zbf000$onInit(Minecraft.java:2969) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1-recomp.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinMinecraft,pl:mixin:APP:Naven-Modern.mixins.json:accessors.MinecraftAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.Minecraft.<init>(Minecraft.java:589) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1-recomp.jar:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinMinecraft,pl:mixin:APP:Naven-Modern.mixins.json:accessors.MinecraftAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.main.Main.main(Main.java:182) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1-recomp.jar:?] {re:classloading,pl:runtimedistcleaner:A}
@@ -51,8 +51,8 @@ Stacktrace:
 	at text.renderer.utils.com.heypixel.heypixelmod.Font.<init>(Font.java:34) ~[%23196!/:?] {re:classloading}
 	at text.renderer.utils.com.heypixel.heypixelmod.CustomTextRenderer.<init>(CustomTextRenderer.java:48) ~[%23196!/:?] {re:classloading}
 	at renderer.utils.com.heypixel.heypixelmod.Fonts.loadFonts(Fonts.java:15) ~[%23196!/:?] {re:classloading}
-	at com.heypixel.heypixelmod.BlinkFix.<init>(Naven.java:58) ~[%23196!/:?] {re:mixin,re:classloading}
-	at com.heypixel.heypixelmod.BlinkFix.modRegister(Naven.java:86) ~[%23196!/:?] {re:mixin,re:classloading}
+	at tech.blinkfix.BlinkFix.<init>(Naven.java:58) ~[%23196!/:?] {re:mixin,re:classloading}
+	at tech.blinkfix.BlinkFix.modRegister(Naven.java:86) ~[%23196!/:?] {re:mixin,re:classloading}
 	at net.minecraft.client.Minecraft.handler$zbf000$onInit(Minecraft.java:2969) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1-recomp.jar%23191!/:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinMinecraft,pl:mixin:APP:Naven-Modern.mixins.json:accessors.MinecraftAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 	at net.minecraft.client.Minecraft.<init>(Minecraft.java:589) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1-recomp.jar%23191!/:?] {re:mixin,pl:accesstransformer:B,pl:runtimedistcleaner:A,re:classloading,pl:accesstransformer:B,pl:mixin:APP:Naven-Modern.mixins.json:MixinMinecraft,pl:mixin:APP:Naven-Modern.mixins.json:accessors.MinecraftAccessor,pl:mixin:A,pl:runtimedistcleaner:A}
 -- Initialization --

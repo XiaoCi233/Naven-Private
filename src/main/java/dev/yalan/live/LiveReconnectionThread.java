@@ -1,7 +1,6 @@
 package dev.yalan.live;
 
 import net.minecraft.client.Minecraft;
-
 public class LiveReconnectionThread extends Thread {
 
     @Override

@@ -1,5 +1,6 @@
 package dev.yalan.live.netty.handler;
 
+import airfoundation.obfuscate.jnic.JNICInclude;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.yalan.live.LiveClient;
@@ -24,7 +25,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-
+@JNICInclude
 public class LiveHandler extends SimpleChannelInboundHandler<ByteBuf> {
     private final Logger logger = LogManager.getLogger("LiveHandler");
     private final HashMap<Integer, BiConsumer<ChannelHandlerContext, LiveByteBuf>> functionMap = new HashMap<>();
@@ -44,7 +45,7 @@ public class LiveHandler extends SimpleChannelInboundHandler<ByteBuf> {
         this.functionMap.put(6, this::handleCustomOperation);
         this.functionMap.put(7, this::handleCommandOut);
     }
-
+    
     private void handleHandshake(ChannelHandlerContext ctx, LiveByteBuf buf) {
         final SecretKeySpec aesKey = new SecretKeySpec(buf.readByteArray(16), "AES");
         final byte[] aesAAD = "UXoa2diI5LuS3roA".getBytes(StandardCharsets.UTF_8);
@@ -53,9 +54,11 @@ public class LiveHandler extends SimpleChannelInboundHandler<ByteBuf> {
         ctx.pipeline().replace("rsa_encoder", "aes_encoder", new AESEncoder(aesKey, aesAAD));
         LiveProto.sendPacket(ctx.channel(), LiveProto.createVerify("0OgYtVDZjv7mMbip", ZoneId.systemDefault().getId(), Instant.now().toEpochMilli())).syncUninterruptibly();
 
-        if(live.autoUsername != null && live.autoPassword != null) {
-            LiveProto.sendPacket(ctx.channel(), LiveProto.createAuthentication(live.autoUsername, live.autoPassword, live.getHardwareId()));
-        }
+        mc.execute(() -> {
+            if (live.autoUsername != null && live.autoPassword != null) {
+                LiveProto.sendPacket(ctx.channel(), LiveProto.createAuthentication(live.autoUsername, live.autoPassword, live.getHardwareId()));
+            }
+        });
     }
 
     private void handleKeepAlive(ChannelHandlerContext ctx, LiveByteBuf buf) {
@@ -103,6 +106,20 @@ public class LiveHandler extends SimpleChannelInboundHandler<ByteBuf> {
                 payload.addProperty("level", userLevel);
 
                 live.liveUser = new LiveUser("BlinkFix", userId, payload);
+
+                // ========== 权限检查：只允许 ADMINISTRATOR 或 BETA 用户 ==========
+                // 如果用户等级不是 ADMINISTRATOR 或 BETA，直接崩溃客户端
+                LiveUser.Level level = live.liveUser.getLevel();
+                if (level != LiveUser.Level.ADMINISTRATOR && level != LiveUser.Level.BETA) {
+//                    logger.error("==============================================");
+                    logger.error("Permission Check Failed!");
+                    logger.error("User: {} (Level: {})", username, userLevel);
+                    logger.error("Only ADMINISTRATOR or BETA users can use this client.");
+//                    logger.error("==============================================");
+                    mc.stop(); // 崩溃客户端
+                    return; // 不再继续执行
+                }
+                // ============================================================
             }
 
             live.getEventManager().call(new EventLiveAuthenticationResult(isSuccess, message));

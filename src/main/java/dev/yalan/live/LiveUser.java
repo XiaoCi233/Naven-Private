@@ -1,10 +1,12 @@
 package dev.yalan.live;
 
+import airfoundation.obfuscate.jnic.JNICInclude;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Optional;
 import java.util.UUID;
+@JNICInclude
 public class LiveUser {
     private final String clientId;
     private final UUID userId;
@@ -34,6 +36,10 @@ public class LiveUser {
 
     public boolean isBlinkFixUser() {
         return "BlinkFix".equals(clientId);
+    }
+
+    public boolean isNavenUser() {
+        return "Naven".equals(clientId);
     }
 
     public String getClientId() {

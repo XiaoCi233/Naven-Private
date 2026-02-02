@@ -1,5 +1,6 @@
 package dev.yalan.live.netty;
 
+import airfoundation.obfuscate.jnic.JNICInclude;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -9,8 +10,8 @@ import net.minecraft.core.UUIDUtil;
 
 import java.util.UUID;
 import java.util.function.Consumer;
-
 @SuppressWarnings("CodeBlock2Expr")
+@JNICInclude
 public class LiveProto {
     public static final int PROTOCOL_VERSION = 0;
 

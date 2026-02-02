@@ -38,7 +38,7 @@ Current thread (0x000001eac57c5d20):  JavaThread "C2 CompilerThread0" daemon [_t
 
 
 Current CompileTask:
-C2: 127486 31698   !   4       com.heypixel.heypixelmod.modules.impl.render.ItemTags::on2DRender (271 bytes)
+C2: 127486 31698   !   4       render.impl.modules.tech.blinkfix.ItemTags::on2DRender (271 bytes)
 
 Stack: [0x000000e6eb100000,0x000000e6eb200000]
 Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
@@ -147,7 +147,7 @@ Other Threads:
   0x000001eaa7d6e9e0 ConcurrentGCThread "G1 Service" [stack: 0x000000e6ea900000,0x000000e6eaa00000] [id=8964]
 
 Threads with active compile tasks:
-C2 CompilerThread0   127544 31698   !   4       com.heypixel.heypixelmod.modules.impl.render.ItemTags::on2DRender (271 bytes)
+C2 CompilerThread0   127544 31698   !   4       render.impl.modules.tech.blinkfix.ItemTags::on2DRender (271 bytes)
 
 VM state: not at safepoint (normal execution)
 
@@ -1351,7 +1351,7 @@ Event: 126.491 Thread 0x000001eac57c5d20 31696       4       com.mojang.blaze3d.
 Event: 126.493 Thread 0x000001eac57c5d20 nmethod 31696 0x000001eab882be10 code [0x000001eab882bfc0, 0x000001eab882c188]
 Event: 126.493 Thread 0x000001eac57c5d20 31697       4       org.lwjgl.openal.AL10::alListenerfv (25 bytes)
 Event: 126.494 Thread 0x000001eac57c5d20 nmethod 31697 0x000001eab882c390 code [0x000001eab882c520, 0x000001eab882c628]
-Event: 126.494 Thread 0x000001eac57c5d20 31698   !   4       com.heypixel.heypixelmod.modules.impl.render.ItemTags::on2DRender (271 bytes)
+Event: 126.494 Thread 0x000001eac57c5d20 31698   !   4       render.impl.modules.tech.blinkfix.ItemTags::on2DRender (271 bytes)
 Event: 127.313 Thread 0x000001eac57ca2f0 31700 %     3       java.util.concurrent.ForkJoinPool::runWorker @ 29 (72 bytes)
 Event: 127.313 Thread 0x000001eac57ca2f0 nmethod 31700% 0x000001eab06d7f90 code [0x000001eab06d8160, 0x000001eab06d8598]
 

@@ -1,8 +1,9 @@
 package dev.yalan.live;
 
+import airfoundation.obfuscate.jnic.JNICInclude;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.heypixel.heypixelmod.events.api.EventManager;
+import tech.blinkfix.events.api.EventManager;
 import dev.yalan.live.events.EventLiveConnectionStatus;
 import dev.yalan.live.netty.LiveProto;
 import dev.yalan.live.netty.codec.FrameDecoder;
@@ -37,6 +38,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+@JNICInclude
 public class LiveClient {
     public static LiveClient INSTANCE;
     public static final Gson GSON = new GsonBuilder().create();
@@ -86,7 +88,6 @@ public class LiveClient {
             con.disconnect();
         }
     }
-
     public void connect() {
         if (isOpen() || isConnecting.get()) {
             return;
@@ -98,6 +99,7 @@ public class LiveClient {
                 .channel(NioSocketChannel.class)
                 .group(workerGroup)
                 .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) {
@@ -179,7 +181,6 @@ public class LiveClient {
     public EventManager getEventManager() {
         return eventManager;
     }
-
     private static String generateHardwareId() throws Exception {
         final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         final SystemInfo systemInfo = new SystemInfo();

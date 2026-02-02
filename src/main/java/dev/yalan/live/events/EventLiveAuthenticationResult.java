@@ -1,6 +1,6 @@
 package dev.yalan.live.events;
 
-import com.heypixel.heypixelmod.events.api.events.Event;
+import tech.blinkfix.events.api.events.Event;
 
 public class EventLiveAuthenticationResult implements Event {
     private final boolean isSuccess;

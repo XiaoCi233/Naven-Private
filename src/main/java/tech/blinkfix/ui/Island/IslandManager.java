@@ -5,7 +5,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ServerData;
-import dev.yalan.live.LiveClient;
 import tech.blinkfix.BlinkFix;
 import tech.blinkfix.utils.AnimationUtils;
 import tech.blinkfix.utils.RenderUtils;
@@ -86,7 +85,7 @@ public class IslandManager {
             // 如果有活动内容，使用活动内容的尺寸
             return new float[]{activeContent.getWidth(), activeContent.getHeight()};
         } else {
-            String username = LiveClient.INSTANCE.liveUser != null ? LiveClient.INSTANCE.liveUser.getName() : "Player";
+            String username ="Player";
             // 使用 FpsConfig 获取显示的 FPS（支持 Fake FPS）
             int actualFps = Integer.parseInt(StringUtils.split(mc.fpsString, " ")[0]);
             int displayedFps = FpsConfig.getDisplayedFps(actualFps);
@@ -166,7 +165,7 @@ public class IslandManager {
     }
 
     private void renderDefaultContent(GuiGraphics graphics, PoseStack stack) {
-        String username = LiveClient.INSTANCE.liveUser != null ? LiveClient.INSTANCE.liveUser.getName() : "Player";
+        String username = "Player";
         // 使用 FpsConfig 获取显示的 FPS（支持 Fake FPS）
         int actualFps = Integer.parseInt(StringUtils.split(mc.fpsString, " ")[0]);
         int displayedFps = FpsConfig.getDisplayedFps(actualFps);

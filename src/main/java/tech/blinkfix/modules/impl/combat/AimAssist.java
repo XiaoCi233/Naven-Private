@@ -195,10 +195,6 @@ public class AimAssist extends Module {
                   return false;
                } else if (FriendManager.isFriend(living)) {
                   return false;
-               } else if (entity instanceof Player && !ClientFriend.canAttack((Player) entity)) {
-                  return false;
-               } else if (entity instanceof Player && !IRCLevelProtection.canAttack((Player) entity)) {
-                  return false;
                } else if (living.isDeadOrDying() || living.getHealth() <= 0.0F) {
                   return false;
                } else if (entity instanceof ArmorStand) {

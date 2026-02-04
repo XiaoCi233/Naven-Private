@@ -31,8 +31,6 @@ public class CommandManager {
 //      this.registerCommand(new CommandLanguage());
       this.registerCommand(new CommandProxy());
        this.registerCommand(new CommandSetName());
-       this.registerCommand(new CommandChat());
-       this.registerCommand(new CommandLiveOperation());
    }
 
    private void registerCommand(Command command) {

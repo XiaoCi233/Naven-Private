@@ -38,9 +38,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import dev.yalan.live.LiveClient;
-import dev.yalan.live.LiveComponent;
-import dev.yalan.live.LiveUser;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -338,7 +335,6 @@ public class NameTags extends Module {
                living.setHealth(20.0F);
             }
 
-            LiveUser liveUser = LiveClient.INSTANCE.getLiveUserMap().get(living.getUUID());
             Vector2f position = entry.getValue();
             float scale = this.scale.getCurrentValue();
             double height = Fonts.harmony.getHeight(true, (double)scale);
@@ -348,9 +344,6 @@ public class NameTags extends Module {
                // Normal 模式渲染逻辑
                String text = "";
 
-               if (liveUser != null) {
-                   text = text + LiveComponent.getLiveUserDisplayName(liveUser) + " ";
-               }
 
                if (Teams.isSameTeam(living)) {
                   text = text + "§aTeam§f | ";
@@ -397,13 +390,7 @@ public class NameTags extends Module {
                
                // 准备所有胶囊数据
                List<CapsuleData> capsules = new ArrayList<>();
-               
-               // 1. LiveUser 前缀（如果存在）
-               if (liveUser != null) {
-                  String liveUserText = LiveComponent.getLiveUserDisplayName(liveUser);
-                  float liveUserWidth = Fonts.harmony.getWidth(liveUserText, (double)scale);
-                  capsules.add(new CapsuleData(liveUserText, liveUserWidth));
-               }
+
                
                // 2. Team状态（如果是队友）
                if (Teams.isSameTeam(living)) {
@@ -482,13 +469,13 @@ public class NameTags extends Module {
                Fonts.harmony.setAlpha(1.0F);
             } else if (this.style.getCurrentMode().equals("New")) {
                // New 模式 (DistanceNameTag) - 显示距离的 NameTag
-               renderNewStyle(e, living, position, scale, height, liveUser, hp, color1, color2);
+               renderNewStyle(e, living, position, scale, height, hp, color1, color2);
             } else if (this.style.getCurrentMode().equals("South")) {
                // South 模式 (TestNameTag) - 简洁测试样式
-               renderSouthStyle(e, living, position, scale, height, liveUser, hp, color1, color2);
+               renderSouthStyle(e, living, position, scale, height, hp, color1, color2);
             } else if (this.style.getCurrentMode().equals("MCP")) {
                // MCP 模式 (RoundNameTag) - 圆角样式
-               renderMCPStyle(e, living, position, scale, height, liveUser, hp, color1, color2);
+               renderMCPStyle(e, living, position, scale, height,hp, color1, color2);
             }
             
             e.getStack().popPose();
@@ -549,7 +536,7 @@ public class NameTags extends Module {
     * 渲染 New 模式 (DistanceNameTag) - 显示距离的 NameTag
     */
    private void renderNewStyle(EventRender2D e, Player living, Vector2f position, float scale, double height, 
-                                LiveUser liveUser, float hp, int color1, int color2) {
+                                  float hp, int color1, int color2) {
       // 检查是否显示隐身玩家
       if (!this.invis.getCurrentValue() && living.isInvisible()) {
          return;
@@ -557,10 +544,7 @@ public class NameTags extends Module {
       
       // 构建文本
       StringBuilder textBuilder = new StringBuilder();
-      
-      if (liveUser != null) {
-         textBuilder.append(LiveComponent.getLiveUserDisplayName(liveUser)).append(" ");
-      }
+
       
       if (Teams.isSameTeam(living)) {
          textBuilder.append("§aTeam§f | ");
@@ -640,7 +624,7 @@ public class NameTags extends Module {
     * 渲染 South 模式 (TestNameTag) - 简洁测试样式
     */
    private void renderSouthStyle(EventRender2D e, Player living, Vector2f position, float scale, double height,
-                                 LiveUser liveUser, float hp, int color1, int color2) {
+                                float hp, int color1, int color2) {
       // 检查是否显示隐身玩家
       if (!this.invis.getCurrentValue() && living.isInvisible()) {
          return;
@@ -706,7 +690,7 @@ public class NameTags extends Module {
     * 渲染 MCP 模式 (RoundNameTag) - 圆角样式
     */
    private void renderMCPStyle(EventRender2D e, Player living, Vector2f position, float scale, double height,
-                               LiveUser liveUser, float hp, int color1, int color2) {
+                                float hp, int color1, int color2) {
       // 检查是否显示隐身玩家
       if (!this.invis.getCurrentValue() && living.isInvisible()) {
          return;
@@ -715,9 +699,7 @@ public class NameTags extends Module {
       // 构建文本
       StringBuilder textBuilder = new StringBuilder();
       
-      if (liveUser != null) {
-         textBuilder.append(LiveComponent.getLiveUserDisplayName(liveUser)).append(" ");
-      }
+
       
       if (Teams.isSameTeam(living)) {
          textBuilder.append("§aTeam§f | ");

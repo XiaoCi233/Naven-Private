@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.realmsclient.client.RealmsClient;
-import dev.yalan.live.gui.LiveAuthenticationScreen;
+//import dev.yalan.live.gui.LiveAuthenticationScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
@@ -51,10 +51,10 @@ public abstract class MixinMinecraft {
      * @author Yalan
      * @reason Force to authentication
      */
-    @Overwrite
-    private void setInitialScreen(RealmsClient p_279285_, ReloadInstance p_279164_, GameConfig.QuickPlayData p_279146_) {
-        setScreen(new LiveAuthenticationScreen());
-    }
+//    @Overwrite
+//    private void setInitialScreen(RealmsClient p_279285_, ReloadInstance p_279164_, GameConfig.QuickPlayData p_279146_) {
+//        setScreen(new LiveAuthenticationScreen());
+//    }
 
     @Inject(
             method = {"<init>"},

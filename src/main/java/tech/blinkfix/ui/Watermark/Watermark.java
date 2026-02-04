@@ -9,7 +9,6 @@ import tech.blinkfix.utils.renderer.Fonts;
 import tech.blinkfix.utils.renderer.text.CustomTextRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.yalan.live.LiveUtils;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.lang3.StringUtils;
@@ -109,7 +108,7 @@ public class Watermark {
             CustomTextRenderer font = Fonts.opensans;
             Minecraft mc = Minecraft.getInstance();
             String clientName = "BlinkFix-NextGen";
-            String username = LiveUtils.getCurrentUsername();
+            String username = "LiveUtils.getCurrentUsername();";
             int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
             String otherInfo = username + " | " + displayedFps + " FPS | " + format.format(new Date());
 
@@ -188,7 +187,7 @@ public class Watermark {
 
         String clientName = "BlinkFix-NextGen";
         String separator = " | ";
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String otherInfo = username + " | " + displayedFps + " FPS | " + format.format(new Date());
         String fullText = clientName + separator + otherInfo;
@@ -241,7 +240,7 @@ public class Watermark {
 
         String clientName = "BlinkFix-NextGen";
         String separator = " [";
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String otherInfo = username + "] [" + displayedFps + " FPS] [" + format.format(new Date()) + "]";
 
@@ -281,7 +280,7 @@ public class Watermark {
         CustomTextRenderer font = Fonts.opensans;
         Minecraft mc = Minecraft.getInstance();
         e.getStack().pushPose();
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String text = "BlinkFix | " + username + " | " + displayedFps + " FPS | " + format.format(new Date());
 
@@ -334,7 +333,7 @@ public class Watermark {
         CustomTextRenderer font = Fonts.opensans;
         Minecraft mc = Minecraft.getInstance();
         e.getStack().pushPose();
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String text = "BlinkFix | " + username + " | " + displayedFps + " FPS | " + format.format(new Date());
 
@@ -363,7 +362,7 @@ public class Watermark {
         CustomTextRenderer font = Fonts.opensans;
         Minecraft mc = Minecraft.getInstance();
         e.getStack().pushPose();
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         String clientName = "BlinkFix-NextGen";
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String otherInfo = username + " | " + displayedFps + " FPS | " + format.format(new Date());
@@ -395,37 +394,37 @@ public class Watermark {
         StencilUtils.dispose();
         e.getStack().popPose();
     }
-    
+
     /**
      * 渲染 "Client" 样式的Watermark（使用原始的渲染和动画逻辑）
      */
     private static void renderClient(EventRender2D e, float watermarkSize, boolean fakeFps, float fakeFpsSize) {
         CustomTextRenderer font = Fonts.opensans;
         Minecraft mc = Minecraft.getInstance();
-        
+
         int displayedFps = getDisplayedFps(mc, fakeFps, fakeFpsSize);
         String fpsText = "FPS:" + displayedFps;
         String clientName = "BlinkFix-NextGen";
-        
+
         // 第一步：先渲染客户端名称（作为背景层，会被动画覆盖）
         font.render(e.getStack(), clientName, 4, 3, Color.WHITE, true, (double)watermarkSize);
-        
+
         // 计算最大尺寸（使用客户端名称来计算宽度）
         float maxW = font.getWidth(clientName, (double)watermarkSize) + 10;
         float maxH = (float)(font.getHeight(true, (double)watermarkSize) + 2);
-        
+
         // 第二步：更新动画
         updateClientAnimation(maxW, maxH);
-        
+
         // 第三步：绘制动画背景（会覆盖客户端名称）
         RenderUtils.drawRoundedRect(e.getStack(), 1, 1, animW.value, animH.value, 2, new Color(28, 228, 228, 255).getRGB());
-        
+
         // 第四步：使用裁剪在动画区域内渲染FPS文本
         RenderUtils.scissorStart(1, 1, animW.value, animH.value);
         font.render(e.getStack(), fpsText, 4, 3, Color.WHITE, true, (double)(watermarkSize * 0.95));
         RenderUtils.scissorEnd();
     }
-    
+
     /**
      * 渲染 "Symmetry" 样式的Watermark（原 "Styles Alpha" 模式）
      */
@@ -433,7 +432,7 @@ public class Watermark {
         CustomTextRenderer font = Fonts.harmony;
         String clientName = "BlinkFix-NextGen";
         String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
-        String username = LiveUtils.getCurrentUsername();
+        String username = "LiveUtils.getCurrentUsername();";
         String rightInfo = username + " | " + time;
         
         // 计算宽度

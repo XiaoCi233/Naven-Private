@@ -1,214 +1,143 @@
-[022月2026 13:51:00.635] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, MOD_DEV, --assetIndex, 5, --assetsDir, C:\Users\BanCN\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.6, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mixin.config, BlinkFix-NextGeneration.mixins.json]
-[022月2026 13:51:00.643] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
-[022月2026 13:51:00.718] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
-[022月2026 13:51:00.803] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
-[022月2026 13:51:00.922] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
-[022月2026 13:51:00.979] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/BanCN/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
-[022月2026 13:51:01.014] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2 GL version 4.6.0 NVIDIA 591.86, NVIDIA Corporation
-[022月2026 13:51:01.179] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.6\9e86bf67e222253576e982856d9958695725adb5\javafmllanguage-1.20.1-47.4.6.jar is missing mods.toml file
-[022月2026 13:51:01.180] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.6\56100545804adc991cc48ab68b86ba46c5873246\lowcodelanguage-1.20.1-47.4.6.jar is missing mods.toml file
-[022月2026 13:51:01.182] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.6\fd228d7d879a9da774eda022ea3092cedb5178f1\mclanguage-1.20.1-47.4.6.jar is missing mods.toml file
-[022月2026 13:51:01.184] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.6\cefc55ada370ce2f23f92834530eb967c0de1fdd\fmlcore-1.20.1-47.4.6.jar is missing mods.toml file
-[022月2026 13:51:01.233] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
-[022月2026 13:51:02.101] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
-[022月2026 13:51:02.102] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, C:\Users\BanCN\.gradle\caches\forge_gradle\assets, --assetIndex, 5]
-[022月2026 13:51:02.174] [main/WARN] [mixin/]: Reference map 'BlinkFix-NextGeneration.refmap.json' for BlinkFix-NextGeneration.mixins.json could not be read. If this is a development environment you can ignore this message
-[022月2026 13:51:04.712] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 188 Datafixer optimizations took 63 milliseconds
-[022月2026 13:51:05.750] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/BanCN/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.6_mapped_official_1.20.1/forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[022月2026 13:51:05.750] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/BanCN/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.6_mapped_official_1.20.1/forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[022月2026 13:51:05.767] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
-[022月2026 13:51:05.772] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Dev
-[022月2026 13:51:05.842] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.1 build 7
-[022月2026 13:51:06.051] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.6, for MC 1.20.1 with MCP 20230612.114412
-[022月2026 13:51:06.053] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.6 Initialized
-[022月2026 13:51:06.646] [Render thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [BlinkFix-NextGeneration]
-[022月2026 13:51:06.731] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources
-[022月2026 13:51:06.829] [Worker-Main-6/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.0.06.hex, loading
-[022月2026 13:51:06.832] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
-[022月2026 13:51:06.866] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font opensans in 8ms
-[022月2026 13:51:07.781] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font harmony in 898ms
-[022月2026 13:51:07.782] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font icon in 0ms
-[022月2026 13:51:07.790] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font youyuan in 1ms
-[022月2026 13:51:07.792] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font test in 1ms
-[022月2026 13:51:07.794] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font tenacity in 2ms
-[022月2026 13:51:07.898] [Render thread/INFO] [tech.blinkfix.files.impl.NameProtectFile/]: Loaded custom name: 塞西莉亚宝宝
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Hide in ArrayList (Only Arrylistmode New):false!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value M:null:Mode:0!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value F:null:Collision Range:10.0!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value F:null:Collision Boost Test:0.08!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:AutoJump:true!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value M:null:Jump Mode:0!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Only On Ground:true!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Blink Check:true!
-[022月2026 13:51:07.902] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Water Check:true!
-[022月2026 13:51:08.238] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.6 Target: 47.4.10
-[022月2026 13:51:08.636] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
-[022月2026 13:51:08.637] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
-[022月2026 13:51:08.748] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on 扬声器 (Realtek(R) Audio)
-[022月2026 13:51:08.748] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
-[022月2026 13:51:08.809] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
-[022月2026 13:51:08.815] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
-[022月2026 13:51:08.815] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
-[022月2026 13:51:08.815] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
-[022月2026 13:51:08.816] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
-[022月2026 13:51:08.817] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
-[022月2026 13:51:08.818] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
-[022月2026 13:51:08.818] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
-[022月2026 13:51:08.818] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
-[022月2026 13:51:08.967] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
-[022月2026 13:51:08.995] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
-[022月2026 13:51:08.996] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
-[022月2026 13:51:08.997] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
-[022月2026 13:51:10.459] [Realms Notification Availability checker #1/INFO] [com.mojang.realmsclient.client.RealmsClient/]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
-[022月2026 13:51:15.619] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources
-[022月2026 13:51:15.622] [Worker-Main-10/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.0.06.hex, loading
-[022月2026 13:51:16.081] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
-[022月2026 13:51:16.081] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
-[022月2026 13:51:16.141] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on 扬声器 (Realtek(R) Audio)
-[022月2026 13:51:16.141] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
-[022月2026 13:51:16.191] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
-[022月2026 13:51:16.193] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
-[022月2026 13:51:16.194] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
-[022月2026 13:51:16.194] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
-[022月2026 13:51:16.194] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
-[022月2026 13:51:16.195] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
-[022月2026 13:51:16.196] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
-[022月2026 13:51:16.196] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
-[022月2026 13:51:16.196] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
-[022月2026 13:51:16.210] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
-[022月2026 13:51:16.228] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
-[022月2026 13:51:16.229] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
-[022月2026 13:51:16.229] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
-[022月2026 13:51:22.298] [Render thread/ERROR] [net.minecraftforge.eventbus.EventBus/EVENTBUS]: Exception caught during firing event: Cannot invoke "dev.yalan.live.LiveClient.sendPacket(dev.yalan.live.netty.LiveProto$LivePacket)" because "dev.yalan.live.LiveClient.INSTANCE" is null
-	Index: 1
-	Listeners:
-		0: NORMAL
-		1: ASM: tech.blinkfix.utils.EventWrapper@582ca1e2 onPlayerLoggingOut(Lnet/minecraftforge/client/event/ClientPlayerNetworkEvent$LoggingOut;)V
-java.lang.NullPointerException: Cannot invoke "dev.yalan.live.LiveClient.sendPacket(dev.yalan.live.netty.LiveProto$LivePacket)" because "dev.yalan.live.LiveClient.INSTANCE" is null
-	at TRANSFORMER/blinkfix@1.0.0/tech.blinkfix.utils.EventWrapper.onPlayerLoggingOut(EventWrapper.java:62)
-	at TRANSFORMER/blinkfix@1.0.0/tech.blinkfix.utils.__EventWrapper_onPlayerLoggingOut_LoggingOut.invoke(.dynamic)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.ASMEventHandler.invoke(ASMEventHandler.java:73)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:315)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:296)
-	at TRANSFORMER/forge@47.4.6/net.minecraftforge.client.ForgeHooksClient.firePlayerLogout(ForgeHooksClient.java:945)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.clearLevel(Minecraft.java:2107)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.clearLevel(Minecraft.java:2089)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.screens.ConnectScreen.startConnecting(ConnectScreen.java:63)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.join(JoinMultiplayerScreen.java:263)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.joinSelectedServer(JoinMultiplayerScreen.java:254)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.screens.multiplayer.ServerSelectionList$OnlineServerEntry.mouseClicked(ServerSelectionList.java:440)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.components.AbstractSelectionList.mouseClicked(AbstractSelectionList.java:298)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.components.events.ContainerEventHandler.mouseClicked(ContainerEventHandler.java:38)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.MouseHandler.lambda$onPress$0(MouseHandler.java:92)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.gui.screens.Screen.wrapScreenError(Screen.java:437)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.MouseHandler.onPress(MouseHandler.java:89)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.MouseHandler.lambda$setup$4(MouseHandler.java:189)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.util.thread.BlockableEventLoop.execute(BlockableEventLoop.java:102)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.MouseHandler.lambda$setup$5(MouseHandler.java:188)
-	at MC-BOOTSTRAP/org.lwjgl.glfw@3.3.1+7/org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43)
-	at MC-BOOTSTRAP/org.lwjgl@3.3.1+7/org.lwjgl.system.JNI.invokeV(Native Method)
-	at MC-BOOTSTRAP/org.lwjgl.glfw@3.3.1+7/org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3474)
-	at TRANSFORMER/minecraft@1.20.1/com.mojang.blaze3d.systems.RenderSystem.limitDisplayFPS(RenderSystem.java:237)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.runTick(Minecraft.java:1173)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.run(Minecraft.java:718)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.main.Main.main(Main.java:218)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:111)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.clientService(CommonLaunchHandler.java:99)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler.devService(ForgeClientUserdevLaunchHandler.java:19)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonDevLaunchHandler.lambda$makeService$7(CommonDevLaunchHandler.java:135)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.Launcher.run(Launcher.java:108)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.Launcher.main(Launcher.java:78)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23)
-	at cpw.mods.bootstraplauncher@1.1.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:141)
-
-[022月2026 13:51:22.450] [Render thread/ERROR] [net.minecraftforge.eventbus.EventBus/EVENTBUS]: Exception caught during firing event: Cannot invoke "dev.yalan.live.LiveClient.sendPacket(dev.yalan.live.netty.LiveProto$LivePacket)" because "dev.yalan.live.LiveClient.INSTANCE" is null
-	Index: 1
-	Listeners:
-		0: NORMAL
-		1: ASM: tech.blinkfix.utils.EventWrapper@582ca1e2 onPlayerLoggingOut(Lnet/minecraftforge/client/event/ClientPlayerNetworkEvent$LoggingOut;)V
-java.lang.NullPointerException: Cannot invoke "dev.yalan.live.LiveClient.sendPacket(dev.yalan.live.netty.LiveProto$LivePacket)" because "dev.yalan.live.LiveClient.INSTANCE" is null
-	at TRANSFORMER/blinkfix@1.0.0/tech.blinkfix.utils.EventWrapper.onPlayerLoggingOut(EventWrapper.java:62)
-	at TRANSFORMER/blinkfix@1.0.0/tech.blinkfix.utils.__EventWrapper_onPlayerLoggingOut_LoggingOut.invoke(.dynamic)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.ASMEventHandler.invoke(ASMEventHandler.java:73)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:315)
-	at MC-BOOTSTRAP/net.minecraftforge.eventbus/net.minecraftforge.eventbus.EventBus.post(EventBus.java:296)
-	at TRANSFORMER/forge@47.4.6/net.minecraftforge.client.ForgeHooksClient.firePlayerLogout(ForgeHooksClient.java:945)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.clearLevel(Minecraft.java:2107)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.emergencySave(Minecraft.java:1312)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.Minecraft.run(Minecraft.java:736)
-	at TRANSFORMER/minecraft@1.20.1/net.minecraft.client.main.Main.main(Main.java:218)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:111)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonLaunchHandler.clientService(CommonLaunchHandler.java:99)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler.devService(ForgeClientUserdevLaunchHandler.java:19)
-	at MC-BOOTSTRAP/fmlloader@1.20.1-47.4.6/net.minecraftforge.fml.loading.targets.CommonDevLaunchHandler.lambda$makeService$7(CommonDevLaunchHandler.java:135)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.Launcher.run(Launcher.java:108)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.Launcher.main(Launcher.java:78)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26)
-	at MC-BOOTSTRAP/cpw.mods.modlauncher@10.0.9/cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23)
-	at cpw.mods.bootstraplauncher@1.1.2/cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:141)
-
-[022月2026 13:51:22.501] [Render thread/ERROR] [net.minecraft.client.Minecraft/FATAL]: Reported exception thrown!
-net.minecraft.ReportedException: mouseClicked event handler
-	at net.minecraft.client.gui.screens.Screen.wrapScreenError(Screen.java:444) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.MouseHandler.onPress(MouseHandler.java:89) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$setup$4(MouseHandler.java:189) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.util.thread.BlockableEventLoop.execute(BlockableEventLoop.java:102) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$setup$5(MouseHandler.java:188) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43) ~[lwjgl-glfw-3.3.1.jar:build 7]
-	at org.lwjgl.system.JNI.invokeV(Native Method) ~[lwjgl-3.3.1.jar:build 7]
-	at org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3474) ~[lwjgl-glfw-3.3.1.jar:build 7]
-	at com.mojang.blaze3d.systems.RenderSystem.limitDisplayFPS(RenderSystem.java:237) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1173) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.Minecraft.run(Minecraft.java:718) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.main.Main.main(Main.java:218) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
-	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
-	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
-	at java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
-	at net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:111) ~[fmlloader-1.20.1-47.4.6.jar:?]
-	at net.minecraftforge.fml.loading.targets.CommonLaunchHandler.clientService(CommonLaunchHandler.java:99) ~[fmlloader-1.20.1-47.4.6.jar:?]
-	at net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler.devService(ForgeClientUserdevLaunchHandler.java:19) ~[fmlloader-1.20.1-47.4.6.jar:?]
-	at net.minecraftforge.fml.loading.targets.CommonDevLaunchHandler.lambda$makeService$7(CommonDevLaunchHandler.java:135) ~[fmlloader-1.20.1-47.4.6.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.Launcher.run(Launcher.java:108) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.Launcher.main(Launcher.java:78) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:141) ~[bootstraplauncher-1.1.2.jar:?]
-Caused by: java.lang.NullPointerException: Cannot invoke "dev.yalan.live.LiveClient.sendPacket(dev.yalan.live.netty.LiveProto$LivePacket)" because "dev.yalan.live.LiveClient.INSTANCE" is null
-	at tech.blinkfix.utils.EventWrapper.onPlayerLoggingOut(EventWrapper.java:62) ~[%23196!/:?]
-	at tech.blinkfix.utils.__EventWrapper_onPlayerLoggingOut_LoggingOut.invoke(.dynamic) ~[%23196!/:?]
-	at net.minecraftforge.eventbus.ASMEventHandler.invoke(ASMEventHandler.java:73) ~[eventbus-6.0.5.jar:?]
-	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:315) ~[eventbus-6.0.5.jar:?]
-	at net.minecraftforge.eventbus.EventBus.post(EventBus.java:296) ~[eventbus-6.0.5.jar:?]
-	at net.minecraftforge.client.ForgeHooksClient.firePlayerLogout(ForgeHooksClient.java:945) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.Minecraft.clearLevel(Minecraft.java:2107) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.Minecraft.clearLevel(Minecraft.java:2089) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.screens.ConnectScreen.startConnecting(ConnectScreen.java:63) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.join(JoinMultiplayerScreen.java:263) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen.joinSelectedServer(JoinMultiplayerScreen.java:254) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.screens.multiplayer.ServerSelectionList$OnlineServerEntry.mouseClicked(ServerSelectionList.java:440) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.components.AbstractSelectionList.mouseClicked(AbstractSelectionList.java:298) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.components.events.ContainerEventHandler.mouseClicked(ContainerEventHandler.java:38) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$onPress$0(MouseHandler.java:92) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	at net.minecraft.client.gui.screens.Screen.wrapScreenError(Screen.java:437) ~[forge-1.20.1-47.4.6_mapped_official_1.20.1.jar:?]
-	... 27 more
-[022月2026 13:51:22.542] [Render thread/FATAL] [net.minecraftforge.common.ForgeMod/]: Preparing crash report with UUID d120554d-8df6-4f79-874e-16f9bd39e44e
-[022月2026 13:51:22.548] [Render thread/FATAL] [net.minecraftforge.common.ForgeMod/]: Preparing crash report with UUID 1fff847e-c5d0-44f3-9452-d83cb2851cd9
+[042月2026 15:44:54.396] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, MOD_DEV, --assetIndex, 5, --assetsDir, C:\Users\BanCN\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.6, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mixin.config, BlinkFix-NextGeneration.mixins.json]
+[042月2026 15:44:54.405] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.12 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[042月2026 15:44:54.483] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[042月2026 15:44:54.638] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[042月2026 15:44:54.866] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
+[042月2026 15:44:54.939] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/BanCN/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
+[042月2026 15:44:55.017] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce RTX 4060 Laptop GPU/PCIe/SSE2 GL version 4.6.0 NVIDIA 591.86, NVIDIA Corporation
+[042月2026 15:44:55.209] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.6\9e86bf67e222253576e982856d9958695725adb5\javafmllanguage-1.20.1-47.4.6.jar is missing mods.toml file
+[042月2026 15:44:55.211] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.6\56100545804adc991cc48ab68b86ba46c5873246\lowcodelanguage-1.20.1-47.4.6.jar is missing mods.toml file
+[042月2026 15:44:55.213] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.6\fd228d7d879a9da774eda022ea3092cedb5178f1\mclanguage-1.20.1-47.4.6.jar is missing mods.toml file
+[042月2026 15:44:55.216] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\BanCN\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.6\cefc55ada370ce2f23f92834530eb967c0de1fdd\fmlcore-1.20.1-47.4.6.jar is missing mods.toml file
+[042月2026 15:44:55.279] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[042月2026 15:44:56.241] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[042月2026 15:44:56.245] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, C:\Users\BanCN\.gradle\caches\forge_gradle\assets, --assetIndex, 5]
+[042月2026 15:44:56.323] [main/WARN] [mixin/]: Reference map 'BlinkFix-NextGeneration.refmap.json' for BlinkFix-NextGeneration.mixins.json could not be read. If this is a development environment you can ignore this message
+[042月2026 15:44:59.376] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 188 Datafixer optimizations took 83 milliseconds
+[042月2026 15:45:00.553] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/BanCN/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.6_mapped_official_1.20.1/forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/assets/.mcassetsroot' uses unexpected schema
+[042月2026 15:45:00.554] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/BanCN/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.6_mapped_official_1.20.1/forge-1.20.1-47.4.6_mapped_official_1.20.1.jar%23191!/data/.mcassetsroot' uses unexpected schema
+[042月2026 15:45:00.568] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[042月2026 15:45:00.574] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Dev
+[042月2026 15:45:00.640] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.1 build 7
+[042月2026 15:45:00.904] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.6, for MC 1.20.1 with MCP 20230612.114412
+[042月2026 15:45:00.906] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.6 Initialized
+[042月2026 15:45:01.545] [Render thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [BlinkFix-NextGeneration]
+[042月2026 15:45:01.647] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources
+[042月2026 15:45:01.742] [Worker-Main-9/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.0.06.hex, loading
+[042月2026 15:45:01.751] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[042月2026 15:45:01.793] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font opensans in 10ms
+[042月2026 15:45:02.849] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font harmony in 1032ms
+[042月2026 15:45:02.850] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font icon in 0ms
+[042月2026 15:45:02.867] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font youyuan in 2ms
+[042月2026 15:45:02.869] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font test in 1ms
+[042月2026 15:45:02.872] [Render thread/INFO] [tech.blinkfix.utils.renderer.text.CustomTextRenderer/]: Loaded font tenacity in 2ms
+[042月2026 15:45:02.974] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file nameprotect.cfg!
+[042月2026 15:45:02.975] [Render thread/INFO] [tech.blinkfix.files.impl.NameProtectFile/]: Loaded custom name: 塞西莉亚宝宝
+[042月2026 15:45:02.975] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file killsays.cfg!
+[042月2026 15:45:02.976] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file spammers.cfg!
+[042月2026 15:45:02.977] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file modules.cfg!
+[042月2026 15:45:02.979] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file values.cfg!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Hide in ArrayList (Only Arrylistmode New):false!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value M:null:Mode:0!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value F:null:Collision Range:10.0!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value F:null:Collision Boost Test:0.08!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:AutoJump:true!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value M:null:Jump Mode:0!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Only On Ground:true!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Blink Check:true!
+[042月2026 15:45:02.983] [Render thread/ERROR] [tech.blinkfix.files.impl.ValueFile/]: Failed to read value B:null:Water Check:true!
+[042月2026 15:45:02.985] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file clickgui.cfg!
+[042月2026 15:45:02.987] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file proxy.cfg!
+[042月2026 15:45:02.988] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Created file friend.cfg!
+[042月2026 15:45:03.686] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.6 Target: 47.4.10
+[042月2026 15:45:03.874] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
+[042月2026 15:45:03.874] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[042月2026 15:45:04.064] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on 扬声器 (Realtek(R) Audio)
+[042月2026 15:45:04.064] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[042月2026 15:45:04.175] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[042月2026 15:45:04.185] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[042月2026 15:45:04.186] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[042月2026 15:45:04.187] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[042月2026 15:45:04.189] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[042月2026 15:45:04.196] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[042月2026 15:45:04.198] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[042月2026 15:45:04.199] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[042月2026 15:45:04.199] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[042月2026 15:45:04.519] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[042月2026 15:45:04.559] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[042月2026 15:45:04.560] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[042月2026 15:45:04.560] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[042月2026 15:45:05.498] [Realms Notification Availability checker #1/INFO] [com.mojang.realmsclient.client.RealmsClient/]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[042月2026 15:45:08.981] [Render thread/INFO] [net.minecraftforge.registries.GameData/REGISTRIES]: Injecting existing registry data into this CLIENT instance
+[042月2026 15:45:10.098] [Render thread/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 7 recipes
+[042月2026 15:45:10.158] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 1271 advancements
+[042月2026 15:45:10.417] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.20.1
+[042月2026 15:45:10.417] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[042月2026 15:45:10.615] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[042月2026 15:45:11.577] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: 准备生成区域中：0%
+[042月2026 15:45:11.577] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: 准备生成区域中：0%
+[042月2026 15:45:11.631] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: 准备生成区域中：0%
+[042月2026 15:45:12.128] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: 准备生成区域中：83%
+[042月2026 15:45:12.221] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[042月2026 15:45:12.235] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 1608 ms
+[042月2026 15:45:12.328] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing view distance to 6, from 10
+[042月2026 15:45:12.329] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 10, from 0
+[042月2026 15:45:12.447] [Render thread/WARN] [io.netty.util.internal.SystemPropertyUtil/]: Unable to parse the boolean system property 'java.net.preferIPv6Addresses':system - using the default value: false
+[042月2026 15:45:12.983] [Netty Local Client IO #0/INFO] [net.minecraftforge.network.NetworkHooks/]: Connected to a modded server.
+[042月2026 15:45:13.017] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Dev[local:E:276260e5] logged in with entity id 99 at (11.108176726036044, -60.0, 16.84168319296212)
+[042月2026 15:45:13.068] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev加入了游戏
+[042月2026 15:45:13.311] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 68 advancements
+[042月2026 15:45:21.399] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Bound clickgui to U.
+[042月2026 15:45:21.406] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:45:21.722] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:45:21.728] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:45:21.735] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:45:21.736] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:45:31.026] [Render thread/WARN] [net.minecraft.client.renderer.EffectInstance/]: Shader motion_blur could not find uniform named InSize in the specified shader program.
+[042月2026 15:45:55.996] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:45:59.573] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:45:59.576] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:45:59.579] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:45:59.580] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:07.260] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:46:12.672] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:46:12.676] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:46:12.679] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:46:12.679] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:20.409] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:46:24.523] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:46:24.528] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:46:24.531] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:46:24.532] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:27.064] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:46:31.672] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:46:31.675] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:46:31.678] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:46:31.679] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:33.485] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!
+[042月2026 15:46:37.446] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 3
+[042月2026 15:46:37.498] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 2
+[042月2026 15:46:37.545] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 1
+[042月2026 15:46:39.096] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 3
+[042月2026 15:46:39.146] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 2
+[042月2026 15:46:39.196] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] BlinkFix  >>>  Self Rescue: 1
+[042月2026 15:46:40.373] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[042月2026 15:46:40.377] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:46:40.379] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:46:40.380] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:40.952] [Render thread/WARN] [net.minecraft.client.renderer.EffectInstance/]: Shader motion_blur could not find uniform named InSize in the specified shader program.
+[042月2026 15:46:41.484] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Stopping!
+[042月2026 15:46:41.526] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Dev lost connection: 连接中断
+[042月2026 15:46:41.526] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev退出了游戏
+[042月2026 15:46:41.531] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Stopping singleplayer server as player logged out
+[042月2026 15:46:41.573] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[042月2026 15:46:41.573] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[042月2026 15:46:41.573] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[042月2026 15:46:41.675] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[042月2026 15:46:41.739] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[042月2026 15:46:41.740] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[042月2026 15:46:41.750] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (New World): All chunks are saved
+[042月2026 15:46:41.750] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[042月2026 15:46:41.750] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[042月2026 15:46:41.750] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[042月2026 15:46:41.983] [Render thread/INFO] [tech.blinkfix.files.FileManager/]: Saved all files!

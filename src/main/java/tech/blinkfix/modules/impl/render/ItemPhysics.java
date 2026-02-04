@@ -8,8 +8,6 @@ import tech.blinkfix.ui.notification.Notification;
 import tech.blinkfix.ui.notification.NotificationLevel;
 import tech.blinkfix.values.ValueBuilder;
 import tech.blinkfix.values.impl.FloatValue;
-import dev.yalan.live.LiveClient;
-import dev.yalan.live.LiveUser;
 
 @ModuleInfo(
         name = "ItemPhysics",
@@ -44,6 +42,7 @@ public class ItemPhysics extends Module {
     public float getHeightOffset() {
         return 0.0f;
     }
+
     public boolean handleEvents() {
         if (this.isEnabled()) {
             Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
@@ -56,24 +55,5 @@ public class ItemPhysics extends Module {
 
     @Override
     public void onEnable() {
-        if (!hasPermission()) {
-            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
-            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
-            this.setEnabled(false);
-        }
-    }
-
-    public boolean hasPermission() {
-        try {
-            LiveClient client = LiveClient.INSTANCE;
-            if (client == null || client.liveUser == null) {
-                return false;
-            }
-            LiveUser user = client.liveUser;
-            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                    user.getLevel() == LiveUser.Level.BETA;
-        } catch (Throwable ignored) {
-            return false;
-        }
     }
 }

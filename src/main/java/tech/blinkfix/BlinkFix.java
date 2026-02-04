@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import dev.yalan.live.LiveClient;
 import net.minecraftforge.common.MinecraftForge;
 
 public class BlinkFix {
@@ -138,7 +137,6 @@ public class BlinkFix {
 
     @EventTarget
     public void onShutdown(EventShutdown e) {
-        LiveClient.INSTANCE.shutdown();
         this.fileManager.save();
         LogUtils.close();
     }

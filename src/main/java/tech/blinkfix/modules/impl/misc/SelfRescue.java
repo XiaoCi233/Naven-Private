@@ -17,8 +17,6 @@ import tech.blinkfix.utils.TimeHelper;
 import tech.blinkfix.values.ValueBuilder;
 import tech.blinkfix.values.impl.BooleanValue;
 import tech.blinkfix.values.impl.FloatValue;
-import dev.yalan.live.LiveClient;
-import dev.yalan.live.LiveUser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
@@ -33,7 +31,7 @@ import java.util.Random;
         description = "Automatically throws ender pearl when falling into void",
         category = Category.MISC
 )
-public class SelfRescue extends Module implements PermissionGatedModule {
+public class SelfRescue extends Module  {
     private final Minecraft mc = Minecraft.getInstance();
     public FloatValue fallDistValue = ValueBuilder.create(this, "Fall Distance")
             .setDefaultFloatValue(3.0F)
@@ -96,13 +94,6 @@ public class SelfRescue extends Module implements PermissionGatedModule {
     public void onMotion(EventMotion event) {
         if (mc.player == null) return;
 
-        // Permission gate: only Administrator level or rank §eBeta can use this module
-        if (!hasPermission()) {
-            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
-            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
-            this.setEnabled(false);
-            return;
-        }
 
         if (onlyVoidValue.getCurrentValue() && !isAboveVoid()) {
             return;
@@ -220,21 +211,6 @@ public class SelfRescue extends Module implements PermissionGatedModule {
         scaffoldManuallyDisabled = false;
 
         super.onDisable();
-    }
-
-    @Override
-    public boolean hasPermission() {
-        try {
-            LiveClient client = LiveClient.INSTANCE;
-            if (client == null || client.liveUser == null) {
-                return false;
-            }
-            LiveUser user = client.liveUser;
-            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                    user.getLevel() == LiveUser.Level.BETA;
-        } catch (Throwable ignored) {
-            return false;
-        }
     }
 
     private int findEnderPearlSlot() {

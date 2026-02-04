@@ -4,8 +4,6 @@ import tech.blinkfix.BlinkFix;
 import tech.blinkfix.events.impl.EventAttackSlowdown;
 import tech.blinkfix.events.impl.EventAttackYaw;
 import tech.blinkfix.events.impl.EventStayingOnGroundSurface;
-import dev.yalan.live.LiveClient;
-import dev.yalan.live.netty.LiveProto;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -87,7 +85,6 @@ public abstract class MixinPlayer extends LivingEntity {
         if (!blinkfix_hasQueried || tickCount % 100 == 0) {
             blinkfix_hasQueried = true;
 
-            LiveClient.INSTANCE.sendPacket(LiveProto.createQueryMinecraftProfile(getUUID()));
         }
     }
 }

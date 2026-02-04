@@ -11,8 +11,6 @@ import tech.blinkfix.values.ValueBuilder;
 import tech.blinkfix.values.impl.BooleanValue;
 import tech.blinkfix.values.impl.FloatValue;
 import tech.blinkfix.values.impl.ModeValue;
-import dev.yalan.live.LiveClient;
-import dev.yalan.live.LiveUser;
 import tech.blinkfix.events.impl.EventRunTicks;
 import tech.blinkfix.events.impl.EventMoveInput;
 import tech.blinkfix.events.api.types.EventType;
@@ -27,7 +25,7 @@ import net.minecraft.world.phys.AABB;
         description = "Make you move speed faster",
         category = Category.MOVEMENT
 )
-public class Speed extends Module implements PermissionGatedModule {
+public class Speed extends Module  {
     private static final float DEFAULT_TICK_SPEED = 1.0F;
     private static final float SPEED_TICK_MULTIPLIER = 1.004f;
     private static final float FRICTION_MULTIPLIER = 1.002F;
@@ -95,12 +93,6 @@ public class Speed extends Module implements PermissionGatedModule {
 
     @Override
     public void onEnable() {
-        if (!hasPermission()) {
-            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
-            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
-            this.setEnabled(false);
-            return;
-        }
         super.onEnable();
         customTickSpeed = DEFAULT_TICK_SPEED;
         if (mc.player != null) {
@@ -153,12 +145,6 @@ public class Speed extends Module implements PermissionGatedModule {
     public void onRunTicks(EventRunTicks event) {
         if (!isEnabled() || event.getType() != EventType.PRE)
             return;
-        if (!hasPermission()) {
-            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
-            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
-            this.setEnabled(false);
-            return;
-        }
         if (shouldDisableSpeed()) {
             updateBPS();
             this.setSuffix(String.format("%.2f (Disabled)", currentBPS));
@@ -258,12 +244,6 @@ public class Speed extends Module implements PermissionGatedModule {
     public void onMoveInput(EventMoveInput event) {
         if (!isEnabled())
             return;
-        if (!hasPermission()) {
-            Notification notification = new Notification(NotificationLevel.INFO, "You not Admin or Beta.", 3000L);
-            BlinkFix.getInstance().getNotificationManager().addNotification(notification);
-            this.setEnabled(false);
-            return;
-        }
         if (shouldDisableSpeed()) {
             return;
         }
@@ -286,18 +266,4 @@ public class Speed extends Module implements PermissionGatedModule {
         event.setStrafe(strafe);
     }
 
-    @Override
-    public boolean hasPermission() {
-        try {
-            LiveClient client = LiveClient.INSTANCE;
-            if (client == null || client.liveUser == null) {
-                return false;
-            }
-            LiveUser user = client.liveUser;
-            return user.getLevel() == LiveUser.Level.ADMINISTRATOR ||
-                    user.getLevel() == LiveUser.Level.BETA;
-        } catch (Throwable ignored) {
-            return false;
-        }
-    }
 }

@@ -2,11 +2,14 @@ package tech.blinkfix.utils;
 
 public class TimerUtils {
     private long lastTime;
+    private long lastMs = 0L;
 
     public TimerUtils() {
         this.reset();
     }
-
+    public boolean delay(long nextDelay) {
+        return System.currentTimeMillis() - lastMs >= nextDelay;
+    }
     public void reset() {
         this.lastTime = System.currentTimeMillis();
     }

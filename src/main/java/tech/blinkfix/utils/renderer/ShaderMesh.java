@@ -1,5 +1,7 @@
 package tech.blinkfix.utils.renderer;
 
+import tech.blinkfix.utils.shader.Shader;
+
 public class ShaderMesh extends Mesh {
    private final Shader shader;
 

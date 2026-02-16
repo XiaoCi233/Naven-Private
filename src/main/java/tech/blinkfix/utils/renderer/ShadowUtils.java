@@ -10,6 +10,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
+import tech.blinkfix.utils.shader.Framebuffer;
+import tech.blinkfix.utils.shader.PostProcessRenderer;
+import tech.blinkfix.utils.shader.Shader;
 
 /**
  * 优化的 Bloom/Shadow 渲染工具类
@@ -174,20 +177,20 @@ public class ShadowUtils {
          blurShader.set("u_Radius", (double)blurRadius);
          blurShader.set("u_Intensity", (double)intensity);
          
-         PostProcessRenderer.beginRender(e.getStack());
+         PostProcessRenderer.beginRender();
 
          // 第一次模糊：水平方向（mainRenderBuffer -> blurBuffer）
          blurBuffer.bind();
          GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
          GL.bindTexture(mainRenderBuffer.texture);
          blurShader.set("u_Direction", 1.0, 0.0);
-         PostProcessRenderer.render(e.getStack());
+         PostProcessRenderer.render();
          
          // 第二次模糊：垂直方向（blurBuffer -> 屏幕）
          blurBuffer.unbind();
          GL.bindTexture(blurBuffer.texture);
          blurShader.set("u_Direction", 0.0, 1.0);
-         PostProcessRenderer.render(e.getStack());
+         PostProcessRenderer.render();
 
          PostProcessRenderer.endRender();
          GL.disableBlend();
@@ -214,12 +217,12 @@ public class ShadowUtils {
          blurShader.set("u_Radius", (double)blurRadius);
          blurShader.set("u_Intensity", (double)intensity);
          
-         PostProcessRenderer.beginRender(e.getStack());
+         PostProcessRenderer.beginRender();
          
          // 直接使用缓存的模糊结果
          GL.bindTexture(blurBuffer.texture);
          blurShader.set("u_Direction", 0.0, 1.0);
-         PostProcessRenderer.render(e.getStack());
+         PostProcessRenderer.render();
          
          PostProcessRenderer.endRender();
          GL.disableBlend();

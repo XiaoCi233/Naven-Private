@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
+import tech.blinkfix.utils.shader.Shader;
 
 public class Mesh {
    private static final Minecraft mc = Minecraft.getInstance();

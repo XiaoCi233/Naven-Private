@@ -7,7 +7,7 @@ modId="blinkfix" #mandatory
 version="1.0.0" #mandatory
 displayName="BlinkFix HWID Protected Mod" #mandatory
 authors="BlinkFix" #optional
-description='''blinkfix客户端'''
+description='''blinkfix客户�?'''
 
 [[dependencies."blinkfix"]] #optional
 modId="forge"

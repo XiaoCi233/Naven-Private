@@ -7,9 +7,11 @@ import tech.blinkfix.events.impl.EventShader;
 import tech.blinkfix.utils.StencilUtils;
 import tech.blinkfix.utils.TimeHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.ints.IntDoubleImmutablePair;
 import net.minecraft.client.Minecraft;
+import tech.blinkfix.utils.shader.Framebuffer;
+import tech.blinkfix.utils.shader.PostProcessRenderer;
+import tech.blinkfix.utils.shader.Shader;
 
 public class BlurUtils {
    private static Shader shaderDown;
@@ -58,20 +60,20 @@ public class BlurUtils {
       int iterations = strength.leftInt();
       double offset = strength.rightDouble();
       if (blurTimer.delay((double)(1000.0F / fps))) {
-         PostProcessRenderer.beginRender(e.getStack());
-         renderToFbo(e.getStack(), fbos[0], Minecraft.getInstance().getMainRenderTarget().getColorTextureId(), shaderDown, offset);
+         PostProcessRenderer.beginRender();
+         renderToFbo(fbos[0], Minecraft.getInstance().getMainRenderTarget().getColorTextureId(), shaderDown, offset);
 
          for (int ix = 0; ix < iterations; ix++) {
-            renderToFbo(e.getStack(), fbos[ix + 1], fbos[ix].texture, shaderDown, offset);
+            renderToFbo(fbos[ix + 1], fbos[ix].texture, shaderDown, offset);
          }
 
          for (int ix = iterations; ix >= 1; ix--) {
-            renderToFbo(e.getStack(), fbos[ix - 1], fbos[ix].texture, shaderUp, offset);
+            renderToFbo(fbos[ix - 1], fbos[ix].texture, shaderUp, offset);
          }
 
          Minecraft.getInstance().getMainRenderTarget().bindWrite(true);
          blurTimer.reset();
-         PostProcessRenderer.render(e.getStack());
+         PostProcessRenderer.render();
          PostProcessRenderer.endRender();
       }
 
@@ -80,11 +82,11 @@ public class BlurUtils {
       shaderUp.set("uTexture", 0);
       shaderUp.set("uHalfTexelSize", 0.5 / (double)fbos[1].width, 0.5 / (double)fbos[1].height);
       shaderUp.set("uOffset", offset);
-      PostProcessRenderer.render(e.getStack());
+      PostProcessRenderer.render();
       StencilUtils.dispose();
    }
 
-   private static void renderToFbo(PoseStack stack, Framebuffer targetFbo, int sourceText, Shader shader, double offset) {
+   private static void renderToFbo(Framebuffer targetFbo, int sourceText, Shader shader, double offset) {
       targetFbo.bind();
       targetFbo.setViewport();
       shader.bind();
@@ -92,6 +94,6 @@ public class BlurUtils {
       shader.set("uTexture", 0);
       shader.set("uHalfTexelSize", 0.5 / (double)targetFbo.width, 0.5 / (double)targetFbo.height);
       shader.set("uOffset", offset);
-      PostProcessRenderer.render(stack);
+      PostProcessRenderer.render();
    }
 }

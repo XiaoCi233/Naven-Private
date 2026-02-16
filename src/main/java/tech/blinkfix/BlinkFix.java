@@ -19,7 +19,7 @@ import tech.blinkfix.utils.NetworkUtils;
 import tech.blinkfix.utils.ServerUtils;
 import tech.blinkfix.utils.TickTimeHelper;
 import tech.blinkfix.utils.renderer.Fonts;
-import tech.blinkfix.utils.renderer.PostProcessRenderer;
+import tech.blinkfix.utils.shader.PostProcessRenderer;
 import tech.blinkfix.utils.renderer.Shaders;
 import tech.blinkfix.utils.rotation.RotationManager;
 import tech.blinkfix.values.HasValueManager;

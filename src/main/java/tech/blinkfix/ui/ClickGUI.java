@@ -1,671 +1,1012 @@
 package tech.blinkfix.ui;
 
 import tech.blinkfix.BlinkFix;
-import tech.blinkfix.events.api.EventTarget;
-import tech.blinkfix.events.impl.EventShader;
 import tech.blinkfix.modules.Category;
 import tech.blinkfix.modules.Module;
-import tech.blinkfix.utils.Colors;
-import tech.blinkfix.utils.FontIcons;
-import tech.blinkfix.utils.MathUtils;
-import tech.blinkfix.utils.RenderUtils;
 import tech.blinkfix.utils.SmoothAnimationTimer;
-import tech.blinkfix.utils.StencilUtils;
-import tech.blinkfix.utils.StringUtils;
-import tech.blinkfix.utils.TimeHelper;
-import tech.blinkfix.utils.renderer.Fonts;
-import tech.blinkfix.utils.renderer.text.CustomTextRenderer;
+import tech.blinkfix.utils.skia.Skia;
+import tech.blinkfix.utils.skia.context.SkiaContext;
+import tech.blinkfix.utils.skia.font.Fonts;
+import tech.blinkfix.utils.skia.font.Icon;
 import tech.blinkfix.values.Value;
-import tech.blinkfix.values.ValueType;
 import tech.blinkfix.values.impl.BooleanValue;
 import tech.blinkfix.values.impl.FloatValue;
 import tech.blinkfix.values.impl.ModeValue;
-import com.mojang.blaze3d.vertex.PoseStack;
+import tech.blinkfix.values.impl.StringValue;
+import io.github.humbleui.skija.Font;
+import io.github.humbleui.types.Rect;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 
 public class ClickGUI extends Screen {
-    private static final Minecraft mc = Minecraft.getInstance();
-    public static float windowX = 100.0F;
-    public static float windowY = 100.0F;
-    public static float windowWidth = 400.0F;
-    public static float windowHeight = 250.0F;
-    Category selectedCategory = null;
-    Module selectedModule = null;
-    int[] dragMousePosition = new int[]{-1, -1};
-    boolean hoveringBack = false;
-    SmoothAnimationTimer widthAnimation = new SmoothAnimationTimer(100.0F);
-    SmoothAnimationTimer heightAnimation = new SmoothAnimationTimer(140.0F);
-    SmoothAnimationTimer titleAnimation = new SmoothAnimationTimer(100.0F);
-    SmoothAnimationTimer titleHoverAnimation = new SmoothAnimationTimer(0.0F);
-    SmoothAnimationTimer categoryMotionY = new SmoothAnimationTimer(0.0F);
-    SmoothAnimationTimer popupAnimation = new SmoothAnimationTimer(0.0F); // 弹出动画
-    SmoothAnimationTimer moduleValuesMotionY = new SmoothAnimationTimer(0.0F);
-    HashMap<Category, SmoothAnimationTimer> categoryXAnimation = new HashMap<>()  {
-        {
-            for (Category value : Category.values()) {
-                this.put(value, new SmoothAnimationTimer(0.0F));
-            }
 
-        }
-    };
-    HashMap<Category, SmoothAnimationTimer> categoryYAnimation = new HashMap<>() {
-        {
-            for (Category value : Category.values()) {
-                this.put(value, new SmoothAnimationTimer(0.0F));
-            }
+    // ==================== Theme Colors ====================
+    private static final Color BG_COLOR = new Color(0, 12, 24);
+    private static final Color SIDEBAR_COLOR = new Color(8, 18, 34);
+    private static final Color ACCENT = new Color(0, 187, 255);
+    private static final Color ACCENT_DIM = new Color(0, 100, 160);
+    private static final Color LINE_COLOR = new Color(19, 28, 41);
+    private static final Color TEXT_WHITE = new Color(255, 255, 255);
+    private static final Color TEXT_GRAY = new Color(140, 150, 165);
+    private static final Color MODULE_BG = new Color(14, 22, 36);
+    private static final Color MODULE_HOVER = new Color(18, 28, 44);
+    private static final Color TOGGLE_ON_BG = new Color(0, 187, 255);
+    private static final Color TOGGLE_OFF_BG = new Color(35, 45, 60);
+    private static final Color SLIDER_TRACK = new Color(30, 40, 55);
+    private static final Color DROPDOWN_BG = new Color(10, 18, 30);
+    private static final Color OVERLAY_BG = new Color(0, 0, 0, 120);
+    private static final Color TOPBAR_COLOR = new Color(11, 16, 23);
+    private static final Color MODULE_OUTLINE = new Color(7, 27, 47);
+    private static final Color SETTING_LINE = new Color(4, 24, 51);
 
-        }
-    };
-    HashMap<Category, List<Module>> modules = new HashMap<>() {
-        {
-            for (Category value : Category.values()) {
-                this.put(value, BlinkFix.getInstance().getModuleManager().getModulesByCategory(value));
-            }
+    // ==================== Layout Constants ====================
+    private static final float PANEL_W = 560; // Widened for dual columns
+    private static final float PANEL_H = 420;
+    private static final float SIDEBAR_W = 136;
+    private static final float TOPBAR_H = 44;
+    private static final float CAT_ITEM_H = 38;
+    private static final float MODULE_H = 32;
+    private static final float SETTING_H = 24;
+    private static final float SLIDER_H = 30;
+    private static final float PAD = 10;
+    private static final float COLUMN_GAP = 10;
+    private static final float RADIUS = 8;
 
+    // ==================== Category Icon Map ====================
+    private static final Map<Category, String> CAT_ICONS = new LinkedHashMap<>() {
+        {
+            put(Category.COMBAT, Icons.COMBAT);
+            put(Category.MOVEMENT, Icons.MOVEMENT);
+            put(Category.RENDER, Icons.RENDER);
+            put(Category.MISC, Icons.MISC);
         }
     };
-    HashMap<Module, SmoothAnimationTimer> modulesAnimation = new HashMap<>() {
-        {
-            for (Module value : BlinkFix.getInstance().getModuleManager().getModules()) {
-                this.put(value, new SmoothAnimationTimer(0.0F, 255.0F));
-            }
 
-        }
-    };
-    HashMap<Module, SmoothAnimationTimer> modulesToggleAnimation = new HashMap<>() {
-        {
-            for (Module value : BlinkFix.getInstance().getModuleManager().getModules()) {
-                this.put(value, new SmoothAnimationTimer(0.0F));
-            }
+    private static class Icons {
+        static final String SEARCH = "\ue8b6";
+        static final String SETTINGS = "\ue8b8";
+        static final String VISIBILITY = "\ue8f4";
+        static final String EXPAND_MORE = "\ue5cf";
+        static final String EXPAND_LESS = "\ue5ce";
+        static final String COMBAT = "\uea48"; // sports_mma or similar
+        static final String MOVEMENT = "\ue566"; // directions_run
+        static final String RENDER = "\ue8f4"; // visibility
+        static final String MISC = "\ue8b8"; // settings
+        static final String CATEGORY = "\ue5d2"; // menu
+    }
 
-        }
-    };
-    HashMap<Value, SmoothAnimationTimer> valuesAnimation = new HashMap<>() {
-        {
-            for (Value value : BlinkFix.getInstance().getValueManager().getValues()) {
-                this.put(value, new SmoothAnimationTimer(0.0F));
-            }
-        }
-    };
-    String titleDisplayName = "";
-    float finalModuleHeight;
-    float finalValueHeight;
-    boolean clickReturnModules = false;
-    boolean clickReturnCategories = false;
-    boolean clickOpenCategoryModules = false;
-    boolean clickResizeWindow = false;
-    boolean clickDragWindow = false;
-    Category hoveringCategory = null;
-    Module hoveringModule = null;
-    Module bindingModule = null;
-    SmoothAnimationTimer moduleSwapAnimation = new SmoothAnimationTimer(0.0F);
-    SmoothAnimationTimer bindingAnimation = new SmoothAnimationTimer(0.0F);
-    List<Module> categoryModules;
-    List<Value> renderValues;
-    BooleanValue hoveringBooleanValue;
-    FloatValue hoveringFloatValue;
-    FloatValue draggingFloatValue;
-    ModeValue hoveringModeValue;
-    int targetModeValueIndex;
-    String bindingModuleName;
+    // ==================== State ====================
+    public static float savedPanelX = -1, savedPanelY = -1;
+    private float panelX = 100, panelY = 50;
+    private Category selectedCategory = Category.COMBAT;
+    private Module bindingModule = null;
+    private boolean dragging = false;
+    private float dragOX, dragOY;
+    private float scroll = 0, maxScroll = 0;
+    private float scrollYVelocity = 0;
     private boolean mouseDown = false;
-    private float minCatY = 0.0F;
-    private final SmoothAnimationTimer moduleAlphaAnimation = new SmoothAnimationTimer(0.0F);
-    private final TimeHelper moduleAlphaTimer = new TimeHelper();
-    private float minValueY = 0.0F;
-    private final SmoothAnimationTimer valuesAlphaAnimation = new SmoothAnimationTimer(0.0F);
-    private final TimeHelper valuesAlphaTimer = new TimeHelper();
+    private FloatValue draggingSlider = null;
+    private ModeValue openedMode = null;
+    private StringValue editingString = null;
+    private final Set<Module> expanded = new HashSet<>();
 
+    // Search
+    private boolean searching = false;
+    private String searchString = "";
+    private final SmoothAnimationTimer searchAnim = new SmoothAnimationTimer(1.0F, 0.0F);
+
+    // ==================== Animations ====================
+    private final SmoothAnimationTimer popupAnim = new SmoothAnimationTimer(100.0F, 0.0F);
+    private final Map<Category, SmoothAnimationTimer> catAnims = new LinkedHashMap<>();
+    private final Map<Module, SmoothAnimationTimer> toggleAnims = new HashMap<>(); // toggle switch pos
+    private final Map<Module, SmoothAnimationTimer> expandAnims = new HashMap<>(); // height expansion
+    private final Map<Module, SmoothAnimationTimer> alphaAnims = new HashMap<>(); // module alpha
+    private final Map<Value, SmoothAnimationTimer> boolAnims = new HashMap<>();
+    private final Map<FloatValue, SmoothAnimationTimer> sliderAnims = new HashMap<>(); // slider dot size
+
+    // ==================== Module Cache ====================
+    private final List<Module> leftModules = new ArrayList<>();
+    private final List<Module> rightModules = new ArrayList<>();
+    private String hoveredTooltip = null;
+
+    // ==================== Constructor ====================
     public ClickGUI() {
         super(Component.nullToEmpty("BlinkFix"));
+        for (Category cat : Category.values()) {
+            catAnims.put(cat, new SmoothAnimationTimer(100.0F, 0.0F));
+        }
+        updateModuleLists();
+    }
+
+    // ==================== Lifecycle ====================
+    @Override
+    protected void init() {
+        BlinkFix.getInstance().getEventManager().register(this);
+        popupAnim.value = 0;
+        if (savedPanelX < 0 || savedPanelY < 0) {
+            panelX = (width - PANEL_W) / 2;
+            panelY = (height - PANEL_H) / 2;
+        } else {
+            panelX = savedPanelX;
+            panelY = savedPanelY;
+        }
+        searching = false;
+        searchString = "";
+        updateModuleLists();
     }
 
     @Override
     public void onClose() {
+        savedPanelX = panelX;
+        savedPanelY = panelY;
         BlinkFix.getInstance().getFileManager().save();
         BlinkFix.getInstance().getEventManager().unregister(this);
         super.onClose();
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (mouseButton == 0) {
-            this.mouseDown = true;
-        }
+    public boolean isPauseScreen() {
+        return false;
+    }
 
-        if (this.bindingModule == null || mouseButton != 3 && mouseButton != 4) {
-            if (mouseButton != 2 && this.bindingModule == null) {
-                if (this.hoveringModule != null) {
-                    if (mouseButton == 0) {
-                        this.hoveringModule.toggle();
-                    } else if (mouseButton == 1) {
-                        this.selectedModule = this.hoveringModule;
-                        this.renderValues = BlinkFix.getInstance().getValueManager().getValuesByHasValue(this.hoveringModule);
-                        this.moduleValuesMotionY.target = this.moduleValuesMotionY.value = 0.0F;
-                    }
-                }
+    private void updateModuleLists() {
+        leftModules.clear();
+        rightModules.clear();
+        List<Module> all;
 
-                if (mouseButton == 0) {
-                    if (this.hoveringBack && !this.clickResizeWindow && !this.clickDragWindow) {
-                        this.selectedCategory = null;
-                        this.selectedModule = null;
-                        this.renderValues = null;
-                    }
-
-                    if (this.clickOpenCategoryModules && this.hoveringCategory != null) {
-                        this.selectedCategory = this.hoveringCategory;
-                        this.categoryMotionY.value = this.categoryMotionY.target = 0.0F;
-                        this.moduleSwapAnimation.value = 5.0F;
-                        this.moduleSwapAnimation.target = 255.0F;
-                        this.clickOpenCategoryModules = false;
-                    }
-
-                    boolean doDragWindow = this.selectedCategory != null ? RenderUtils.isHovering((int) mouseX, (int) mouseY, windowX, windowY, windowX + windowWidth, windowY + 25.0F) : RenderUtils.isHovering((int) mouseX, (int) mouseY, windowX, windowY, windowX + 100.0F, windowY + 40.0F);
-                    if ((this.selectedCategory == null || !this.hoveringBack) && doDragWindow) {
-                        this.SetDragPosition(mouseX, mouseY);
-                        this.clickDragWindow = true;
-                    }
-
-                    if (RenderUtils.isHovering((int) mouseX, (int) mouseY, windowX + windowWidth - 10.0F, windowY + windowHeight - 10.0F, windowX + windowWidth, windowY + windowHeight)) {
-                        this.SetDragPosition(mouseX, mouseY);
-                        this.clickResizeWindow = true;
-                    }
-
-                    if (this.hoveringBooleanValue != null) {
-                        this.hoveringBooleanValue.setCurrentValue(!this.hoveringBooleanValue.getCurrentValue());
-                    }
-
-                    if (this.hoveringFloatValue != null) {
-                        this.draggingFloatValue = this.hoveringFloatValue;
-                    }
-
-                    if (this.hoveringModeValue != null) {
-                        this.hoveringModeValue.setCurrentValue(this.targetModeValueIndex);
-                        SmoothAnimationTimer animation = this.valuesAnimation.get(this.hoveringModeValue);
-                        animation.value = 0.0F;
-                        animation.target = 255.0F;
-                    }
-                }
-            } else if (mouseButton == 2 && this.hoveringModule != null) {
-                this.bindingModule = this.hoveringModule;
-            }
-
-            return true;
+        if (searching && !searchString.isEmpty()) {
+            String q = searchString.toLowerCase().replace(" ", "");
+            all = BlinkFix.getInstance().getModuleManager().getModules().stream()
+                    .filter(m -> m.getName().toLowerCase().replace(" ", "").contains(q))
+                    .sorted((m1, m2) -> Integer.compare(m2.getValues().size(), m1.getValues().size()))
+                    .collect(Collectors.toList());
         } else {
-            this.bindingModule.setKey(-mouseButton);
-            this.bindingModule = null;
-            return true;
-        }
-    }
-
-    @Override
-    public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
-        if (pButton == 0) {
-            this.mouseDown = false;
+            all = BlinkFix.getInstance().getModuleManager().getModulesByCategory(selectedCategory);
+            // Sort by settings count to balance columns somewhat
+            all.sort((m1, m2) -> Integer.compare(m2.getValues().size(), m1.getValues().size()));
         }
 
-        if (this.clickResizeWindow) {
-            this.clickResizeWindow = false;
-            this.SetDragPosition(-1, -1);
+        for (int i = 0; i < all.size(); i++) {
+            if (i % 2 == 0)
+                leftModules.add(all.get(i));
+            else
+                rightModules.add(all.get(i));
         }
 
-        if (this.clickDragWindow) {
-            this.clickDragWindow = false;
-            this.SetDragPosition(-1, -1);
-        }
-
-        if (this.draggingFloatValue != null) {
-            this.draggingFloatValue = null;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        if (this.bindingModule != null) {
-            if (pKeyCode == 256) {
-                this.bindingModule.setKey(0);
-                this.bindingModule = null;
-                return true;
+        // Init animations for new modules
+        for (Module m : all) {
+            toggleAnims.putIfAbsent(m, new SmoothAnimationTimer(1.0F, m.isEnabled() ? 1.0F : 0.0F));
+            expandAnims.putIfAbsent(m, new SmoothAnimationTimer(1.0F, expanded.contains(m) ? 1.0F : 0.0F));
+            alphaAnims.putIfAbsent(m, new SmoothAnimationTimer(1.0F, 0.0F));
+            for (Value v : m.getValues()) {
+                if (v instanceof BooleanValue)
+                    boolAnims.putIfAbsent(v,
+                            new SmoothAnimationTimer(1.0F, ((BooleanValue) v).getCurrentValue() ? 1.0F : 0.0F));
+                if (v instanceof FloatValue)
+                    sliderAnims.putIfAbsent((FloatValue) v, new SmoothAnimationTimer(6.0F, 0.0F)); // 0 to 6
             }
-
-            this.bindingModule.setKey(pKeyCode);
-            this.bindingModule = null;
         }
-
-        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
-    @Override
-    protected void init() {
-        BlinkFix.getInstance().getEventManager().register(this);
-        this.valuesAnimation.forEach((value, animation) -> {
-            if (value.getValueType() == ValueType.MODE) {
-                animation.value = 0.0F;
-                animation.target = 255.0F;
-            }
-        });
-        // 启动弹出动画
-        this.popupAnimation.value = 0.0F;
-        this.popupAnimation.target = 100.0F;
-        this.popupAnimation.speed = 0.6F; // 设置动画速度
-    }
-
-    @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double pDelta) {
-        if (this.bindingModule == null && RenderUtils.isHoveringBound((int) pMouseX, (int) pMouseY, windowX + 5.0F, windowY + 20.0F, 100.0F, windowHeight - 5.0F)) {
-            SmoothAnimationTimer var10000 = this.categoryMotionY;
-            var10000.target = (float) ((double) var10000.target + pDelta * (double) 15.0F);
-            this.moduleAlphaTimer.reset();
-        }
-
-        if (this.renderValues != null && this.bindingModule == null && RenderUtils.isHoveringBound((int) pMouseX, (int) pMouseY, windowX + 140.0F, windowY + 20.0F, windowWidth - 155.0F, windowHeight - 25.0F)) {
-            SmoothAnimationTimer var7 = this.moduleValuesMotionY;
-            var7.target = (float) ((double) var7.target + pDelta * (double) 15.0F);
-            this.valuesAlphaTimer.reset();
-        }
-
-        return true;
-    }
-
-    @EventTarget
-    public void onShader(EventShader e) {
-        if (mc.screen == this) {
-            RenderUtils.drawRoundedRect(e.getStack(), windowX, windowY, this.widthAnimation.value, this.heightAnimation.value, 5.0F, 1073741824);
-        }
-
-    }
-
+    // ==================== Render ====================
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float pPartialTick) {
-        PoseStack stack = g.pose();
-        this.hoveringModule = null;
-        this.clickReturnModules = this.clickReturnCategories = this.clickOpenCategoryModules = false;
-        CustomTextRenderer opensans = Fonts.opensans;
+        tickAnimations();
+        popupAnim.update(true);
+        float scale = popupAnim.value / 100.0F;
 
-        // 更新弹出动画
-        this.popupAnimation.update(true);
-
-        // 应用缩放变换
-        float popupScale = 0.5F + (this.popupAnimation.value / 100.0F) * 0.5F; // 从0.5倍缩放到1.0倍
-
-        // 计算GUI中心点
-        float centerX = windowX + this.widthAnimation.value / 2.0F;
-        float centerY = windowY + this.heightAnimation.value / 2.0F;
-
-        // 保存当前变换矩阵
-        stack.pushPose();
-
-        // 移动到中心点，应用缩放，再移回原位置
-        stack.translate(centerX, centerY, 0);
-        stack.scale(popupScale, popupScale, 1.0F);
-        stack.translate(-centerX, -centerY, 0);
-        if (this.selectedCategory == null) {
-            this.widthAnimation.target = 100.0F;
-            this.heightAnimation.target = 140.0F;
-        } else {
-            this.widthAnimation.target = windowWidth;
-            this.heightAnimation.target = windowHeight;
+        // Inertial scrolling
+        if (Math.abs(scrollYVelocity) > 0.1) {
+            scroll += scrollYVelocity;
+            scrollYVelocity *= 0.85f;
+            scroll = Math.min(0, Math.max(maxScroll, scroll));
         }
 
-        this.widthAnimation.update(true);
-        this.heightAnimation.update(true);
-        RenderUtils.drawRoundedRect(stack, windowX, windowY, this.widthAnimation.value, this.heightAnimation.value, 5.0F, Colors.getColor(0, 0, 0, 40));
+        hoveredTooltip = null;
 
-        for (Category value : Category.values()) {
-            SmoothAnimationTimer xAnimation = this.categoryXAnimation.get(value);
-            SmoothAnimationTimer yAnimation = this.categoryYAnimation.get(value);
-            if (this.selectedCategory == null) {
-                yAnimation.target = 255.0F;
-            } else {
-                yAnimation.target = 0.0F;
+        SkiaContext.draw(canvas -> {
+            Skia.drawRect(0, 0, width, height, OVERLAY_BG);
+            if (scale < 0.01F)
+                return;
+
+            float cx = panelX + PANEL_W / 2;
+            float cy = panelY + PANEL_H / 2;
+            Skia.save();
+            Skia.scale(cx, cy, scale);
+
+            // Panel Blur & Background
+            Skia.drawRoundedBlur(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
+            Skia.drawRoundedRect(panelX, panelY, PANEL_W, PANEL_H, RADIUS, BG_COLOR);
+            Skia.drawShadow(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
+            Skia.drawOutline(panelX, panelY, PANEL_W, PANEL_H, RADIUS, 1f, LINE_COLOR);
+
+            drawSidebar(mouseX, mouseY);
+            drawTopBar(mouseX, mouseY);
+            drawContent(mouseX, mouseY);
+
+            if (bindingModule != null)
+                drawBindOverlay();
+
+            // Tooltip
+            if (hoveredTooltip != null) {
+                drawTooltip(mouseX, mouseY, hoveredTooltip);
             }
 
-            xAnimation.update(true);
-            yAnimation.update(true);
-            float height = (float) (value.ordinal() * 25) * (yAnimation.value / 255.0F);
-            if (yAnimation.target >= 4.0F) {
-                opensans.setAlpha(yAnimation.value / 255.0F);
-                Fonts.icons.render(stack, value.getIcon(), windowX + 8.0F + xAnimation.value, windowY + 41.0F + height, Color.WHITE, true, 0.4);
-                opensans.render(stack, value.getDisplayName(), windowX + 25.0F + xAnimation.value, windowY + 40.0F + height, Color.WHITE, true, 0.4);
-                opensans.setAlpha(1.0F);
-            }
+            Skia.restore();
+        });
 
-            boolean hovering = RenderUtils.isHovering(mouseX, mouseY, windowX, windowY + 40.0F + height, windowX + 100.0F, windowY + 40.0F + height + 20.0F);
-            if (hovering) {
-                xAnimation.target = 5.0F;
-            } else {
-                xAnimation.target = 0.0F;
-            }
-
-            if (yAnimation.value >= 250.0F && hovering) {
-                this.hoveringCategory = value;
-                this.clickOpenCategoryModules = true;
-            }
+        if (dragging) {
+            panelX = mouseX - dragOX;
+            panelY = mouseY - dragOY;
         }
-
-        this.titleAnimation.update(true);
-        this.titleHoverAnimation.update(true);
-        if (this.titleAnimation.value > 5.0F) {
-            opensans.setAlpha(this.titleAnimation.value / 255.0F);
-            opensans.render(stack, this.titleDisplayName, windowX + 6.0F + this.titleHoverAnimation.value, windowY + 3.0F, Color.WHITE, true, 0.4);
+        if (draggingSlider != null && mouseDown) {
+            // Logic moved to drawSliderSetting to ensure coordinate context
         }
-
-        opensans.setAlpha((255.0F - this.titleAnimation.value) / 255.0F);
-        opensans.render(stack, "BlinkFix", windowX + 50.0F - opensans.getWidth("BlinkFix", 0.75F) / 2.0F, windowY + 5.0F, Color.WHITE, true, 0.75F);
-        opensans.setAlpha(1.0F);
-        if (this.selectedCategory != null) {
-            this.titleAnimation.target = 255.0F;
-            String var10001 = this.selectedCategory.getDisplayName();
-            this.titleDisplayName = "< " + var10001 + (this.selectedModule != null ? " / " + this.selectedModule.getName() + " - " + this.selectedModule.getDescription() : "");
-            this.hoveringBack = RenderUtils.isHovering(mouseX, mouseY, windowX + 8.0F, windowY + 5.0F, windowX + 5.0F + opensans.getWidth(this.titleDisplayName, 0.4), (float) ((double) (windowY + 5.0F) + opensans.getHeight(true, 0.4F)));
-            if (this.hoveringBack && !this.clickResizeWindow && !this.clickDragWindow) {
-                this.titleHoverAnimation.target = -2.0F;
-            } else {
-                this.titleHoverAnimation.target = 0.0F;
-            }
-
-            if (this.categoryMotionY.target < -this.finalModuleHeight) {
-                this.categoryMotionY.target = -this.finalModuleHeight;
-            }
-
-            if (this.categoryMotionY.target > 0.0F) {
-                this.categoryMotionY.target = 0.0F;
-            }
-
-            this.categoryMotionY.update(true);
-        } else {
-            this.titleAnimation.target = 4.0F;
-        }
-
-        StencilUtils.write(false);
-        RenderUtils.fill(stack, windowX, windowY + 20.0F, windowX + this.widthAnimation.value, windowY + this.heightAnimation.value - 5.0F, Integer.MIN_VALUE);
-        StencilUtils.erase(true);
-        List<Module> inList = this.modules.get(this.selectedCategory);
-        if (inList != null) {
-            this.categoryModules = inList;
-            this.moduleSwapAnimation.target = 255.0F;
-        } else {
-            this.moduleSwapAnimation.target = 5.0F;
-        }
-
-        this.moduleSwapAnimation.update(true);
-        if (inList == null && this.moduleSwapAnimation.value < 8.0F) {
-            this.categoryModules = null;
-        }
-
-        if (this.categoryModules != null) {
-            float renderModuleHeight = 0.0F;
-            this.minCatY = windowHeight - 25.0F;
-
-            for (Module categoryModule : this.categoryModules) {
-                boolean isHovering = RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 5.0F, windowY + 20.0F, 120.0F, windowHeight - 25.0F) && RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 5.0F, windowY + 20.0F + renderModuleHeight + this.categoryMotionY.value, 120.0F, 25.0F) && this.moduleSwapAnimation.value > 250.0F && this.bindingModule == null;
-                SmoothAnimationTimer moduleToggleAnimation = this.modulesToggleAnimation.get(categoryModule);
-                if (categoryModule.isEnabled()) {
-                    moduleToggleAnimation.target = this.moduleSwapAnimation.value;
-                } else {
-                    moduleToggleAnimation.target = 6.0F;
-                }
-
-                moduleToggleAnimation.update(true);
-                int alpha = (int) this.moduleSwapAnimation.value;
-                int enabledColor = Colors.getColor(54, 98, 236, (int) moduleToggleAnimation.value);
-                int disabledColor = Colors.getColor(25, 25, 25, alpha);
-                RenderUtils.drawRoundedRect(stack, windowX + 5.0F, windowY + 20.0F + renderModuleHeight + this.categoryMotionY.value, 120.0F, 25.0F, 5.0F, disabledColor);
-                RenderUtils.drawRoundedRect(stack, windowX + 5.0F, windowY + 20.0F + renderModuleHeight + this.categoryMotionY.value, 120.0F, 25.0F, 5.0F, enabledColor);
-                SmoothAnimationTimer moduleAnimation = this.modulesAnimation.get(categoryModule);
-                if (isHovering) {
-                    moduleAnimation.target = 150.0F;
-                    this.hoveringModule = categoryModule;
-                } else {
-                    moduleAnimation.target = 5.0F;
-                }
-
-                moduleAnimation.update(true);
-                int hoveringColor = Colors.getColor(255, 255, 255, (int) moduleAnimation.value / 3);
-                RenderUtils.drawRoundedRect(stack, windowX + 5.0F, windowY + 20.0F + renderModuleHeight + this.categoryMotionY.value, 120.0F, 25.0F, 5.0F, hoveringColor);
-                opensans.setAlpha((float) alpha / 255.0F);
-                opensans.render(stack, categoryModule.getName(), windowX + 13.0F, windowY + 25.0F + renderModuleHeight + this.categoryMotionY.value, Color.WHITE, true, 0.4);
-                opensans.setAlpha(1.0F);
-                renderModuleHeight += 30.0F;
-            }
-
-            this.finalModuleHeight = renderModuleHeight + 20.0F - windowHeight;
-            this.minCatY -= renderModuleHeight - 5.0F;
-            float totalHeight = this.finalModuleHeight + windowHeight;
-            if (totalHeight > windowHeight - 25.0F) {
-                this.moduleAlphaAnimation.update(true);
-                if (this.moduleAlphaTimer.delay(1000.0F)) {
-                    this.moduleAlphaAnimation.target = 0.0F;
-                } else {
-                    this.moduleAlphaAnimation.target = 255.0F;
-                }
-
-                float viewable = windowHeight - 25.0F;
-                float progress = (float) MathUtils.clamp(-this.categoryMotionY.value / -this.minCatY, 0.0F, 1.0F);
-                float ratio = viewable / totalHeight * viewable;
-                float barHeight = Math.max(ratio, 20.0F);
-                float position = progress * (viewable - barHeight);
-                RenderUtils.drawRoundedRect(stack, windowX + 127.0F, windowY + 20.0F + position, 3.0F, barHeight, 1.5F, RenderUtils.reAlpha(3630060, this.moduleAlphaAnimation.value / 255.0F));
-            }
-        }
-
-        if (this.renderValues != null) {
-            boolean isValueInBound = RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 140.0F, windowY + 20.0F, windowWidth - 155.0F, windowHeight - 25.0F);
-            float motion = this.moduleValuesMotionY.value;
-            if (this.moduleValuesMotionY.target < -this.finalValueHeight) {
-                this.moduleValuesMotionY.target = -this.finalValueHeight;
-            }
-
-            if (this.moduleValuesMotionY.target > 0.0F) {
-                this.moduleValuesMotionY.target = 0.0F;
-            }
-
-            this.moduleValuesMotionY.update(true);
-            float x = 0.0F;
-            float valueHeight = 0.0F;
-            this.minValueY = windowHeight - 25.0F;
-            this.hoveringBooleanValue = null;
-
-            for (Value value : this.renderValues) {
-                if (value.isVisible() && value.getValueType() == ValueType.BOOLEAN) {
-                    BooleanValue booleanValue = value.getBooleanValue();
-                    SmoothAnimationTimer animation = this.valuesAnimation.get(booleanValue);
-                    if (booleanValue.getCurrentValue()) {
-                        animation.target = 255.0F;
-                    } else {
-                        animation.target = 0.0F;
-                    }
-
-                    animation.update(true);
-                    float scale = 0.4F;
-                    CustomTextRenderer font = Fonts.opensans;
-                    int heightOffset = 0;
-                    if (StringUtils.containChinese(value.getName())) {
-                        font = Fonts.harmony;
-                        scale = 0.325F;
-                        heightOffset = 2;
-                    }
-
-                    float currentLength = font.getWidth(value.getName(), scale) + 23.0F;
-                    if (x + currentLength + 20.0F > windowWidth - 155.0F) {
-                        x = 0.0F;
-                        valueHeight += 20.0F;
-                    }
-
-                    if (isValueInBound && RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 130.0F + x, windowY + valueHeight + motion + 20.0F, currentLength, 13.0F)) {
-                        this.hoveringBooleanValue = booleanValue;
-                    }
-
-                    int enabledColor = Colors.getColor(54, 98, 236, (int) animation.value);
-                    RenderUtils.drawRoundedRect(stack, windowX + 140.0F + x, windowY + valueHeight + motion + 20.0F, 12.0F, 12.0F, 2.0F, Colors.getColor(0, 0, 0, 150));
-                    RenderUtils.drawRoundedRect(stack, windowX + 142.0F + x, windowY + valueHeight + motion + 22.0F, 8.0F, 8.0F, 2.0F, enabledColor);
-                    font.render(stack, value.getName(), windowX + 155.0F + x, windowY + valueHeight + motion + 19.0F + (float) heightOffset, Color.WHITE, true, scale);
-                    x += currentLength;
-                }
-            }
-
-            valueHeight += 10.0F;
-            this.hoveringFloatValue = null;
-
-            for (Value value : this.renderValues) {
-                if (value.isVisible() && value.getValueType() == ValueType.FLOAT) {
-                    FloatValue floatValue = value.getFloatValue();
-                    SmoothAnimationTimer animation = this.valuesAnimation.get(floatValue);
-                    if (isValueInBound && RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 140.0F, windowY + valueHeight + motion + 39.5F, windowWidth - 155.0F, 10.0F)) {
-                        this.hoveringFloatValue = floatValue;
-                    }
-
-                    opensans.render(stack, value.getName(), windowX + 140.0F, windowY + valueHeight + motion + 25.0F, Color.WHITE, true, 0.4);
-                    float var10000 = (float) Math.round(floatValue.getCurrentValue() * 100.0F) / 100.0F;
-                    String currentValue = var10000 + " / " + floatValue.getMaxValue();
-                    opensans.render(stack, currentValue, windowX + windowWidth - opensans.getWidth(currentValue, 0.4) - 15.0F, windowY + valueHeight + motion + 25.0F, Color.WHITE, true, 0.4);
-                    float stage = (floatValue.getCurrentValue() - floatValue.getMinValue()) / (floatValue.getMaxValue() - floatValue.getMinValue());
-                    int enabledColor = Colors.getColor(54, 98, 236, 255);
-                    RenderUtils.drawRoundedRect(stack, windowX + 140.0F, windowY + valueHeight + motion + 42.0F, windowWidth - 155.0F, 5.0F, 3.0F, Colors.getColor(0, 0, 0, 150));
-                    animation.target = (windowWidth - 155.0F) * stage;
-                    animation.update(true);
-                    RenderUtils.drawRoundedRect(stack, windowX + 140.0F, windowY + valueHeight + motion + 42.0F, animation.value, 5.0F, 3.0F, enabledColor);
-                    RenderUtils.drawRoundedRect(stack, windowX + 135.0F + animation.value, windowY + valueHeight + motion + 39.5F, 10.0F, 10.0F, 5.0F, Colors.getColor(255, 255, 255, 255));
-                    valueHeight += 25.0F;
-                }
-            }
-
-            this.hoveringModeValue = null;
-
-            for (Value value : this.renderValues) {
-                if (value.isVisible() && value.getValueType() == ValueType.MODE) {
-                    ModeValue modeValue = value.getModeValue();
-                    SmoothAnimationTimer animation = this.valuesAnimation.get(modeValue);
-                    animation.update(true);
-                    opensans.render(stack, value.getName(), windowX + 140.0F, windowY + valueHeight + motion + 25.0F, Color.WHITE, true, 0.4);
-                    x = 0.0F;
-                    valueHeight += 15.0F;
-
-                    for (int modeIndex = 0; modeIndex < modeValue.getValues().length; ++modeIndex) {
-                        String mode = modeValue.getValues()[modeIndex];
-                        float currentLength = opensans.getWidth(mode, 0.4) + 20.0F;
-                        if (x + currentLength + 20.0F > windowWidth - 155.0F) {
-                            x = 0.0F;
-                            valueHeight += 20.0F;
-                        }
-
-                        if (isValueInBound && RenderUtils.isHoveringBound(mouseX, mouseY, windowX + 140.0F + x, windowY + valueHeight + motion + 25.0F, currentLength, 13.0F)) {
-                            this.hoveringModeValue = modeValue;
-                            this.targetModeValueIndex = modeIndex;
-                        }
-
-                        int enabledColor = Colors.getColor(54, 98, 236, modeValue.isCurrentMode(mode) ? (int) animation.value : 10);
-                        RenderUtils.drawRoundedRect(stack, windowX + 140.0F + x, windowY + valueHeight + motion + 27.0F, 10.0F, 10.0F, 5.0F, Colors.getColor(0, 0, 0, 150));
-                        RenderUtils.drawRoundedRect(stack, windowX + 141.0F + x, windowY + valueHeight + motion + 28.0F, 8.0F, 8.0F, 5.0F, enabledColor);
-                        opensans.render(stack, mode, windowX + 152.0F + x, windowY + valueHeight + motion + 25.0F, Color.WHITE, true, 0.4);
-                        x += currentLength;
-                    }
-
-                    valueHeight += 20.0F;
-                }
-            }
-
-            this.finalValueHeight = valueHeight - windowHeight + 25.0F;
-            this.minValueY -= valueHeight;
-            float valTotalHeight = this.finalValueHeight + windowHeight;
-            if (valTotalHeight > windowHeight - 25.0F) {
-                this.valuesAlphaAnimation.update(true);
-                if (this.valuesAlphaTimer.delay(1000.0F)) {
-                    this.valuesAlphaAnimation.target = 0.0F;
-                } else {
-                    this.valuesAlphaAnimation.target = 255.0F;
-                }
-
-                float viewable = windowHeight - 25.0F;
-                float progress = (float) MathUtils.clamp(-this.moduleValuesMotionY.value / -this.minValueY, 0.0F, 1.0F);
-                float ratio = viewable / valTotalHeight * viewable;
-                float barHeight = Math.max(ratio, 20.0F);
-                float position = progress * (viewable - barHeight);
-                RenderUtils.drawRoundedRect(stack, windowX + windowWidth - 8.0F, windowY + 20.0F + position, 3.0F, barHeight, 1.5F, RenderUtils.reAlpha(3630060, this.valuesAlphaAnimation.value / 255.0F));
-            }
-        }
-
-        if (this.draggingFloatValue != null) {
-            float stage = ((float) mouseX - windowX - 140.0F) / (windowWidth - 160.0F);
-            float value = this.draggingFloatValue.getMinValue() + (this.draggingFloatValue.getMaxValue() - this.draggingFloatValue.getMinValue()) * stage;
-            if (value < this.draggingFloatValue.getMinValue()) {
-                value = this.draggingFloatValue.getMinValue();
-            }
-
-            if (value > this.draggingFloatValue.getMaxValue()) {
-                value = this.draggingFloatValue.getMaxValue();
-            }
-
-            value = (float) Math.round(value / this.draggingFloatValue.getStep()) * this.draggingFloatValue.getStep();
-            this.draggingFloatValue.setCurrentValue(value);
-        }
-
-        if (this.clickDragWindow && this.mouseDown) {
-            windowX += (float) (mouseX - this.dragMousePosition[0]);
-            windowY += (float) (mouseY - this.dragMousePosition[1]);
-            this.SetDragPosition(mouseX, mouseY);
-        }
-
-        if (this.categoryModules != null && !this.hoveringBack && this.clickResizeWindow && this.mouseDown) {
-            windowWidth += (float) (mouseX - this.dragMousePosition[0]);
-            windowHeight += (float) (mouseY - this.dragMousePosition[1]);
-            if (windowWidth < 500.0F) {
-                windowWidth = 500.0F;
-            }
-
-            if (windowHeight < 300.0F) {
-                windowHeight = 300.0F;
-            }
-
-            this.SetDragPosition(mouseX, mouseY);
-        }
-
-        if (this.bindingModule != null) {
-            this.bindingAnimation.target = 250.0F;
-            this.bindingModuleName = this.bindingModule.getName();
-        } else {
-            this.bindingAnimation.target = 5.0F;
-        }
-
-        this.bindingAnimation.update(true);
-        if (this.bindingAnimation.value > 6.0F) {
-            RenderUtils.fill(stack, windowX, windowY, windowX + this.widthAnimation.value, windowY + this.heightAnimation.value, Colors.getColor(0, 0, 0, (int) this.bindingAnimation.value / 2));
-            opensans.setAlpha(this.bindingAnimation.value / 255.0F);
-            String line1 = "Press a key to bind " + this.bindingModuleName;
-            String line2 = "(Press ESC to remove/cancel key bind)";
-            opensans.render(stack, line1, windowX + this.widthAnimation.value / 2.0F - opensans.getWidth(line1, 0.6) / 2.0F, (double) windowY + ((double) this.heightAnimation.value - opensans.getHeight(true, 0.6)) / (double) 2.0F - (double) 10.0F, Color.WHITE, true, 0.6);
-            opensans.render(stack, line2, windowX + this.widthAnimation.value / 2.0F - opensans.getWidth(line2, 0.4) / 2.0F, (double) windowY + ((double) this.heightAnimation.value - opensans.getHeight(true, 0.4)) / (double) 2.0F + (double) 15.0F, Color.WHITE, true, 0.4);
-            opensans.setAlpha(1.0F);
-        }
-
-        if (this.selectedCategory != null) {
-            Fonts.icons.setAlpha(0.5F);
-            Fonts.icons.render(stack, FontIcons.RESIZE, windowX + this.widthAnimation.value - 10.0F, windowY + this.heightAnimation.value - 10.0F, Color.WHITE, false, 0.3);
-            Fonts.icons.setAlpha(1.0F);
-        }
-
-        StencilUtils.dispose();
-
-        // 恢复变换矩阵
-        stack.popPose();
     }
 
-    public void SetDragPosition(double x, double y) {
-        this.SetDragPosition((int) x, (int) y);
+    private void tickAnimations() {
+        for (Category c : Category.values()) {
+            catAnims.get(c).update(c == selectedCategory);
+        }
+        searchAnim.update(searching);
+
+        List<Module> visibleModules = new ArrayList<>(leftModules);
+        visibleModules.addAll(rightModules);
+
+        for (Module m : visibleModules) {
+            SmoothAnimationTimer t = toggleAnims.get(m);
+            if (t != null)
+                t.update(m.isEnabled());
+
+            SmoothAnimationTimer e = expandAnims.get(m);
+            if (e != null)
+                e.update(expanded.contains(m));
+
+            SmoothAnimationTimer a = alphaAnims.get(m);
+            if (a != null)
+                a.update(true); // Fade in
+
+            for (Value v : m.getValues()) {
+                if (v instanceof BooleanValue) {
+                    SmoothAnimationTimer ba = boolAnims.get(v);
+                    if (ba != null)
+                        ba.update(((BooleanValue) v).getCurrentValue());
+                }
+            }
+        }
     }
 
-    public void SetDragPosition(int x, int y) {
-        this.dragMousePosition[0] = x;
-        this.dragMousePosition[1] = y;
+    // ==================== Sidebar ====================
+    private void drawSidebar(int mx, int my) {
+        float sx = panelX, sy = panelY;
+        Skia.save();
+        Skia.clip(sx, sy, SIDEBAR_W, PANEL_H, RADIUS, 0, 0, RADIUS);
+        Skia.drawRect(sx, sy, SIDEBAR_W, PANEL_H, SIDEBAR_COLOR);
+
+        // Logo
+        Font logo = Fonts.getMiSans(16);
+        Skia.drawText("BlinkFix", sx + 16, sy + 14, ACCENT, logo);
+        Skia.drawLine(sx + 12, sy + 42, sx + SIDEBAR_W - 12, sy + 42, 1, LINE_COLOR);
+
+        float iy = sy + 52;
+        Font catFont = Fonts.getMiSans(12);
+        Font iconFont = Fonts.getIconFill(18);
+
+        for (Category cat : Category.values()) {
+            float anim = catAnims.get(cat).value / 100.0F;
+            boolean hov = hover(mx, my, sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H);
+            boolean sel = cat == selectedCategory;
+
+            if (sel) {
+                Skia.drawRoundedRect(sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H, 6,
+                        new Color(0, 187, 255, AC((int) (30 * anim))));
+                Skia.drawRoundedRect(sx + 4, iy + 9, 3, CAT_ITEM_H - 18, 2, ACCENT);
+            } else if (hov) {
+                Skia.drawRoundedRect(sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H, 6,
+                        new Color(255, 255, 255, 10));
+            }
+
+            String icon = CAT_ICONS.getOrDefault(cat, Icons.CATEGORY);
+            Color ic = sel ? ACCENT : (hov ? TEXT_WHITE : TEXT_GRAY);
+            Color tc = sel ? TEXT_WHITE : (hov ? TEXT_WHITE : TEXT_GRAY);
+
+            Skia.drawText(icon, sx + 20, iy + (CAT_ITEM_H - 18) / 2, ic, iconFont);
+            Skia.drawText(cat.getDisplayName(), sx + 46, iy + (CAT_ITEM_H - 12) / 2, tc, catFont);
+            iy += CAT_ITEM_H;
+        }
+
+        // User info at bottom
+        float uiy = sy + PANEL_H - 42;
+        Skia.drawLine(sx + 8, uiy, sx + SIDEBAR_W - 8, uiy, 1, LINE_COLOR);
+        String userName = Minecraft.getInstance().getUser().getName();
+        Font userFont = Fonts.getMiSans(11);
+        Font subFont = Fonts.getMiSans(9);
+
+        Skia.drawCircle(sx + 22, uiy + 20, 12, ACCENT_DIM);
+        String initial = userName.substring(0, 1).toUpperCase();
+        float iw = Skia.getStringWidth(initial, userFont);
+        Skia.drawText(initial, sx + 22 - iw / 2, uiy + 15, TEXT_WHITE, userFont);
+        Skia.drawText(userName, sx + 38, uiy + 12, TEXT_WHITE, userFont);
+        Skia.drawText("Till: ", sx + 38, uiy + 24, TEXT_GRAY, subFont);
+        float tillW = Skia.getStringWidth("Till: ", subFont);
+        Skia.drawText("Lifetime", sx + 38 + tillW, uiy + 24, ACCENT, subFont);
+
+        Skia.restore();
+        Skia.drawLine(sx + SIDEBAR_W, sy, sx + SIDEBAR_W, sy + PANEL_H, 1, LINE_COLOR);
+    }
+
+    // ==================== Top Bar ====================
+    private void drawTopBar(int mx, int my) {
+        float tx = panelX + SIDEBAR_W, ty = panelY;
+        Skia.save();
+        Skia.clip(tx, ty, PANEL_W - SIDEBAR_W, TOPBAR_H, 0, RADIUS, 0, 0);
+        Skia.drawRect(tx, ty, PANEL_W - SIDEBAR_W, TOPBAR_H, TOPBAR_COLOR);
+        Skia.restore();
+
+        // Search Bar Area
+        float searchW = 160;
+        float searchX = panelX + PANEL_W - searchW - 14;
+        float searchY = ty + 10;
+        float searchH = 24;
+
+        boolean searchHov = hover(mx, my, searchX, searchY, searchW, searchH);
+        float anim = searchAnim.value; // 0 to 1
+
+        Skia.drawRoundedRect(searchX, searchY, searchW, searchH, 4, new Color(20, 30, 45));
+        Skia.drawOutline(searchX, searchY, searchW, searchH, 4, 1, searchHov || searching ? ACCENT : LINE_COLOR);
+
+        Font f = Fonts.getMiSans(12);
+        Font iconF = Fonts.getIconFill(14);
+
+        if (searching || !searchString.isEmpty()) {
+            String display = searchString + (searching && (System.currentTimeMillis() / 500 % 2 == 0) ? "|" : "");
+            // clip text
+            Skia.save();
+            Skia.clip(searchX + 4, searchY, searchW - 24, searchH, 0);
+            Skia.drawText(display, searchX + 6, searchY + 8, TEXT_WHITE, f);
+            Skia.restore();
+        } else {
+            Skia.drawText("Search modules...", searchX + 6, searchY + 8, TEXT_GRAY, f);
+        }
+
+        // Search Icon
+        Skia.drawText(Icons.SEARCH, searchX + searchW - 20, searchY + 5, searching ? ACCENT : TEXT_GRAY, iconF);
+
+        // Category/Breadcrumb title
+        if (!searching) {
+            Skia.drawText(selectedCategory.getDisplayName(), tx + 16, ty + (TOPBAR_H - 14) / 2, TEXT_WHITE,
+                    Fonts.getMiSans(14));
+        } else {
+            Skia.drawText("Searching Results", tx + 16, ty + (TOPBAR_H - 14) / 2, ACCENT, Fonts.getMiSans(14));
+        }
+
+        Skia.drawLine(tx, ty + TOPBAR_H, panelX + PANEL_W, ty + TOPBAR_H, 1, LINE_COLOR);
+    }
+
+    // ==================== Content ====================
+    private void drawContent(int mx, int my) {
+        float cx = panelX + SIDEBAR_W, cy = panelY + TOPBAR_H;
+        float cw = PANEL_W - SIDEBAR_W, ch = PANEL_H - TOPBAR_H;
+
+        Skia.save();
+        Skia.clip(cx, cy, cw, ch, 0, RADIUS, RADIUS, 0);
+
+        float colW = (cw - PAD * 2 - COLUMN_GAP) / 2;
+        float leftY = cy + PAD + scroll;
+        float rightY = cy + PAD + scroll;
+
+        // Draw columns
+        leftY = drawColumn(leftModules, cx + PAD, leftY, colW, mx, my);
+        rightY = drawColumn(rightModules, cx + PAD + colW + COLUMN_GAP, rightY, colW, mx, my);
+
+        float maxY = Math.max(leftY, rightY);
+        maxScroll = Math.min(0, -(maxY - scroll - cy - ch + PAD));
+        Skia.restore();
+    }
+
+    private float drawColumn(List<Module> modules, float x, float startY, float w, int mx, int my) {
+        float y = startY;
+        Font nameF = Fonts.getMiSans(11);
+        Font setF = Fonts.getMiSans(10);
+        Font valF = Fonts.getMiSans(9);
+
+        for (Module mod : modules) {
+            SmoothAnimationTimer ea = expandAnims.get(mod);
+            float ep = ea != null ? ea.value : 0;
+            float sh = (expanded.contains(mod) || ep > 0.01f) ? settingsH(mod) : 0;
+            float eh = MODULE_H + sh * ep;
+
+            // Alpha fade in
+            float alpha = alphaAnims.get(mod) != null ? alphaAnims.get(mod).value : 1f;
+            if (alpha < 0.05f) {
+                y += eh + 4;
+                continue;
+            } // Skip invisible
+
+            // We can use Skia.setAlpha but simpler to just mod colors or not handle alpha
+            // for layout speed
+            // Properly implementing alpha stacking in skia requires saveLayer
+
+            boolean hov = hover(mx, my, x, y, w, eh);
+
+            // Background
+            Skia.drawRoundedRect(x, y, w, eh, 6, hov ? MODULE_HOVER : MODULE_BG);
+            Skia.drawOutline(x, y, w, eh, 6, 1, MODULE_OUTLINE);
+
+            Skia.save();
+            Skia.clip(x, y, w, eh, 6); // Clip content inside module card
+
+            // Module Name & Toggle
+            Skia.drawText(mod.getPrettyName(), x + 10, y + (MODULE_H - 11) / 2, TEXT_WHITE, nameF);
+
+            // Toggle Switch
+            drawToggle(mod, x + w - 38, y + (MODULE_H - 16) / 2, mx, my);
+
+            // Settings Icon / Expand Arrow
+            Font arrowF = Fonts.getIconFill(14);
+            boolean isExp = expanded.contains(mod);
+            // Skia.drawText(isExp ? Icon.EXPAND_LESS : Icon.EXPAND_MORE, x + w - 55, y +
+            // (MODULE_H - 14) / 2, TEXT_GRAY, arrowF);
+            // Let's make entire header clickable for expand except toggle
+
+            // Keybind
+            if (mod.getKey() != 0) {
+                String keyName = GLFW.glfwGetKeyName(mod.getKey(), 0);
+                if (keyName == null)
+                    keyName = String.valueOf(mod.getKey());
+                keyName = "[" + keyName.toUpperCase() + "]";
+                float kw = Skia.getStringWidth(keyName, valF);
+                Skia.drawText(keyName, x + w - 50 - kw, y + (MODULE_H - 9) / 2, TEXT_GRAY, valF);
+            }
+
+            // Description Tooltip logic
+            if (hov && my < y + MODULE_H && hover(mx, my, x, y, w - 40, MODULE_H)) {
+                if (mod.getDescription() != null && !mod.getDescription().isEmpty())
+                    hoveredTooltip = mod.getDescription();
+            }
+
+            // Settings
+            if (ep > 0.01f) {
+                float sy = y + MODULE_H;
+                float setAlpha = ep; // use opacity too
+
+                // Divider
+                Skia.drawLine(x + 10, sy, x + w - 10, sy, 1, new Color(LINE_COLOR.getRed(), LINE_COLOR.getGreen(),
+                        LINE_COLOR.getBlue(), (int) (255 * 0.5 * setAlpha)));
+                sy += 4;
+
+                List<Value> vals = BlinkFix.getInstance().getValueManager().getValuesByHasValue(mod);
+                for (Value v : vals) {
+                    if (!v.isVisible())
+                        continue;
+
+                    // Helper for setting background hover
+                    boolean sHov = hover(mx, my, x + 4, sy, w - 8,
+                            v instanceof ModeValue && openedMode == v.getModeValue() ? 20
+                                    : (v instanceof BooleanValue ? SETTING_H
+                                            : (v instanceof FloatValue ? SLIDER_H : SETTING_H)));
+
+                    switch (v.getValueType()) {
+                        case BOOLEAN -> {
+                            drawBoolSetting(v.getBooleanValue(), v, x, sy, w, setF, mx, my);
+                            sy += SETTING_H;
+                        }
+                        case FLOAT -> {
+                            drawSliderSetting(v.getFloatValue(), x, sy, w, setF, valF, mx, my);
+                            sy += SLIDER_H;
+                        }
+                        case MODE -> {
+                            sy += drawModeSetting(v.getModeValue(), x, sy, w, setF, mx, my);
+                        }
+                        case STRING -> {
+                            drawStringSetting(v.getStringValue(), x, sy, w, setF, mx, my);
+                            sy += SETTING_H;
+                        }
+                        default -> {
+                        }
+                    }
+                }
+            }
+
+            Skia.restore();
+            y += eh + 6; // Gap between modules
+        }
+        return y;
+    }
+
+    // ==================== Components ====================
+
+    private void drawToggle(Module mod, float x, float y, int mx, int my) {
+        float w = 30, h = 16, r = h / 2;
+        SmoothAnimationTimer a = toggleAnims.get(mod);
+        float p = a != null ? a.value : (mod.isEnabled() ? 1 : 0);
+
+        Color bg = lerp(TOGGLE_OFF_BG, TOGGLE_ON_BG, p);
+        Skia.drawRoundedRect(x, y, w, h, r, bg);
+
+        float circleX = x + 3 + (w - 14) * p; // 3 padding
+        Skia.drawCircle(circleX + 4, y + 8, 4, TEXT_WHITE);
+    }
+
+    private void drawBoolSetting(BooleanValue bv, Value v, float x, float y, float w, Font f, int mx, int my) {
+        Skia.drawText(bv.getName(), x + 12, y + (SETTING_H - 10) / 2, TEXT_GRAY, f);
+        float tw = 24, th = 12, tx = x + w - tw - 12, ty = y + (SETTING_H - th) / 2;
+        SmoothAnimationTimer a = boolAnims.get(v);
+        float p = a != null ? a.value : (bv.getCurrentValue() ? 1 : 0);
+
+        Skia.drawRoundedRect(tx, ty, tw, th, th / 2, lerp(TOGGLE_OFF_BG, ACCENT, p));
+        Skia.drawCircle(tx + 4 + (tw - 8) * p, ty + th / 2, 3, TEXT_WHITE);
+    }
+
+    private void drawSliderSetting(FloatValue fv, float x, float y, float w, Font f, Font vf, int mx, int my) {
+        Skia.drawText(fv.getName(), x + 12, y + 4, TEXT_GRAY, f);
+
+        String vs = String.format(fv.getStep() % 1 == 0 ? "%.0f" : "%.2f", fv.getCurrentValue());
+        float vw = Skia.getStringWidth(vs, vf);
+        Skia.drawText(vs, x + w - vw - 12, y + 4, TEXT_WHITE, vf);
+
+        float tx = x + 12, ty = y + SLIDER_H - 12, tw = w - 24, th = 3;
+        Skia.drawRoundedRect(tx, ty, tw, th, 1.5f, SLIDER_TRACK);
+
+        // Input Handling
+        if (draggingSlider == fv && mouseDown) {
+            float diff = Math.min(tw, Math.max(0, mx - tx));
+            float min = fv.getMinValue();
+            float max = fv.getMaxValue();
+            float val = min + (diff / tw) * (max - min);
+            if (fv.getStep() > 0)
+                val = Math.round(val / fv.getStep()) * fv.getStep();
+            fv.setCurrentValue(val);
+        }
+
+        float range = fv.getMaxValue() - fv.getMinValue();
+        float pct = range > 0 ? (fv.getCurrentValue() - fv.getMinValue()) / range : 0;
+
+        if (pct > 0)
+            Skia.drawRoundedRect(tx, ty, tw * pct, th, 1.5f, ACCENT);
+
+        // Slider Dot Animation
+        SmoothAnimationTimer sa = sliderAnims.get(fv);
+        boolean hoverDot = hover(mx, my, tx, ty - 5, tw, 13) || draggingSlider == fv;
+        if (sa != null)
+            sa.update(hoverDot);
+        float dotR = sa != null ? 3 + sa.value * 0.5f : 3; // 4 to 8
+
+        Skia.drawCircle(tx + tw * pct, ty + th / 2, dotR, TEXT_WHITE);
+        // Glow effect for dot
+        if (hoverDot)
+            Skia.drawCircle(tx + tw * pct, ty + th / 2, dotR + 3, new Color(255, 255, 255, 50));
+    }
+
+    private float drawModeSetting(ModeValue mv, float x, float y, float w, Font f, int mx, int my) {
+        float h = SETTING_H;
+        Skia.drawText(mv.getName(), x + 12, y + (h - 10) / 2, TEXT_GRAY, f);
+
+        float bw = 70, bh = 16, bx = x + w - bw - 12, by = y + (h - bh) / 2;
+        boolean open = openedMode == mv;
+
+        Skia.drawRoundedRect(bx, by, bw, bh, 4, DROPDOWN_BG);
+        Skia.drawOutline(bx, by, bw, bh, 4, 1, open ? ACCENT_DIM : LINE_COLOR);
+
+        String cur = mv.getCurrentMode();
+        // Clip text
+        Skia.save();
+        Skia.clip(bx + 4, by, bw - 16, bh, 0);
+        Skia.drawText(cur, bx + 6, by + 4, TEXT_WHITE, f);
+        Skia.restore();
+
+        Font iconF = Fonts.getIconFill(10);
+        Skia.drawText(open ? Icons.EXPAND_LESS : Icons.EXPAND_MORE, bx + bw - 12, by + 4, TEXT_GRAY, iconF);
+
+        if (open) {
+            String[] modes = mv.getValues();
+            float dh = modes.length * 18 + 4;
+            // Draw dropdown on top (needs high z-index concept, but we use painter
+            // algorithm)
+            // Ideally should be drawn last, but for simplicity here we assume it overlaps
+            // OK or structure handles it.
+            // Actually in `drawColumn` we clip modules. If dropdown extends, it gets
+            // clipped!
+            // FIX: Dropdowns can't work easily inside clipped modules without rendering
+            // overlay separately.
+            // For now, let's just grow the setting height so it pushes down?
+            // "Grow push" style is easier in this architecture than "Overlay".
+
+            float oy = by + bh + 2;
+            Skia.drawRoundedRect(bx, oy, bw, dh, 4, DROPDOWN_BG);
+            Skia.drawOutline(bx, oy, bw, dh, 4, 1, LINE_COLOR);
+
+            for (String m : modes) {
+                boolean oh = hover(mx, my, bx, oy, bw, 18);
+                boolean sel = m.equals(mv.getCurrentMode());
+                if (oh)
+                    Skia.drawRoundedRect(bx + 1, oy, bw - 2, 18, 3, new Color(255, 255, 255, 10));
+                Skia.drawText(m, bx + 6, oy + 5, sel ? ACCENT : (oh ? TEXT_WHITE : TEXT_GRAY), f);
+                oy += 18;
+            }
+            return h + dh + 4;
+        }
+
+        return h;
+    }
+
+    private void drawStringSetting(StringValue sv, float x, float y, float w, Font f, int mx, int my) {
+        Skia.drawText(sv.getName(), x + 12, y + (SETTING_H - 10) / 2, TEXT_GRAY, f);
+
+        float tw = 80, th = 16, tx = x + w - tw - 12, ty = y + (SETTING_H - th) / 2;
+        boolean editing = editingString == sv;
+
+        Skia.drawRoundedRect(tx, ty, tw, th, 4, DROPDOWN_BG);
+        Skia.drawOutline(tx, ty, tw, th, 4, 1, editing ? ACCENT : LINE_COLOR);
+
+        String txt = sv.getCurrentValue();
+        if (editing && (System.currentTimeMillis() / 500 % 2 == 0))
+            txt += "_";
+
+        Skia.save();
+        Skia.clip(tx + 2, ty, tw - 4, th, 0);
+        Skia.drawText(txt.isEmpty() && !editing ? "Type..." : txt, tx + 4, ty + 4,
+                editing || !txt.isEmpty() ? TEXT_WHITE : Color.DARK_GRAY, f);
+        Skia.restore();
+    }
+
+    private void drawBindOverlay() {
+        Skia.drawRoundedBlur(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
+        Skia.drawRoundedRect(panelX, panelY, PANEL_W, PANEL_H, RADIUS, new Color(0, 0, 0, 200));
+
+        Font f = Fonts.getMiSans(16);
+        String t = "Binding " + bindingModule.getPrettyName();
+        float tw = Skia.getStringWidth(t, f);
+        Skia.drawText(t, panelX + (PANEL_W - tw) / 2, panelY + PANEL_H / 2 - 10, ACCENT, f);
+
+        Font sf = Fonts.getMiSans(12);
+        String s = "Press any key (ESC to cancel, DEL to unbind)";
+        float sw = Skia.getStringWidth(s, sf);
+        Skia.drawText(s, panelX + (PANEL_W - sw) / 2, panelY + PANEL_H / 2 + 10, TEXT_GRAY, sf);
+    }
+
+    private void drawTooltip(int mx, int my, String text) {
+        if (text == null || text.isEmpty())
+            return;
+        Font f = Fonts.getMiSans(11);
+        float tw = Skia.getStringWidth(text, f);
+        float padding = 6;
+        float w = tw + padding * 2;
+        float h = 18;
+        float x = mx + 8;
+        float y = my + 8;
+
+        Skia.drawRoundedBlur(x, y, w, h, 4);
+        Skia.drawRoundedRect(x, y, w, h, 4, new Color(0, 0, 0, 200));
+        Skia.drawOutline(x, y, w, h, 4, 1, LINE_COLOR);
+        Skia.drawText(text, x + padding, y + 4, TEXT_WHITE, f);
+    }
+
+    // ==================== Inputs ====================
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        int mx = (int) mouseX, my = (int) mouseY;
+        if (button == 0)
+            mouseDown = true;
+
+        // Search Click
+        float searchW = 160;
+        float searchX = panelX + PANEL_W - searchW - 14;
+        float searchY = panelY + 10;
+        if (hover(mx, my, searchX, searchY, searchW, 24)) {
+            if (button == 0) {
+                searching = !searching;
+                if (searching) {
+                    // Keep string
+                } else {
+                    searchString = "";
+                    updateModuleLists();
+                }
+            } else if (button == 1) { // Right click clear
+                searchString = "";
+                updateModuleLists();
+            }
+            return true;
+        }
+
+        if (bindingModule != null)
+            return true;
+
+        // Panel Drag
+        if (button == 0 && !dragging && hover(mx, my, panelX, panelY, PANEL_W, TOPBAR_H)) {
+            dragging = true;
+            dragOX = mx - panelX;
+            dragOY = my - panelY;
+            return true;
+        }
+
+        // Sidebar
+        if (hover(mx, my, panelX, panelY + 52, SIDEBAR_W, PANEL_H - 52)) {
+            float catY = panelY + 52;
+            for (Category cat : Category.values()) {
+                if (hover(mx, my, panelX + 8, catY, SIDEBAR_W - 16, CAT_ITEM_H)) {
+                    if (button == 0) {
+                        selectedCategory = cat;
+                        scroll = 0;
+                        searching = false;
+                        searchString = ""; // Exit search on cat change
+                        updateModuleLists();
+                    }
+                    return true;
+                }
+                catY += CAT_ITEM_H;
+            }
+        }
+
+        // Content Area
+        float cx = panelX + SIDEBAR_W;
+        float cy = panelY + TOPBAR_H;
+        float cw = PANEL_W - SIDEBAR_W;
+        float ch = PANEL_H - TOPBAR_H;
+
+        if (hover(mx, my, cx, cy, cw, ch)) {
+            float colW = (cw - PAD * 2 - COLUMN_GAP) / 2;
+
+            // Handle clicks in columns
+            if (handleColumnClick(leftModules, cx + PAD, cy + PAD + scroll, colW, mx, my, button))
+                return true;
+            if (handleColumnClick(rightModules, cx + PAD + colW + COLUMN_GAP, cy + PAD + scroll, colW, mx, my, button))
+                return true;
+
+            // Close opened things if clicked empty
+            if (button == 0) {
+                openedMode = null;
+                editingString = null;
+            }
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean handleColumnClick(List<Module> modules, float x, float startY, float w, int mx, int my,
+            int button) {
+        float y = startY;
+        for (Module mod : modules) {
+            SmoothAnimationTimer ea = expandAnims.get(mod);
+            float ep = ea != null ? ea.value : 0;
+            float sh = (expanded.contains(mod) || ep > 0.01f) ? settingsH(mod) : 0;
+            float eh = MODULE_H + sh * ep;
+
+            boolean visible = alphaAnims.get(mod) == null || alphaAnims.get(mod).value > 0.05f;
+            if (!visible) {
+                y += eh + 6;
+                continue;
+            }
+
+            // Module Header
+            if (hover(mx, my, x, y, w, MODULE_H)) {
+                // Toggle Button
+                if (button == 0 && hover(mx, my, x + w - 40, y, 40, MODULE_H)) {
+                    mod.toggle();
+                    return true;
+                }
+                // Expand
+                if (button == 1 || (button == 0 && hover(mx, my, x, y, w - 40, MODULE_H))) {
+                    if (expanded.contains(mod))
+                        expanded.remove(mod);
+                    else
+                        expanded.add(mod);
+                    return true;
+                }
+                // Bind
+                if (button == 2) {
+                    bindingModule = mod;
+                    return true;
+                }
+            }
+
+            // Settings
+            if (expanded.contains(mod) && ep > 0.5f) {
+                float sy = y + MODULE_H + 4;
+                for (Value v : mod.getValues()) {
+                    if (!v.isVisible())
+                        continue;
+                    float h = SETTING_H;
+                    if (v instanceof FloatValue)
+                        h = SLIDER_H;
+                    if (v instanceof ModeValue && openedMode == v.getModeValue()) {
+                        h += ((ModeValue) v).getValues().length * 18 + 4;
+                    }
+
+                    if (v instanceof BooleanValue) {
+                        if (button == 0 && hover(mx, my, x + w - 40, sy, 30, h)) {
+                            boolean current = ((BooleanValue) v).getCurrentValue();
+                            ((BooleanValue) v).setCurrentValue(!current);
+                            return true;
+                        }
+                    } else if (v instanceof FloatValue) {
+                        if (button == 0 && hover(mx, my, x, sy, w, h)) {
+                            draggingSlider = (FloatValue) v;
+                            return true;
+                        }
+                    } else if (v instanceof ModeValue) {
+                        ModeValue mv = (ModeValue) v;
+                        if (button == 0 && hover(mx, my, x + w - 85, sy, 72, 16)) {
+                            if (openedMode == mv)
+                                openedMode = null;
+                            else
+                                openedMode = mv;
+                            return true;
+                        }
+                        if (openedMode == mv && button == 0) {
+                            // Check dropdown list
+                            float dy = sy + (SETTING_H - 16) / 2 + 18;
+                            for (int i = 0; i < mv.getValues().length; i++) {
+                                if (hover(mx, my, x + w - 85, dy + i * 18, 70, 18)) {
+                                    mv.setCurrentValue(i);
+                                    openedMode = null;
+                                    return true;
+                                }
+                            }
+                        }
+                    } else if (v instanceof StringValue) {
+                        if (button == 0 && hover(mx, my, x + w - 95, sy, 82, 16)) {
+                            editingString = (StringValue) v;
+                            return true;
+                        }
+                    }
+
+                    sy += h;
+                }
+            }
+
+            y += eh + 6;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            mouseDown = false;
+            dragging = false;
+            draggingSlider = null;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (hover((int) mouseX, (int) mouseY, panelX, panelY, PANEL_W, PANEL_H)) {
+            scrollYVelocity += delta * 15;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (bindingModule != null) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE)
+                bindingModule = null;
+            else if (keyCode == GLFW.GLFW_KEY_DELETE) {
+                bindingModule.setKey(0);
+                bindingModule = null;
+            } else {
+                bindingModule.setKey(keyCode);
+                bindingModule = null;
+            }
+            return true;
+        }
+
+        if (searching) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                searching = false;
+                searchString = "";
+                updateModuleLists();
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !searchString.isEmpty()) {
+                searchString = searchString.substring(0, searchString.length() - 1);
+                updateModuleLists();
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_ENTER) {
+                // Maybe close search mode but keep filter? No, standard behavior
+                return true;
+            }
+            return true;
+        }
+
+        if (editingString != null) {
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_ENTER) {
+                editingString = null;
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                String val = editingString.getCurrentValue();
+                if (!val.isEmpty())
+                    editingString.setCurrentValue(val.substring(0, val.length() - 1));
+                return true;
+            }
+            // Ctrl+V handled in charTyped usually or here
+            if (Screen.isPaste(keyCode)) {
+                String val = editingString.getCurrentValue();
+                editingString.setCurrentValue(
+                        val + GLFW.glfwGetClipboardString(Minecraft.getInstance().getWindow().getWindow()));
+                return true;
+            }
+            return true;
+        }
+
+        // Ctrl+F for Search
+        if (keyCode == GLFW.GLFW_KEY_F && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
+            searching = !searching;
+            if (!searching) {
+                searchString = "";
+                updateModuleLists();
+            }
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (searching) {
+            searchString += codePoint;
+            updateModuleLists();
+            return true;
+        }
+        if (editingString != null) {
+            String val = editingString.getCurrentValue();
+            editingString.setCurrentValue(val + codePoint);
+            return true;
+        }
+        return super.charTyped(codePoint, modifiers);
+    }
+
+    // ==================== Helpers ====================
+    private float settingsH(Module mod) {
+        float h = 4;
+        List<Value> vals = BlinkFix.getInstance().getValueManager().getValuesByHasValue(mod);
+        for (Value v : vals) {
+            if (!v.isVisible())
+                continue;
+            switch (v.getValueType()) {
+                case BOOLEAN -> h += SETTING_H;
+                case FLOAT -> h += SLIDER_H;
+                case STRING -> h += SETTING_H;
+                case MODE -> {
+                    h += SETTING_H;
+                    if (openedMode == v.getModeValue())
+                        h += v.getModeValue().getValues().length * 18 + 4;
+                }
+                default -> {
+                }
+            }
+        }
+        return h;
+    }
+
+    private static boolean hover(int mx, int my, float x, float y, float w, float h) {
+        return mx >= x && mx <= x + w && my >= y && my <= y + h;
+    }
+
+    private static Color lerp(Color a, Color b, float t) {
+        t = Math.max(0, Math.min(1, t));
+        return new Color(
+                (int) (a.getRed() + (b.getRed() - a.getRed()) * t),
+                (int) (a.getGreen() + (b.getGreen() - a.getGreen()) * t),
+                (int) (a.getBlue() + (b.getBlue() - a.getBlue()) * t),
+                (int) (a.getAlpha() + (b.getAlpha() - a.getAlpha()) * t));
+    }
+
+    private int AC(int alpha) { // alpha clamp
+        return Math.max(0, Math.min(255, alpha));
     }
 }

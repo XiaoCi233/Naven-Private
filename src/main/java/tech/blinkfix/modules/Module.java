@@ -13,6 +13,8 @@ import tech.blinkfix.values.impl.BooleanValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 import tech.blinkfix.modules.impl.render.Island;
+import tech.blinkfix.values.Value;
+import java.util.List;
 
 public abstract class Module extends HasValue {
     public static final Minecraft mc = Minecraft.getInstance();
@@ -26,7 +28,8 @@ public abstract class Module extends HasValue {
     private boolean enabled;
     private int minPermission = 0;
     private int key;
-    protected final BooleanValue hideInArrayList = ValueBuilder.create(this, "Hide in ArrayList (Only Arrylistmode New)")
+    protected final BooleanValue hideInArrayList = ValueBuilder
+            .create(this, "Hide in ArrayList (Only Arrylistmode New)")
             .setDefaultBooleanValue(false)
             .build()
             .getBooleanValue();
@@ -92,7 +95,8 @@ public abstract class Module extends HasValue {
                     if (!gated.hasPermission()) {
                         this.enabled = false;
                         // notify and refuse enabling
-                        Notification notification = new Notification(NotificationLevel.INFO, gated.getPermissionDenyMessage(), 3000L);
+                        Notification notification = new Notification(NotificationLevel.INFO,
+                                gated.getPermissionDenyMessage(), 3000L);
                         naven.getNotificationManager().addNotification(notification);
                         return;
                     }
@@ -101,14 +105,15 @@ public abstract class Module extends HasValue {
                 naven.getEventManager().register(this);
                 this.onEnable();
                 if (!(this instanceof ClickGUIModule)) {
-                    HUD module = (HUD)BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
+                    HUD module = (HUD) BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
                     if (module.moduleToggleSound.getCurrentValue()) {
                         mc.player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_ON, 0.5F, 1.3F);
                     }
 
-                    Notification notification = new Notification(NotificationLevel.SUCCESS, this.name + " Enabled!", 3000L);
+                    Notification notification = new Notification(NotificationLevel.SUCCESS, this.name + " Enabled!",
+                            3000L);
                     naven.getNotificationManager().addNotification(notification);
-                    
+
                     // 通知 Island 模块模块已切换
                     notifyIslandModuleToggle(this);
                 }
@@ -117,14 +122,15 @@ public abstract class Module extends HasValue {
                 naven.getEventManager().unregister(this);
                 this.onDisable();
                 if (!(this instanceof ClickGUIModule)) {
-                    HUD module = (HUD)BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
+                    HUD module = (HUD) BlinkFix.getInstance().getModuleManager().getModule(HUD.class);
                     if (module.moduleToggleSound.getCurrentValue()) {
                         mc.player.playSound(SoundEvents.WOODEN_BUTTON_CLICK_OFF, 0.5F, 0.8F);
                     }
 
-                    Notification notification = new Notification(NotificationLevel.ERROR, this.name + " Disabled!", 3000L);
+                    Notification notification = new Notification(NotificationLevel.ERROR, this.name + " Disabled!",
+                            3000L);
                     naven.getNotificationManager().addNotification(notification);
-                    
+
                     // 通知 Island 模块模块已切换
                     notifyIslandModuleToggle(this);
                 }
@@ -132,15 +138,14 @@ public abstract class Module extends HasValue {
         } catch (Exception var5) {
         }
     }
-    
+
     /**
      * 通知 Island 模块有模块切换
      */
     private void notifyIslandModuleToggle(Module module) {
         try {
-            Island island =
-                    (Island) BlinkFix.getInstance()
-                            .getModuleManager().getModule(Island.class);
+            Island island = (Island) BlinkFix.getInstance()
+                    .getModuleManager().getModule(Island.class);
             if (island != null) {
                 island.notifyModuleToggled(module);
             }
@@ -166,17 +171,19 @@ public abstract class Module extends HasValue {
         return this.prettyName;
     }
 
-//    public String getDisplayName() {
-//        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase());
-//    }
+    // public String getDisplayName() {
+    // return ModuleLanguageManager.getTranslation("module." +
+    // this.name.toLowerCase());
+    // }
 
     public String getDescription() {
         return this.description;
     }
 
-//    public String getDisplayDescription() {
-//        return ModuleLanguageManager.getTranslation("module." + this.name.toLowerCase() + ".desc");
-//    }
+    // public String getDisplayDescription() {
+    // return ModuleLanguageManager.getTranslation("module." +
+    // this.name.toLowerCase() + ".desc");
+    // }
 
     public String getSuffix() {
         return this.suffix;
@@ -186,9 +193,10 @@ public abstract class Module extends HasValue {
         return this.category;
     }
 
-//    public String getDisplayCategory() {
-//        return ModuleLanguageManager.getTranslation("category." + this.category.name().toLowerCase());
-//    }
+    // public String getDisplayCategory() {
+    // return ModuleLanguageManager.getTranslation("category." +
+    // this.category.name().toLowerCase());
+    // }
 
     public boolean isEnabled() {
         return this.enabled;
@@ -212,7 +220,12 @@ public abstract class Module extends HasValue {
     public void setKey(int key) {
         this.key = key;
     }
+
     public BooleanValue getHideInArrayList() {
         return this.hideInArrayList;
+    }
+
+    public List<Value> getValues() {
+        return BlinkFix.getInstance().getValueManager().getValuesByHasValue(this);
     }
 }

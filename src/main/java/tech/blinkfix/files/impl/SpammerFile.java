@@ -33,7 +33,7 @@ public class SpammerFile extends ClientFile {
    @Override
    public void read(BufferedReader reader) throws IOException {
       Spammer module = (Spammer) BlinkFix.getInstance().getModuleManager().getModule(Spammer.class);
-      List<BooleanValue> values = module.getValues();
+      List<BooleanValue> values = module.getPhraseValues();
 
       String line;
       while ((line = reader.readLine()) != null) {
@@ -51,7 +51,7 @@ public class SpammerFile extends ClientFile {
    public void save(BufferedWriter writer) throws IOException {
       Spammer module = (Spammer) BlinkFix.getInstance().getModuleManager().getModule(Spammer.class);
 
-      for (BooleanValue value : module.getValues()) {
+      for (BooleanValue value : module.getPhraseValues()) {
          writer.write(value.getName() + "\n");
       }
    }

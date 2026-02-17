@@ -138,12 +138,22 @@ Adding Libraries to Inheritance
 Reading Input: D:\idea\Naven-Private\build\libs\BlinkFix-NextGeneration-Beta.jar
 Adding input to inheritance map
 Processing entries
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/keyPressed(III)Z from net/minecraft/client/gui/screens/Screen/keyPressed(III)Z: keyPressed -> m_7933_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/isPauseScreen()Z from net/minecraft/client/gui/screens/Screen/isPauseScreen()Z: isPauseScreen -> m_7043_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/mouseScrolled(DDD)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseScrolled(DDD)Z: mouseScrolled -> m_6050_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/mouseDragged(DDIDD)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseDragged(DDIDD)Z: mouseDragged -> m_7979_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/charTyped(CI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/charTyped(CI)Z: charTyped -> m_5534_
+Conflicting propagated mapping for me/project/ui/dropdown/DropdownClickGUI/mouseReleased(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseReleased(DDI)Z: mouseReleased -> m_6348_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/keyPressed(III)Z from net/minecraft/client/gui/screens/Screen/keyPressed(III)Z: keyPressed -> m_7933_
+Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/isPauseScreen()Z from net/minecraft/client/gui/screens/Screen/isPauseScreen()Z: isPauseScreen -> m_7043_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/mouseScrolled(DDD)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseScrolled(DDD)Z: mouseScrolled -> m_6050_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/onClose()V from net/minecraft/client/gui/screens/Screen/onClose()V: onClose -> m_7379_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/init()V from net/minecraft/client/gui/screens/Screen/init()V: init -> m_7856_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
+Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/charTyped(CI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/charTyped(CI)Z: charTyped -> m_5534_
 Conflicting propagated mapping for tech/blinkfix/ui/ClickGUI/mouseReleased(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseReleased(DDI)Z: mouseReleased -> m_6348_
 Conflicting propagated mapping for net/minecraft/world/entity/LivingEntity/lambda$addAdditionalSaveData$3(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/nbt/Tag;)V from net/minecraft/world/entity/player/Player/lambda$addAdditionalSaveData$3(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/nbt/Tag;)V: lambda$addAdditionalSaveData$3 -> m_219754_
 Conflicting propagated mapping for tech/blinkfix/utils/BlinkingPlayer/getCloakTextureLocation()Lnet/minecraft/resources/ResourceLocation; from net/minecraft/client/player/AbstractClientPlayer/getCloakTextureLocation()Lnet/minecraft/resources/ResourceLocation;: getCloakTextureLocation -> m_108561_
@@ -158,6 +168,7 @@ Conflicting propagated mapping for tech/blinkfix/ui/MainUI/MainUI/isPauseScreen(
 Conflicting propagated mapping for tech/blinkfix/ui/MainUI/MainUI/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
 Conflicting propagated mapping for tech/blinkfix/ui/MainUI/MainUI/init()V from net/minecraft/client/gui/screens/Screen/init()V: init -> m_7856_
 Conflicting propagated mapping for tech/blinkfix/ui/MainUI/MainUI/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
+Conflicting propagated mapping for net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen/onClose()V from net/minecraft/client/gui/screens/Screen/onClose()V: onClose -> m_7379_
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/keyPressed(III)Z from net/minecraft/client/gui/screens/Screen/keyPressed(III)Z: keyPressed -> m_7933_
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/isPauseScreen()Z from net/minecraft/client/gui/screens/Screen/isPauseScreen()Z: isPauseScreen -> m_7043_
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V from net/minecraft/client/gui/screens/Screen/render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V: render -> m_88315_
@@ -165,7 +176,6 @@ Conflicting propagated mapping for tech/blinkfix/ui/Welcome/init()V from net/min
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/mouseClicked(DDI)Z from net/minecraft/client/gui/components/events/ContainerEventHandler/mouseClicked(DDI)Z: mouseClicked -> m_6375_
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/renderBackground(Lnet/minecraft/client/gui/GuiGraphics;)V from net/minecraft/client/gui/screens/Screen/renderBackground(Lnet/minecraft/client/gui/GuiGraphics;)V: renderBackground -> m_280273_
 Conflicting propagated mapping for tech/blinkfix/ui/Welcome/tick()V from net/minecraft/client/gui/screens/Screen/tick()V: tick -> m_86600_
-Conflicting propagated mapping for net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen/onClose()V from net/minecraft/client/gui/screens/Screen/onClose()V: onClose -> m_7379_
 Conflicting propagated mapping for tech/blinkfix/utils/renderer/text/BufferedTexture/load(Lnet/minecraft/server/packs/resources/ResourceManager;)V from net/minecraft/client/renderer/texture/AbstractTexture/load(Lnet/minecraft/server/packs/resources/ResourceManager;)V: load -> m_6704_
 Adding extras
 Sorting
@@ -224,6 +234,35 @@ Writing Output: D:\idea\Naven-Private\build\reobfJar\output.jar
   assets/naven/textures/
   assets/naven/textures/images/
   assets/naven/textures/images/background.png
+  me/
+  me/project/
+  me/project/ui/
+  me/project/ui/dropdown/
+  me/project/ui/dropdown/DropdownAccessibilityBridge.class
+  me/project/ui/dropdown/DropdownAnimationManager.class
+  me/project/ui/dropdown/DropdownAnimationState.class
+  me/project/ui/dropdown/DropdownClickGUI.class
+  me/project/ui/dropdown/DropdownController$ModuleBindingState.class
+  me/project/ui/dropdown/DropdownController.class
+  me/project/ui/dropdown/DropdownEasing.class
+  me/project/ui/dropdown/DropdownEvent.class
+  me/project/ui/dropdown/DropdownEventBus.class
+  me/project/ui/dropdown/DropdownLayout.class
+  me/project/ui/dropdown/DropdownLayoutEngine.class
+  me/project/ui/dropdown/DropdownModel.class
+  me/project/ui/dropdown/DropdownNode.class
+  me/project/ui/dropdown/DropdownNodeType.class
+  me/project/ui/dropdown/DropdownPerformanceMonitor.class
+  me/project/ui/dropdown/DropdownRenderer.class
+  me/project/ui/dropdown/DropdownSettings.class
+  me/project/ui/dropdown/DropdownTheme.class
+  me/project/ui/dropdown/DropdownThemeConfig.class
+  me/project/ui/dropdown/DropdownViewState.class
+  me/project/ui/dropdown/events/
+  me/project/ui/dropdown/events/DropdownEvents$SearchChanged.class
+  me/project/ui/dropdown/events/DropdownEvents$ThemeChanged.class
+  me/project/ui/dropdown/events/DropdownEvents$ToggleExpanded.class
+  me/project/ui/dropdown/events/DropdownEvents.class
   modloader/
   modloader/BlinkFixModLoader.class
   natives/
@@ -437,6 +476,7 @@ Writing Output: D:\idea\Naven-Private\build\reobfJar\output.jar
   tech/blinkfix/files/FileManager.class
   tech/blinkfix/files/impl/
   tech/blinkfix/files/impl/CGuiFile.class
+  tech/blinkfix/files/impl/DropdownGuiFile.class
   tech/blinkfix/files/impl/FriendFile.class
   tech/blinkfix/files/impl/KillSaysFile.class
   tech/blinkfix/files/impl/ModuleFile.class
@@ -577,10 +617,15 @@ Writing Output: D:\idea\Naven-Private\build\reobfJar\output.jar
   tech/blinkfix/ui/ArrayList/ArrayList.class
   tech/blinkfix/ui/ClickGUI$1.class
   tech/blinkfix/ui/ClickGUI$2.class
-  tech/blinkfix/ui/ClickGUI$3.class
-  tech/blinkfix/ui/ClickGUI$4.class
-  tech/blinkfix/ui/ClickGUI$5.class
-  tech/blinkfix/ui/ClickGUI$6.class
+  tech/blinkfix/ui/ClickGUI$7.class
+  tech/blinkfix/ui/ClickGUI$8.class
+  tech/blinkfix/ui/ClickGUI$9.class
+  tech/blinkfix/ui/ClickGUI$Icons.class
+  tech/blinkfix/ui/ClickGUI$SkiaHit.class
+  tech/blinkfix/ui/ClickGUI$SkiaHitType.class
+  tech/blinkfix/ui/ClickGUI$SkiaModuleState.class
+  tech/blinkfix/ui/ClickGUI$SkiaPanel.class
+  tech/blinkfix/ui/ClickGUI$SkiaValueState.class
   tech/blinkfix/ui/ClickGUI.class
   tech/blinkfix/ui/CooldownBar/
   tech/blinkfix/ui/CooldownBar/CooldownBar.class
@@ -738,6 +783,21 @@ Writing Output: D:\idea\Naven-Private\build\reobfJar\output.jar
   tech/blinkfix/values/impl/FloatValue.class
   tech/blinkfix/values/impl/ModeValue.class
   tech/blinkfix/values/impl/StringValue.class
+  wtf/
+  wtf/alisa/
+  wtf/alisa/skija/
+  wtf/alisa/skija/Skija.class
+  wtf/alisa/skija/font/
+  wtf/alisa/skija/font/FontLoader.class
+  wtf/alisa/skija/font/FontManager.class
+  wtf/alisa/skija/font/FontType.class
+  wtf/alisa/skija/font/ResourceUtil.class
+  wtf/alisa/skija/util/
+  wtf/alisa/skija/util/SkijaHelper.class
+  wtf/alisa/skija/util/state/
+  wtf/alisa/skija/util/state/Properties.class
+  wtf/alisa/skija/util/state/State.class
+  wtf/alisa/skija/util/state/States.class
   xyz/
   xyz/gay/
   xyz/gay/mixin/

@@ -14,19 +14,15 @@ public class CGuiFile extends ClientFile {
    @Override
    public void read(BufferedReader reader) throws IOException {
       try {
-         ClickGUI.windowX = (float)Integer.parseInt(reader.readLine());
-         ClickGUI.windowY = (float)Integer.parseInt(reader.readLine());
-         ClickGUI.windowWidth = (float)Integer.parseInt(reader.readLine());
-         ClickGUI.windowHeight = (float)Integer.parseInt(reader.readLine());
-      } catch (Exception var3) {
+         ClickGUI.savedPanelX = (float) Integer.parseInt(reader.readLine());
+         ClickGUI.savedPanelY = (float) Integer.parseInt(reader.readLine());
+      } catch (Exception ignored) {
       }
    }
 
    @Override
    public void save(BufferedWriter writer) throws IOException {
-      writer.write((int)ClickGUI.windowX + "\n");
-      writer.write((int)ClickGUI.windowY + "\n");
-      writer.write((int)ClickGUI.windowWidth + "\n");
-      writer.write((int)ClickGUI.windowHeight + "\n");
+      writer.write((int) ClickGUI.savedPanelX + "\n");
+      writer.write((int) ClickGUI.savedPanelY + "\n");
    }
 }

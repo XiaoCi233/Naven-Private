@@ -44,6 +44,13 @@ public class SkiaContext {
     }
 
     public static void draw(Consumer<Canvas> drawingLogic) {
+        // Auto-initialize if not yet created
+        if (context == null || surface == null) {
+            Minecraft mc = Minecraft.getInstance();
+            createSurface(mc.getWindow().getWidth(), mc.getWindow().getHeight());
+        }
+        if (context == null || surface == null)
+            return; // Still null? bail out
 
         RenderSystem.pixelStore(GlConst.GL_UNPACK_ROW_LENGTH, 0);
         RenderSystem.pixelStore(GlConst.GL_UNPACK_SKIP_PIXELS, 0);
@@ -53,7 +60,12 @@ public class SkiaContext {
         context.resetGLAll();
 
         Canvas canvas = getCanvas();
+        // Apply GUI scale so Skia pixel coords match Minecraft's scaled GUI coords
+        float guiScale = (float) Minecraft.getInstance().getWindow().getGuiScale();
+        canvas.save();
+        canvas.scale(guiScale, guiScale);
         drawingLogic.accept(canvas);
+        canvas.restore();
 
         context.flush();
 

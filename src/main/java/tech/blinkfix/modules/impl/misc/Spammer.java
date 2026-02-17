@@ -55,7 +55,7 @@ public class Spammer extends Module {
       }
    }
 
-   public List<BooleanValue> getValues() {
+   public List<BooleanValue> getPhraseValues() {
       return this.values;
    }
 }

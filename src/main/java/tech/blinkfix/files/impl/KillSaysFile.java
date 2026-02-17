@@ -31,7 +31,7 @@ public class KillSaysFile extends ClientFile {
    @Override
    public void read(BufferedReader reader) throws IOException {
       KillSay module = (KillSay) BlinkFix.getInstance().getModuleManager().getModule(KillSay.class);
-      List<BooleanValue> values = module.getValues();
+      List<BooleanValue> values = module.getPhraseValues();
 
       String line;
       while ((line = reader.readLine()) != null) {
@@ -49,7 +49,7 @@ public class KillSaysFile extends ClientFile {
    public void save(BufferedWriter writer) throws IOException {
       KillSay module = (KillSay) BlinkFix.getInstance().getModuleManager().getModule(KillSay.class);
 
-      for (BooleanValue value : module.getValues()) {
+      for (BooleanValue value : module.getPhraseValues()) {
          writer.write(value.getName() + "\n");
       }
    }

@@ -91,7 +91,19 @@ public class KawaseBlur {
     }
 
     public int getTexture() {
-        return fbos[0].texture;
+        if (fbos[0] == null) {
+            ensureFramebuffers();
+        }
+        return fbos[0] != null ? fbos[0].texture : Minecraft.getInstance().getMainRenderTarget().getColorTextureId();
+    }
+
+    private void ensureFramebuffers() {
+        for (int i = 0; i < fbos.length; i++) {
+            if (fbos[i] == null) {
+                fbos[i] = new Framebuffer(1 / Math.pow(2, i));
+            }
+        }
+        firstTick = false;
     }
 
     private void renderToFbo(Framebuffer targetFbo, int sourceText, Shader shader, double offset) {

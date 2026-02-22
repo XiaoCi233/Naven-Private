@@ -203,6 +203,35 @@ public class Skia {
         }
     }
 
+    public static void drawImage(ResourceLocation resource, float x, float y, float width, float height) {
+        if (resource == null) return;
+        if (imageHelper.load(resource)) {
+            Image image = imageHelper.get(resource.getPath());
+            if (image != null) {
+                getCanvas().drawImageRect(image, Rect.makeXYWH(x, y, width, height));
+            }
+        }
+    }
+
+    public static void drawImage(ResourceLocation resource, float x, float y, float width, float height, Color tint) {
+        if (resource == null || tint == null) return;
+        if (tint.getRed() == 255 && tint.getGreen() == 255 && tint.getBlue() == 255 && tint.getAlpha() == 255) {
+            drawImage(resource, x, y, width, height);
+            return;
+        }
+        if (imageHelper.load(resource)) {
+            Image image = imageHelper.get(resource.getPath());
+            if (image != null) {
+                int skColor = io.github.humbleui.skija.Color.makeARGB(tint.getAlpha(), tint.getRed(), tint.getGreen(),
+                        tint.getBlue());
+                try (Paint paint = new Paint()) {
+                    paint.setColorFilter(ColorFilter.makeBlend(skColor, BlendMode.SRC_IN));
+                    getCanvas().drawImageRect(image, Rect.makeXYWH(x, y, width, height), paint);
+                }
+            }
+        }
+    }
+
     public static void drawImage(int textureId, float x, float y, float width, float height, float alpha,
                                  SurfaceOrigin origin) {
 
@@ -639,6 +668,7 @@ public class Skia {
     public static Paint getPaint(Color color) {
         Paint paint = new Paint();
         paint.setARGB(color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
+        paint.setAntiAlias(true);
         return paint;
     }
 

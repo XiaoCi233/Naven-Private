@@ -133,6 +133,7 @@ public class ModuleManager {
                 new ItemTracker(),
                 new BedPlates(),
                 new HUD(),
+                new WaterMark2(),
                 new Camera(),
               // new Language(),
                 new LowFire(),

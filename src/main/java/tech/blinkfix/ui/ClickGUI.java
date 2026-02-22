@@ -14,6 +14,10 @@ import tech.blinkfix.values.impl.FloatValue;
 import tech.blinkfix.values.impl.ModeValue;
 import tech.blinkfix.values.impl.StringValue;
 import io.github.humbleui.skija.Font;
+import io.github.humbleui.skija.Paint;
+import io.github.humbleui.skija.Path;
+import io.github.humbleui.skija.Shader;
+import io.github.humbleui.types.Point;
 import io.github.humbleui.types.Rect;
 
 import java.awt.Color;
@@ -29,27 +33,98 @@ import org.lwjgl.glfw.GLFW;
 public class ClickGUI extends Screen {
 
     // ==================== Theme Colors ====================
-    private static final Color BG_COLOR = new Color(0, 12, 24);
-    private static final Color SIDEBAR_COLOR = new Color(8, 18, 34);
-    private static final Color ACCENT = new Color(0, 187, 255);
-    private static final Color ACCENT_DIM = new Color(0, 100, 160);
-    private static final Color LINE_COLOR = new Color(19, 28, 41);
-    private static final Color TEXT_WHITE = new Color(255, 255, 255);
-    private static final Color TEXT_GRAY = new Color(140, 150, 165);
-    private static final Color MODULE_BG = new Color(14, 22, 36);
-    private static final Color MODULE_HOVER = new Color(18, 28, 44);
-    private static final Color TOGGLE_ON_BG = new Color(0, 187, 255);
-    private static final Color TOGGLE_OFF_BG = new Color(35, 45, 60);
-    private static final Color SLIDER_TRACK = new Color(30, 40, 55);
-    private static final Color DROPDOWN_BG = new Color(10, 18, 30);
-    private static final Color OVERLAY_BG = new Color(0, 0, 0, 120);
-    private static final Color TOPBAR_COLOR = new Color(11, 16, 23);
-    private static final Color MODULE_OUTLINE = new Color(7, 27, 47);
-    private static final Color SETTING_LINE = new Color(4, 24, 51);
+    public static final class Theme {
+        public Color background;
+        public Color sidebar;
+        public Color accent;
+        public Color accentDim;
+        public Color line;
+        public Color textPrimary;
+        public Color textSecondary;
+        public Color moduleBackground;
+        public Color moduleHover;
+        public Color toggleOn;
+        public Color toggleOff;
+        public Color sliderTrack;
+        public Color dropdown;
+        public Color overlay;
+        public Color topbar;
+        public Color moduleOutline;
+        public Color settingLine;
+
+        public Theme(Color background, Color sidebar, Color accent, Color accentDim, Color line, Color textPrimary,
+                Color textSecondary, Color moduleBackground, Color moduleHover, Color toggleOn, Color toggleOff,
+                Color sliderTrack, Color dropdown, Color overlay, Color topbar, Color moduleOutline, Color settingLine) {
+            this.background = background;
+            this.sidebar = sidebar;
+            this.accent = accent;
+            this.accentDim = accentDim;
+            this.line = line;
+            this.textPrimary = textPrimary;
+            this.textSecondary = textSecondary;
+            this.moduleBackground = moduleBackground;
+            this.moduleHover = moduleHover;
+            this.toggleOn = toggleOn;
+            this.toggleOff = toggleOff;
+            this.sliderTrack = sliderTrack;
+            this.dropdown = dropdown;
+            this.overlay = overlay;
+            this.topbar = topbar;
+            this.moduleOutline = moduleOutline;
+            this.settingLine = settingLine;
+        }
+
+        public static Theme defaultTheme() {
+            return new Theme(
+                    new Color(0, 12, 24),
+                    new Color(8, 18, 34),
+                    new Color(0, 187, 255),
+                    new Color(0, 100, 160),
+                    new Color(19, 28, 41),
+                    new Color(255, 255, 255),
+                    new Color(140, 150, 165),
+                    new Color(14, 22, 36),
+                    new Color(18, 28, 44),
+                    new Color(0, 187, 255),
+                    new Color(35, 45, 60),
+                    new Color(30, 40, 55),
+                    new Color(10, 18, 30),
+                    new Color(0, 0, 0, 120),
+                    new Color(11, 16, 23),
+                    new Color(7, 27, 47),
+                    new Color(4, 24, 51)
+            );
+        }
+    }
+
+    private static Theme theme = Theme.defaultTheme();
+    private static Color BG_COLOR;
+    private static Color SIDEBAR_COLOR;
+    private static Color ACCENT;
+    private static Color ACCENT_DIM;
+    private static Color LINE_COLOR;
+    private static Color TEXT_WHITE;
+    private static Color TEXT_GRAY;
+    private static Color MODULE_BG;
+    private static Color MODULE_HOVER;
+    private static Color TOGGLE_ON_BG;
+    private static Color TOGGLE_OFF_BG;
+    private static Color SLIDER_TRACK;
+    private static Color DROPDOWN_BG;
+    private static Color OVERLAY_BG;
+    private static Color TOPBAR_COLOR;
+    private static Color MODULE_OUTLINE;
+    private static Color SETTING_LINE;
+
+    static {
+        applyTheme(theme);
+    }
 
     // ==================== Layout Constants ====================
-    private static final float PANEL_W = 560; // Widened for dual columns
-    private static final float PANEL_H = 420;
+    private static final float BASE_PANEL_W = 560;
+    private static final float BASE_PANEL_H = 420;
+    private static final float MIN_PANEL_W = 460;
+    private static final float MIN_PANEL_H = 320;
     private static final float SIDEBAR_W = 136;
     private static final float TOPBAR_H = 44;
     private static final float CAT_ITEM_H = 38;
@@ -59,6 +134,7 @@ public class ClickGUI extends Screen {
     private static final float PAD = 10;
     private static final float COLUMN_GAP = 10;
     private static final float RADIUS = 8;
+    private static final float RESIZE_HANDLE = 10;
 
     // ==================== Category Icon Map ====================
     private static final Map<Category, String> CAT_ICONS = new LinkedHashMap<>() {
@@ -85,11 +161,16 @@ public class ClickGUI extends Screen {
 
     // ==================== State ====================
     public static float savedPanelX = -1, savedPanelY = -1;
+    public static float savedPanelW = -1, savedPanelH = -1;
     private float panelX = 100, panelY = 50;
+    private float panelW = BASE_PANEL_W, panelH = BASE_PANEL_H;
     private Category selectedCategory = Category.COMBAT;
     private Module bindingModule = null;
     private boolean dragging = false;
     private float dragOX, dragOY;
+    private boolean resizing = false;
+    private float resizeOX, resizeOY;
+    private float resizeW, resizeH;
     private float scroll = 0, maxScroll = 0;
     private float scrollYVelocity = 0;
     private boolean mouseDown = false;
@@ -102,6 +183,7 @@ public class ClickGUI extends Screen {
     private boolean searching = false;
     private String searchString = "";
     private final SmoothAnimationTimer searchAnim = new SmoothAnimationTimer(1.0F, 0.0F);
+    private float categoryIndicatorY = -1;
 
     // ==================== Animations ====================
     private final SmoothAnimationTimer popupAnim = new SmoothAnimationTimer(100.0F, 0.0F);
@@ -113,8 +195,7 @@ public class ClickGUI extends Screen {
     private final Map<FloatValue, SmoothAnimationTimer> sliderAnims = new HashMap<>(); // slider dot size
 
     // ==================== Module Cache ====================
-    private final List<Module> leftModules = new ArrayList<>();
-    private final List<Module> rightModules = new ArrayList<>();
+    private final List<Module> visibleModules = new ArrayList<>();
     private String hoveredTooltip = null;
 
     // ==================== Constructor ====================
@@ -126,14 +207,33 @@ public class ClickGUI extends Screen {
         updateModuleLists();
     }
 
+    public static void setTheme(Theme nextTheme) {
+        if (nextTheme == null) {
+            return;
+        }
+        theme = nextTheme;
+        applyTheme(nextTheme);
+    }
+
+    public static Theme getTheme() {
+        return theme;
+    }
+
     // ==================== Lifecycle ====================
     @Override
     protected void init() {
         BlinkFix.getInstance().getEventManager().register(this);
         popupAnim.value = 0;
+        if (savedPanelW > 0 && savedPanelH > 0) {
+            panelW = savedPanelW;
+            panelH = savedPanelH;
+        } else {
+            panelW = BASE_PANEL_W;
+            panelH = BASE_PANEL_H;
+        }
         if (savedPanelX < 0 || savedPanelY < 0) {
-            panelX = (width - PANEL_W) / 2;
-            panelY = (height - PANEL_H) / 2;
+            panelX = (width - panelW) / 2;
+            panelY = (height - panelH) / 2;
         } else {
             panelX = savedPanelX;
             panelY = savedPanelY;
@@ -147,6 +247,8 @@ public class ClickGUI extends Screen {
     public void onClose() {
         savedPanelX = panelX;
         savedPanelY = panelY;
+        savedPanelW = panelW;
+        savedPanelH = panelH;
         BlinkFix.getInstance().getFileManager().save();
         BlinkFix.getInstance().getEventManager().unregister(this);
         super.onClose();
@@ -158,8 +260,7 @@ public class ClickGUI extends Screen {
     }
 
     private void updateModuleLists() {
-        leftModules.clear();
-        rightModules.clear();
+        visibleModules.clear();
         List<Module> all;
 
         if (searching && !searchString.isEmpty()) {
@@ -174,12 +275,7 @@ public class ClickGUI extends Screen {
             all.sort((m1, m2) -> Integer.compare(m2.getValues().size(), m1.getValues().size()));
         }
 
-        for (int i = 0; i < all.size(); i++) {
-            if (i % 2 == 0)
-                leftModules.add(all.get(i));
-            else
-                rightModules.add(all.get(i));
-        }
+        visibleModules.addAll(all);
 
         // Init animations for new modules
         for (Module m : all) {
@@ -217,16 +313,16 @@ public class ClickGUI extends Screen {
             if (scale < 0.01F)
                 return;
 
-            float cx = panelX + PANEL_W / 2;
-            float cy = panelY + PANEL_H / 2;
+            float cx = panelX + panelW / 2;
+            float cy = panelY + panelH / 2;
             Skia.save();
             Skia.scale(cx, cy, scale);
 
             // Panel Blur & Background
-            Skia.drawRoundedBlur(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
-            Skia.drawRoundedRect(panelX, panelY, PANEL_W, PANEL_H, RADIUS, BG_COLOR);
-            Skia.drawShadow(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
-            Skia.drawOutline(panelX, panelY, PANEL_W, PANEL_H, RADIUS, 1f, LINE_COLOR);
+            Skia.drawRoundedBlur(panelX, panelY, panelW, panelH, RADIUS);
+            Skia.drawRoundedRect(panelX, panelY, panelW, panelH, RADIUS, BG_COLOR);
+            Skia.drawShadow(panelX, panelY, panelW, panelH, RADIUS);
+            Skia.drawOutline(panelX, panelY, panelW, panelH, RADIUS, 1f, LINE_COLOR);
 
             drawSidebar(mouseX, mouseY);
             drawTopBar(mouseX, mouseY);
@@ -240,12 +336,20 @@ public class ClickGUI extends Screen {
                 drawTooltip(mouseX, mouseY, hoveredTooltip);
             }
 
+            drawResizeHandle(mouseX, mouseY);
+
             Skia.restore();
         });
 
         if (dragging) {
             panelX = mouseX - dragOX;
             panelY = mouseY - dragOY;
+        }
+        if (resizing && mouseDown) {
+            float maxW = Math.max(MIN_PANEL_W, width - 20);
+            float maxH = Math.max(MIN_PANEL_H, height - 20);
+            panelW = Math.max(MIN_PANEL_W, Math.min(maxW, resizeW + (mouseX - resizeOX)));
+            panelH = Math.max(MIN_PANEL_H, Math.min(maxH, resizeH + (mouseY - resizeOY)));
         }
         if (draggingSlider != null && mouseDown) {
             // Logic moved to drawSliderSetting to ensure coordinate context
@@ -257,9 +361,6 @@ public class ClickGUI extends Screen {
             catAnims.get(c).update(c == selectedCategory);
         }
         searchAnim.update(searching);
-
-        List<Module> visibleModules = new ArrayList<>(leftModules);
-        visibleModules.addAll(rightModules);
 
         for (Module m : visibleModules) {
             SmoothAnimationTimer t = toggleAnims.get(m);
@@ -288,30 +389,42 @@ public class ClickGUI extends Screen {
     private void drawSidebar(int mx, int my) {
         float sx = panelX, sy = panelY;
         Skia.save();
-        Skia.clip(sx, sy, SIDEBAR_W, PANEL_H, RADIUS, 0, 0, RADIUS);
-        Skia.drawRect(sx, sy, SIDEBAR_W, PANEL_H, SIDEBAR_COLOR);
+        Skia.clip(sx, sy, SIDEBAR_W, panelH, RADIUS, 0, 0, RADIUS);
+        Skia.drawRect(sx, sy, SIDEBAR_W, panelH, SIDEBAR_COLOR);
 
-        // Logo
-        Font logo = Fonts.getMiSans(16);
-        Skia.drawText("BlinkFix", sx + 16, sy + 14, ACCENT, logo);
+        Font logo = Fonts.getMiSans(18);
+        String logoText = BlinkFix.CLIENT_NAME.toUpperCase();
+        Skia.drawText(logoText, sx + 12, sy + 12, ACCENT, logo);
         Skia.drawLine(sx + 12, sy + 42, sx + SIDEBAR_W - 12, sy + 42, 1, LINE_COLOR);
 
         float iy = sy + 52;
+        int selectedIndex = 0;
+        int index = 0;
+        for (Category cat : Category.values()) {
+            if (cat == selectedCategory) {
+                selectedIndex = index;
+                break;
+            }
+            index++;
+        }
+        float targetY = sy + 52 + selectedIndex * CAT_ITEM_H;
+        if (categoryIndicatorY < 0) {
+            categoryIndicatorY = targetY;
+        }
+        categoryIndicatorY += (targetY - categoryIndicatorY) * 0.25f;
+        float selectAlpha = catAnims.getOrDefault(selectedCategory, new SmoothAnimationTimer(100.0F, 100.0F)).value / 100.0F;
+        Color selectBg = new Color(ACCENT.getRed(), ACCENT.getGreen(), ACCENT.getBlue(), AC((int) (30 * selectAlpha)));
+        Skia.drawRoundedRect(sx + 8, categoryIndicatorY, SIDEBAR_W - 16, CAT_ITEM_H, 6, selectBg);
+        Skia.drawRoundedRect(sx + 4, categoryIndicatorY + 9, 3, CAT_ITEM_H - 18, 2, ACCENT);
         Font catFont = Fonts.getMiSans(12);
         Font iconFont = Fonts.getIconFill(18);
 
         for (Category cat : Category.values()) {
-            float anim = catAnims.get(cat).value / 100.0F;
             boolean hov = hover(mx, my, sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H);
             boolean sel = cat == selectedCategory;
 
-            if (sel) {
-                Skia.drawRoundedRect(sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H, 6,
-                        new Color(0, 187, 255, AC((int) (30 * anim))));
-                Skia.drawRoundedRect(sx + 4, iy + 9, 3, CAT_ITEM_H - 18, 2, ACCENT);
-            } else if (hov) {
-                Skia.drawRoundedRect(sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H, 6,
-                        new Color(255, 255, 255, 10));
+            if (!sel && hov) {
+                Skia.drawRoundedRect(sx + 8, iy, SIDEBAR_W - 16, CAT_ITEM_H, 6, new Color(255, 255, 255, 10));
             }
 
             String icon = CAT_ICONS.getOrDefault(cat, Icons.CATEGORY);
@@ -324,7 +437,7 @@ public class ClickGUI extends Screen {
         }
 
         // User info at bottom
-        float uiy = sy + PANEL_H - 42;
+        float uiy = sy + panelH - 42;
         Skia.drawLine(sx + 8, uiy, sx + SIDEBAR_W - 8, uiy, 1, LINE_COLOR);
         String userName = Minecraft.getInstance().getUser().getName();
         Font userFont = Fonts.getMiSans(11);
@@ -340,25 +453,24 @@ public class ClickGUI extends Screen {
         Skia.drawText("Lifetime", sx + 38 + tillW, uiy + 24, ACCENT, subFont);
 
         Skia.restore();
-        Skia.drawLine(sx + SIDEBAR_W, sy, sx + SIDEBAR_W, sy + PANEL_H, 1, LINE_COLOR);
+        Skia.drawLine(sx + SIDEBAR_W, sy, sx + SIDEBAR_W, sy + panelH, 1, LINE_COLOR);
     }
 
     // ==================== Top Bar ====================
     private void drawTopBar(int mx, int my) {
         float tx = panelX + SIDEBAR_W, ty = panelY;
         Skia.save();
-        Skia.clip(tx, ty, PANEL_W - SIDEBAR_W, TOPBAR_H, 0, RADIUS, 0, 0);
-        Skia.drawRect(tx, ty, PANEL_W - SIDEBAR_W, TOPBAR_H, TOPBAR_COLOR);
+        Skia.clip(tx, ty, panelW - SIDEBAR_W, TOPBAR_H, 0, RADIUS, 0, 0);
+        Skia.drawRect(tx, ty, panelW - SIDEBAR_W, TOPBAR_H, TOPBAR_COLOR);
         Skia.restore();
 
         // Search Bar Area
         float searchW = 160;
-        float searchX = panelX + PANEL_W - searchW - 14;
+        float searchX = panelX + panelW - searchW - 14;
         float searchY = ty + 10;
         float searchH = 24;
 
         boolean searchHov = hover(mx, my, searchX, searchY, searchW, searchH);
-        float anim = searchAnim.value; // 0 to 1
 
         Skia.drawRoundedRect(searchX, searchY, searchW, searchH, 4, new Color(20, 30, 45));
         Skia.drawOutline(searchX, searchY, searchW, searchH, 4, 1, searchHov || searching ? ACCENT : LINE_COLOR);
@@ -367,14 +479,14 @@ public class ClickGUI extends Screen {
         Font iconF = Fonts.getIconFill(14);
 
         if (searching || !searchString.isEmpty()) {
-            String display = searchString + (searching && (System.currentTimeMillis() / 500 % 2 == 0) ? "|" : "");
-            // clip text
+            String caret = searching && (System.currentTimeMillis() / 500 % 2 == 0) ? "|" : "";
+            String display = Skia.getLimitText(searchString + caret, f, searchW - 24);
             Skia.save();
             Skia.clip(searchX + 4, searchY, searchW - 24, searchH, 0);
             Skia.drawText(display, searchX + 6, searchY + 8, TEXT_WHITE, f);
             Skia.restore();
         } else {
-            Skia.drawText("Search modules...", searchX + 6, searchY + 8, TEXT_GRAY, f);
+            Skia.drawText("Search", searchX + 6, searchY + 8, TEXT_GRAY, f);
         }
 
         // Search Icon
@@ -388,13 +500,13 @@ public class ClickGUI extends Screen {
             Skia.drawText("Searching Results", tx + 16, ty + (TOPBAR_H - 14) / 2, ACCENT, Fonts.getMiSans(14));
         }
 
-        Skia.drawLine(tx, ty + TOPBAR_H, panelX + PANEL_W, ty + TOPBAR_H, 1, LINE_COLOR);
+        Skia.drawLine(tx, ty + TOPBAR_H, panelX + panelW, ty + TOPBAR_H, 1, LINE_COLOR);
     }
 
     // ==================== Content ====================
     private void drawContent(int mx, int my) {
         float cx = panelX + SIDEBAR_W, cy = panelY + TOPBAR_H;
-        float cw = PANEL_W - SIDEBAR_W, ch = PANEL_H - TOPBAR_H;
+        float cw = panelW - SIDEBAR_W, ch = panelH - TOPBAR_H;
 
         Skia.save();
         Skia.clip(cx, cy, cw, ch, 0, RADIUS, RADIUS, 0);
@@ -403,13 +515,49 @@ public class ClickGUI extends Screen {
         float leftY = cy + PAD + scroll;
         float rightY = cy + PAD + scroll;
 
-        // Draw columns
-        leftY = drawColumn(leftModules, cx + PAD, leftY, colW, mx, my);
-        rightY = drawColumn(rightModules, cx + PAD + colW + COLUMN_GAP, rightY, colW, mx, my);
+        ColumnLayout layout = buildColumns();
+        leftY = drawColumn(layout.left, cx + PAD, leftY, colW, mx, my);
+        rightY = drawColumn(layout.right, cx + PAD + colW + COLUMN_GAP, rightY, colW, mx, my);
 
         float maxY = Math.max(leftY, rightY);
         maxScroll = Math.min(0, -(maxY - scroll - cy - ch + PAD));
         Skia.restore();
+    }
+
+    private static final class ColumnLayout {
+        private final List<Module> left;
+        private final List<Module> right;
+
+        private ColumnLayout(List<Module> left, List<Module> right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    private ColumnLayout buildColumns() {
+        List<Module> left = new ArrayList<>();
+        List<Module> right = new ArrayList<>();
+        float leftH = 0;
+        float rightH = 0;
+        for (Module mod : visibleModules) {
+            float h = moduleHeight(mod);
+            if (leftH <= rightH) {
+                left.add(mod);
+                leftH += h;
+            } else {
+                right.add(mod);
+                rightH += h;
+            }
+        }
+        return new ColumnLayout(left, right);
+    }
+
+    private float moduleHeight(Module mod) {
+        SmoothAnimationTimer ea = expandAnims.get(mod);
+        float ep = ea != null ? ea.value : (expanded.contains(mod) ? 1f : 0f);
+        float sh = (expanded.contains(mod) || ep > 0.01f) ? settingsH(mod) : 0;
+        float eh = MODULE_H + sh * ep;
+        return eh + 6;
     }
 
     private float drawColumn(List<Module> modules, float x, float startY, float w, int mx, int my) {
@@ -659,18 +807,18 @@ public class ClickGUI extends Screen {
     }
 
     private void drawBindOverlay() {
-        Skia.drawRoundedBlur(panelX, panelY, PANEL_W, PANEL_H, RADIUS);
-        Skia.drawRoundedRect(panelX, panelY, PANEL_W, PANEL_H, RADIUS, new Color(0, 0, 0, 200));
+        Skia.drawRoundedBlur(panelX, panelY, panelW, panelH, RADIUS);
+        Skia.drawRoundedRect(panelX, panelY, panelW, panelH, RADIUS, new Color(0, 0, 0, 200));
 
         Font f = Fonts.getMiSans(16);
         String t = "Binding " + bindingModule.getPrettyName();
         float tw = Skia.getStringWidth(t, f);
-        Skia.drawText(t, panelX + (PANEL_W - tw) / 2, panelY + PANEL_H / 2 - 10, ACCENT, f);
+        Skia.drawText(t, panelX + (panelW - tw) / 2, panelY + panelH / 2 - 10, ACCENT, f);
 
         Font sf = Fonts.getMiSans(12);
         String s = "Press any key (ESC to cancel, DEL to unbind)";
         float sw = Skia.getStringWidth(s, sf);
-        Skia.drawText(s, panelX + (PANEL_W - sw) / 2, panelY + PANEL_H / 2 + 10, TEXT_GRAY, sf);
+        Skia.drawText(s, panelX + (panelW - sw) / 2, panelY + panelH / 2 + 10, TEXT_GRAY, sf);
     }
 
     private void drawTooltip(int mx, int my, String text) {
@@ -690,6 +838,37 @@ public class ClickGUI extends Screen {
         Skia.drawText(text, x + padding, y + 4, TEXT_WHITE, f);
     }
 
+    private void drawResizeHandle(int mx, int my) {
+        float x = panelX + panelW - RESIZE_HANDLE - 4;
+        float y = panelY + panelH - RESIZE_HANDLE - 4;
+        boolean hov = hover(mx, my, x, y, RESIZE_HANDLE, RESIZE_HANDLE);
+        Color base = hov || resizing ? ACCENT : LINE_COLOR;
+        Color glow = new Color(ACCENT.getRed(), ACCENT.getGreen(), ACCENT.getBlue(), hov || resizing ? 140 : 80);
+        Skia.drawShadow(x - 2, y - 2, RESIZE_HANDLE + 4, RESIZE_HANDLE + 4, 4, glow);
+        Skia.drawShadow(x - 1, y - 1, RESIZE_HANDLE + 2, RESIZE_HANDLE + 2, 3, new Color(0, 0, 0, 110));
+        Skia.drawRoundedRect(x, y, RESIZE_HANDLE, RESIZE_HANDLE, 2, base);
+        Skia.drawOutline(x, y, RESIZE_HANDLE, RESIZE_HANDLE, 2, 1, TEXT_WHITE);
+        Skia.drawOutline(x + 1, y + 1, RESIZE_HANDLE - 2, RESIZE_HANDLE - 2, 1, 1, new Color(255, 255, 255, 90));
+
+        int c1 = io.github.humbleui.skija.Color.makeARGB(200, ACCENT.getRed(), ACCENT.getGreen(), ACCENT.getBlue());
+        int c2 = io.github.humbleui.skija.Color.makeARGB(80, LINE_COLOR.getRed(), LINE_COLOR.getGreen(), LINE_COLOR.getBlue());
+        Path tri = new Path();
+        tri.moveTo(x + RESIZE_HANDLE, y + RESIZE_HANDLE);
+        tri.lineTo(x + RESIZE_HANDLE, y);
+        tri.lineTo(x, y + RESIZE_HANDLE);
+        tri.closePath();
+        Paint paint = new Paint();
+        paint.setShader(Shader.makeLinearGradient(new Point(x, y), new Point(x + RESIZE_HANDLE, y + RESIZE_HANDLE), new int[]{c1, c2}, new float[]{0f, 1f}));
+        Skia.getCanvas().drawPath(tri, paint);
+
+        Color line = hov || resizing ? TEXT_WHITE : TEXT_GRAY;
+        for (int i = 0; i < 3; i++) {
+            float o = 2 + i * 3;
+            Skia.drawLine(x + RESIZE_HANDLE - o, y + RESIZE_HANDLE, x + RESIZE_HANDLE, y + RESIZE_HANDLE - o, 1, line);
+        }
+        Skia.drawLine(x + RESIZE_HANDLE - 2, y + RESIZE_HANDLE, x + RESIZE_HANDLE, y + RESIZE_HANDLE - 2, 1, new Color(255, 255, 255, 160));
+    }
+
     // ==================== Inputs ====================
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -699,7 +878,7 @@ public class ClickGUI extends Screen {
 
         // Search Click
         float searchW = 160;
-        float searchX = panelX + PANEL_W - searchW - 14;
+        float searchX = panelX + panelW - searchW - 14;
         float searchY = panelY + 10;
         if (hover(mx, my, searchX, searchY, searchW, 24)) {
             if (button == 0) {
@@ -717,11 +896,20 @@ public class ClickGUI extends Screen {
             return true;
         }
 
+        if (button == 0 && hover(mx, my, panelX + panelW - RESIZE_HANDLE - 4, panelY + panelH - RESIZE_HANDLE - 4, RESIZE_HANDLE, RESIZE_HANDLE)) {
+            resizing = true;
+            resizeOX = mx;
+            resizeOY = my;
+            resizeW = panelW;
+            resizeH = panelH;
+            return true;
+        }
+
         if (bindingModule != null)
             return true;
 
         // Panel Drag
-        if (button == 0 && !dragging && hover(mx, my, panelX, panelY, PANEL_W, TOPBAR_H)) {
+        if (button == 0 && !dragging && hover(mx, my, panelX, panelY, panelW, TOPBAR_H)) {
             dragging = true;
             dragOX = mx - panelX;
             dragOY = my - panelY;
@@ -729,7 +917,7 @@ public class ClickGUI extends Screen {
         }
 
         // Sidebar
-        if (hover(mx, my, panelX, panelY + 52, SIDEBAR_W, PANEL_H - 52)) {
+        if (hover(mx, my, panelX, panelY + 52, SIDEBAR_W, panelH - 52)) {
             float catY = panelY + 52;
             for (Category cat : Category.values()) {
                 if (hover(mx, my, panelX + 8, catY, SIDEBAR_W - 16, CAT_ITEM_H)) {
@@ -749,16 +937,17 @@ public class ClickGUI extends Screen {
         // Content Area
         float cx = panelX + SIDEBAR_W;
         float cy = panelY + TOPBAR_H;
-        float cw = PANEL_W - SIDEBAR_W;
-        float ch = PANEL_H - TOPBAR_H;
+        float cw = panelW - SIDEBAR_W;
+        float ch = panelH - TOPBAR_H;
 
         if (hover(mx, my, cx, cy, cw, ch)) {
             float colW = (cw - PAD * 2 - COLUMN_GAP) / 2;
+            ColumnLayout layout = buildColumns();
 
             // Handle clicks in columns
-            if (handleColumnClick(leftModules, cx + PAD, cy + PAD + scroll, colW, mx, my, button))
+            if (handleColumnClick(layout.left, cx + PAD, cy + PAD + scroll, colW, mx, my, button))
                 return true;
-            if (handleColumnClick(rightModules, cx + PAD + colW + COLUMN_GAP, cy + PAD + scroll, colW, mx, my, button))
+            if (handleColumnClick(layout.right, cx + PAD + colW + COLUMN_GAP, cy + PAD + scroll, colW, mx, my, button))
                 return true;
 
             // Close opened things if clicked empty
@@ -874,13 +1063,14 @@ public class ClickGUI extends Screen {
             mouseDown = false;
             dragging = false;
             draggingSlider = null;
+            resizing = false;
         }
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (hover((int) mouseX, (int) mouseY, panelX, panelY, PANEL_W, PANEL_H)) {
+        if (hover((int) mouseX, (int) mouseY, panelX, panelY, panelW, panelH)) {
             scrollYVelocity += delta * 15;
             return true;
         }
@@ -914,8 +1104,18 @@ public class ClickGUI extends Screen {
                 updateModuleLists();
                 return true;
             }
-            if (keyCode == GLFW.GLFW_KEY_ENTER) {
-                // Maybe close search mode but keep filter? No, standard behavior
+            if (Screen.isPaste(keyCode)) {
+                String paste = GLFW.glfwGetClipboardString(Minecraft.getInstance().getWindow().getWindow());
+                if (paste != null && !paste.isEmpty()) {
+                    searchString += paste;
+                    updateModuleLists();
+                }
+                return true;
+            }
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                searching = false;
+                searchString = "";
+                updateModuleLists();
                 return true;
             }
             return true;
@@ -971,6 +1171,26 @@ public class ClickGUI extends Screen {
     }
 
     // ==================== Helpers ====================
+    private static void applyTheme(Theme t) {
+        BG_COLOR = t.background;
+        SIDEBAR_COLOR = t.sidebar;
+        ACCENT = t.accent;
+        ACCENT_DIM = t.accentDim;
+        LINE_COLOR = t.line;
+        TEXT_WHITE = t.textPrimary;
+        TEXT_GRAY = t.textSecondary;
+        MODULE_BG = t.moduleBackground;
+        MODULE_HOVER = t.moduleHover;
+        TOGGLE_ON_BG = t.toggleOn;
+        TOGGLE_OFF_BG = t.toggleOff;
+        SLIDER_TRACK = t.sliderTrack;
+        DROPDOWN_BG = t.dropdown;
+        OVERLAY_BG = t.overlay;
+        TOPBAR_COLOR = t.topbar;
+        MODULE_OUTLINE = t.moduleOutline;
+        SETTING_LINE = t.settingLine;
+    }
+
     private float settingsH(Module mod) {
         float h = 4;
         List<Value> vals = BlinkFix.getInstance().getValueManager().getValuesByHasValue(mod);

@@ -28,9 +28,9 @@ public class TargetESP {
     private static final float[] targetColorRed = new float[]{0.78431374F, 0.0F, 0.0F, 0.23529412F};
     private static final float[] targetColorGreen = new float[]{0.0F, 0.78431374F, 0.0F, 0.23529412F};
 
-    private static final ResourceLocation NITRO_TEXTURE = new ResourceLocation("heypixel", "textures/target/rectangle.png");
-    private static final ResourceLocation RAINBOW_RECTANGLE = new ResourceLocation("heypixel", "textures/target/rectangle1.png");
-    private static final ResourceLocation MAONIANG_TEXTURE = new ResourceLocation("heypixel", "textures/target/maoniang.png");
+    private static final ResourceLocation NITRO_TEXTURE = new ResourceLocation("heypixel", "VcX6svVqmeT8/textures/target/rectangle.png");
+    private static final ResourceLocation RAINBOW_RECTANGLE = new ResourceLocation("heypixel", "VcX6svVqmeT8/textures/target/rectangle1.png");
+    private static final ResourceLocation MAONIANG_TEXTURE = new ResourceLocation("heypixel", "VcX6svVqmeT8/textures/target/maoniang.png");
     private static final Random random = new Random();
 
     private static float rotationAngle = 0.0F;

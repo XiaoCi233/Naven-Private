@@ -187,6 +187,9 @@ dependencies {
     jarJar(group: 'io.github.humbleui', name: 'skija-windows-x64', version: '[0.116,0.117)') {
         jarJar.pin(it, '0.116.4')
     }
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
 }
 
 
@@ -226,6 +229,10 @@ tasks.named('jar', Jar).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }
 
 tasks.register('extractRuntimeClasspath', Copy) {//这行gradle任务可以导出编译时所有用到的jar出来
